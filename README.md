@@ -25,30 +25,41 @@ The generated doc set is modular:
 
 ## Install
 
-Clone and symlink into your agent's skills directory:
+Clone and symlink the skill (and optionally the dedicated agent) into place:
 
 ```bash
 git clone https://github.com/FWcloud916/skill-doc-architect.git
 ln -s "$(pwd)/skill-doc-architect" ~/.claude/skills/doc-architect
+ln -s "$(pwd)/skill-doc-architect/agents/doc-architect.md" ~/.claude/agents/doc-architect.md
 ```
 
 Any agent runtime that discovers `SKILL.md`-based skills (Claude Code, or others reading
-the same layout) will pick it up.
+the same layout) will pick the skill up. The agent definition preloads the skill via its
+`skills:` frontmatter, so the skill symlink is a prerequisite for the agent symlink.
 
 ## Use
 
-Invoke `/doc-architect` explicitly, or just ask in natural language:
+**As a skill** — invoke `/doc-architect` explicitly, or just ask in natural language:
 
 - "set up docs for a new project" / "新專案要建文件" → greenfield
 - "create documentation for this repo" / "這個專案沒有文件" → brownfield
 - "update docs for this branch" / "把這次改動同步到文件" → diff-driven update
 - "audit the docs" / "檢查文件有沒有過時" → drift audit
 
+**As a dedicated agent** (requires the agent symlink):
+
+- In any session, Claude Code can delegate brownfield bootstraps and doc updates/audits
+  to the `doc-architect` subagent, which runs them autonomously and reports back files
+  written, skipped modules, and open questions.
+- Greenfield planning needs interaction (interview → advice → recorded decisions), so
+  run it as the main session: `claude --agent doc-architect`.
+
 ## Project structure
 
 ```
 doc-architect/
 ├── SKILL.md          # entry point: modes, doc-set selection, shared conventions
+├── agents/           # dedicated agent definition (preloads the skill)
 └── references/       # one template per generated file + the audit checklist
 ```
 
