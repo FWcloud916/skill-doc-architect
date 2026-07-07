@@ -76,7 +76,18 @@ you read in this session (or, for greenfield, to a decision the user stated).
 | Node (`package.json`) | lockfile, `.nvmrc`, `engines` | Express/Nest/Next route definitions | ORM models (Prisma schema, TypeORM entities) | Bull/Agenda queues, `node-cron` |
 | Python (`pyproject.toml`) | lockfile, `.python-version` | FastAPI/Django/Flask routers, `urls.py` | Django models / SQLAlchemy / Pydantic | Celery tasks, `celery beat` config |
 | Serverless (`serverless.yml`/`template.yaml`) | the manifest + runtime deps | **function → trigger (event source) table** from the manifest | handler payload types | `schedule:` events in the manifest |
+| Frontend web (`package.json` + `next`/`nuxt`/`react`/`vue`/`svelte`/`vite`, no server framework) | lockfile, `.nvmrc`, framework config (`next.config.*`, `vite.config.*`, `nuxt.config.*`) | pages/routes: Next `app/`/`pages/`, Nuxt `pages/`, router config (React Router, `vue-router`) | store definitions (Redux/Zustand/Pinia), API types; §9 usually `N/A` | usually `N/A`; service workers, client-side scheduled sync |
+| React Native (`package.json` + `react-native`/`expo`) | lockfile, `app.json`/`app.config.*`, `ios/` + `android/` configs | navigation graph: `@react-navigation` navigators, expo-router `app/` | store shapes + local persistence (AsyncStorage, SQLite, WatermelonDB) | background tasks (expo-task-manager, headless JS), push config |
+| iOS (`*.xcodeproj`/`Package.swift`/`Podfile`) | `Package.resolved`/`Podfile.lock`, deployment target in project settings | screens + navigation: SwiftUI `App`/`Scene`, storyboards, coordinators | model types; Core Data `.xcdatamodeld`/SwiftData/Realm | `BGTaskScheduler` tasks, `Info.plist` background modes, push |
+| Android (`build.gradle*` + `AndroidManifest.xml`) | `libs.versions.toml`, `build.gradle*` | Activities/Fragments in the manifest; Compose `NavHost`/navigation XML | data classes; Room entities/DAOs, DataStore | WorkManager workers, manifest services, FCM |
+| Flutter (`pubspec.yaml`) | `pubspec.lock`, SDK constraint in `pubspec.yaml` | `MaterialApp` routes / `go_router` config, `Navigator` calls | model classes; drift/sqflite/hive/isar | `workmanager`/`background_fetch`, `firebase_messaging` |
 | Unknown stack | README + whatever manifest exists | grep for port binding / server start / `main` | grep for schema/DDL/entity keywords | grep for cron/queue/worker keywords |
+
+Frontend/mobile facets the columns don't carry: §3 gets rendering strategy (SPA/SSR/SSG)
++ state-management approach; §8 gets consumed backend APIs + third-party SDKs (analytics,
+push, payments); §9 documents the client-side store or `N/A — client of <backend>`;
+§10 covers build/bundle pipeline + hosting/CDN (web) or signing + app store release
+(mobile).
 
 ## Writing rules
 

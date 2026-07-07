@@ -4,7 +4,9 @@ description: >-
   Plans, bootstraps, and maintains a project's core documentation set — README.md,
   AGENTS.md, a modular docs/ set (project-overview.md, domain-models.md,
   coding-style.md, db-observation.md), and an opt-in PROGRESS.md agent-harness state
-  file — for any stack: Rails, Go, Node, Python, serverless, or other. Trigger this skill when: (1) the user is starting a NEW project
+  file — for any stack: Rails, Go, Node, Python, serverless, frontend web
+  (React/Vue/Next.js/Nuxt/Svelte), mobile (iOS, Android, Flutter, React Native), or
+  other. Trigger this skill when: (1) the user is starting a NEW project
   and wants its documentation architecture planned — "新專案要建文件", "幫我規劃專案文件
   架構", "set up docs for a new project", "greenfield docs"; (2) an EXISTING codebase
   lacks docs and needs them written from the code — "這個專案沒有文件", "幫 X 建 docs",
@@ -44,7 +46,7 @@ References:
 | `docs/project-overview.md` | **core** | always; greenfield sections may read `TBD — not yet designed` |
 | `docs/domain-models.md` (+ `docs/domain/` when large) | module | the project has a non-trivial data model or business mechanisms worth explaining |
 | `docs/coding-style.md` | module | linter config or discernible conventions exist; else skip (or short factual stub on request) |
-| `docs/db-observation.md` | module | the project owns a relational datastore |
+| `docs/db-observation.md` | module | the project owns a server-side relational datastore (a client-embedded store — SQLite/Core Data/Room — doesn't qualify; record it in project-overview §9) |
 | `PROGRESS.md` (repo root) | module | the project is actively developed by AI agents across sessions — **opt-in only** (offer in G, recommended default; offer in B when agent-driven development is stated or evident); selecting it brings the AGENTS.md Session routine with it |
 
 **Plan before you write**: the doc-set selection (modules generated, modules skipped,
@@ -114,13 +116,26 @@ Either way, restate the selection when presenting results.
 
 ## Mode B — Brownfield bootstrap (write docs from the code)
 
-1. **Detect the stack** from manifests: `Gemfile`→Rails, `go.mod`→Go,
-   `package.json`→Node, `pyproject.toml`→Python, `serverless.yml`/`template.yaml`→
-   Serverless. Unknown → fall back to README + entrypoint reading; say so in the output.
+1. **Detect the stack** from manifests, in order: `pubspec.yaml`→Flutter;
+   `package.json`→disambiguate by deps (dependencies + devDependencies) —
+   `react-native`/`expo`→React Native (mobile); else a server framework
+   (`express`/`fastify`/`@nestjs/core`/`koa`)→Node backend; else a frontend framework
+   (`next`/`nuxt`/`react`/`vue`/`svelte`/`vite`)→Frontend web (SSR frameworks still
+   count as frontend; API routes become a §6 surface); else plain Node. `Gemfile`→Rails,
+   `go.mod`→Go, `pyproject.toml`→Python, `serverless.yml`/`template.yaml`→Serverless;
+   `*.xcodeproj`/`Package.swift`/`Podfile`→iOS; `build.gradle*` **plus**
+   `AndroidManifest.xml`→Android. Both frontend and server deps, or a workspaces
+   monorepo → fullstack: say so in the plan; interactive: ask which surface(s) to
+   document; headless: document both, backend facets first. Unknown → fall back to
+   README + entrypoint reading; say so in the output.
 2. **Discovery reading**, in order (per-stack file map:
    `references/project-overview-template.md` §Per-stack source map): README → dependency
    manifest + lockfile → routes/entrypoints → schema + models → workers/jobs + schedule
    → external-integration clients + settings → env configs, Dockerfile, CI/CD.
+   Frontend/mobile stacks swap the middle steps: routes/pages/screens + navigation in
+   place of server routes; stores + client-side persistence in place of schema + models;
+   mobile background tasks/push in place of workers; and the final step also covers
+   build/bundle, signing, and release config.
 3. **Present the plan** (sprint contract): the stack judgment, the selected doc set with
    a one-line skip reason per module, merge-mode handling if docs partially exist,
    whether `PROGRESS.md` is being offered, and the file scope still to be read.

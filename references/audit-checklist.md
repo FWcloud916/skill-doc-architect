@@ -44,6 +44,14 @@ source map in `project-overview-template.md` covers anything not listed.
 | `schedule:` events in the manifest | Serverless | project-overview §7 |
 | handler payload types | Serverless | project-overview §5 |
 | manifest + runtime deps | Serverless | project-overview §2 |
+| `pages/`/`app/` routes, router/navigation config (React Router, `vue-router`, `@react-navigation`, `go_router`, storyboards, Compose `NavHost`) | Frontend / mobile | project-overview §6 |
+| `components/`, `store/` (Redux/Zustand/Pinia slices, ViewModels) | Frontend / mobile | project-overview §3, §5; domain-models §1 if store shapes are documented |
+| API-client layer (fetch wrappers, generated clients), third-party SDK config | Frontend / mobile | project-overview §8 |
+| client persistence (Core Data model, Room entities/DAOs, drift/sqflite tables, AsyncStorage usage) | Mobile | project-overview §5, §9; domain-models §1 |
+| `Info.plist`, entitlements, Xcode project settings | iOS | project-overview §2, §7 (background modes), §10 (signing) |
+| `AndroidManifest.xml`, `build.gradle*`, `libs.versions.toml` | Android | project-overview §2, §6, §7, §10 |
+| `pubspec.yaml`/`pubspec.lock` | Flutter | project-overview §2 |
+| signing/release config (`fastlane/`, provisioning, keystore refs, store metadata) | Mobile | project-overview §10 |
 
 After the mapped edits, list any section the diff did **not** touch but that reads as
 semantically related (e.g. a flow description mentioning a renamed class) — report these
@@ -163,10 +171,14 @@ finishes in seconds:
 - linter presence: `<linter> --version`; a check-only mode on a single file MAY be run
 - `make -n <target>` (dry-run)
 - script existence: the named script/target appears in package scripts / Makefile / CI config
+- frontend/mobile probes: `npx vitest list`, `flutter --version`, `dart --version`,
+  `xcodebuild -list` (reads project metadata only)
 
 **NOT SAFE — static check only, never execute:** setup/install, migrations, seeds,
 deploys, `docker compose up`, DB consoles, anything that writes files, mutates network
-state, or needs credentials. For these the check stays "exists in real config".
+state, or needs credentials — including any `./gradlew` invocation (the wrapper may
+download distributions and dependencies on first run). For these the check stays
+"exists in real config".
 
 Rules:
 
@@ -214,6 +226,11 @@ but the report MUST then include a prominent warning with three parts (what / wh
 | Go | built-in `go test ./...`, one `_test.go` |
 | Node | built-in `node --test` (zero-dependency) or vitest/jest |
 | Python | `pytest`, one smoke test |
+| Frontend web | vitest or jest + Testing Library, one component smoke test |
+| React Native | jest (`jest-expo`/`react-native` preset), one component test |
+| iOS | XCTest target, run via `xcodebuild test` |
+| Android | JUnit via `./gradlew test` (static-check only per §5) |
+| Flutter | built-in `flutter test`, one widget test |
 | Serverless / other | at least one locally runnable invoke/verify path |
 
 Establishing the test framework is the project's (working agents') job, not this

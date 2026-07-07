@@ -8,8 +8,9 @@ An agent skill that plans, bootstraps, and maintains a project's core documentat
 - **Greenfield** — interviews you about a new project's purpose, scale, and team, advises
   on undecided choices (language, architecture, datastore), and records decisions with
   rationale into a full docs skeleton.
-- **Brownfield** — reads an existing codebase (Rails, Go, Node, Python, serverless, or
-  other), presents its plan (stack, doc set, skip reasons) for confirmation, then
+- **Brownfield** — reads an existing codebase (Rails, Go, Node, Python, serverless,
+  frontend web, mobile — iOS/Android/Flutter/React Native — or other), presents its
+  plan (stack, doc set, skip reasons) for confirmation, then
   writes the documentation from the code one doc at a time with per-doc self-checks
   (WIP = 1); resumable across sessions on large repos; merge mode fills gaps when some
   docs already exist.
@@ -30,7 +31,7 @@ The generated doc set is modular:
 | `README.md`, `AGENTS.md`, `docs/project-overview.md` | core — always generated |
 | `docs/domain-models.md` (+ `docs/domain/`) | when the data model is non-trivial |
 | `docs/coding-style.md` | when linter config or clear conventions exist |
-| `docs/db-observation.md` | when the project owns a relational datastore |
+| `docs/db-observation.md` | when the project owns a server-side relational datastore |
 | `PROGRESS.md` (agent-harness state, repo root) | when the project is actively developed by AI agents — opt-in |
 
 ## Install

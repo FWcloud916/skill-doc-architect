@@ -25,7 +25,7 @@ propose one.
 > This document describes the coding style conventions for <project>.
 > It covers both **linter-enforced rules** and **team conventions** that cannot be auto-checked.
 >
-> Configuration source: <.rubocop.yml / eslint.config.js / ruff.toml / .golangci.yml / ...>
+> Configuration source: <.rubocop.yml / eslint.config.js / ruff.toml / .golangci.yml / analysis_options.yaml / .swiftlint.yml / ...>
 >
 > **Terminology:** This document uses RFC 2119 keywords —
 > **MUST** (mandatory), **SHOULD** (recommended), **MAY** (optional).
@@ -62,5 +62,8 @@ propose one.
 | Ruby/Rails | `.rubocop.yml` (+ inherited files) | `bundle exec rubocop`; changed-only: `git diff <base>...HEAD --name-only \| grep '\.rb$' \| xargs bundle exec rubocop` |
 | Go | `.golangci.yml`, `Makefile` lint target | `golangci-lint run`, `gofmt -l .` |
 | Python | `ruff.toml` / `[tool.ruff]` in `pyproject.toml`, `setup.cfg` | `ruff check`, `ruff format --check` |
-| JS/TS | `eslint.config.js` / `.eslintrc*`, `.prettierrc*`, `biome.json` | `npx eslint .`, `npx prettier --check .` |
+| JS/TS (incl. frontend web & React Native) | `eslint.config.js` / `.eslintrc*`, `.prettierrc*`, `biome.json` | `npx eslint .`, `npx prettier --check .` |
+| Swift | `.swiftlint.yml`, `.swift-format` | `swiftlint`, `swift-format lint -r Sources/` |
+| Kotlin/Android | ktlint via `.editorconfig`, `detekt.yml` | `./gradlew ktlintCheck`, `./gradlew detekt` (gradle = static check only, audit-checklist §5) |
+| Dart/Flutter | `analysis_options.yaml` | `dart analyze`, `dart format --output=none --set-exit-if-changed .` |
 | None found | CI config for any lint step; else ask the user | — |
