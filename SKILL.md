@@ -5,8 +5,9 @@ description: >-
   AGENTS.md, a modular docs/ set (project-overview.md, domain-models.md,
   coding-style.md, db-observation.md), and an opt-in PROGRESS.md agent-harness state
   file — for any stack: Rails, Go, Node, Python, serverless, frontend web
-  (React/Vue/Next.js/Nuxt/Svelte), mobile (iOS, Android, Flutter, React Native), or
-  other. Trigger this skill when: (1) the user is starting a NEW project
+  (React/Vue/Next.js/Nuxt/Svelte), mobile (iOS, Android, Flutter, React Native),
+  desktop (Electron, Tauri, macOS, Windows .NET), or other. Trigger this skill when:
+  (1) the user is starting a NEW project
   and wants its documentation architecture planned — "新專案要建文件", "幫我規劃專案文件
   架構", "set up docs for a new project", "greenfield docs"; (2) an EXISTING codebase
   lacks docs and needs them written from the code — "這個專案沒有文件", "幫 X 建 docs",
@@ -27,7 +28,9 @@ know before developing in it. Self-contained: all templates live in `references/
 References:
 - `references/readme-template.md` — human-first repo entry point
 - `references/agents-md-template.md` — agent signpost file (routing + hard constraints; ≤ ~100 lines)
-- `references/project-overview-template.md` — 10-section skeleton + per-stack source map
+- `references/project-overview-template.md` — 10-section skeleton + per-section guidance
+- `references/stacks/<stack>.md` — per-stack detection, discovery map, diff→section
+  map, linter signals, minimal test gate (routed from Mode B step 1)
 - `references/domain-models-template.md` — 3 layout variants + ASCII ER diagram style
 - `references/coding-style-template.md` — generate from the project's own linter config
 - `references/db-observation-template.md` — DB observation how-to (DB-owning projects only)
@@ -116,31 +119,45 @@ Either way, restate the selection when presenting results.
 
 ## Mode B — Brownfield bootstrap (write docs from the code)
 
-1. **Detect the stack** from manifests, in order: `pubspec.yaml`→Flutter;
-   `package.json`→disambiguate by deps (dependencies + devDependencies) —
-   `react-native`/`expo`→React Native (mobile); else a server framework
-   (`express`/`fastify`/`@nestjs/core`/`koa`)→Node backend; else a frontend framework
-   (`next`/`nuxt`/`react`/`vue`/`svelte`/`vite`)→Frontend web (SSR frameworks still
-   count as frontend; API routes become a §6 surface); else plain Node. `Gemfile`→Rails,
-   `go.mod`→Go, `pyproject.toml`→Python, `serverless.yml`/`template.yaml`→Serverless;
-   `*.xcodeproj`/`Package.swift`/`Podfile`→iOS; `build.gradle*` **plus**
-   `AndroidManifest.xml`→Android. Both frontend and server deps, or a workspaces
-   monorepo → fullstack: say so in the plan; interactive: ask which surface(s) to
-   document; headless: document both, backend facets first. Unknown → fall back to
-   README + entrypoint reading; say so in the output.
-2. **Discovery reading**, in order (per-stack file map:
-   `references/project-overview-template.md` §Per-stack source map): README → dependency
-   manifest + lockfile → routes/entrypoints → schema + models → workers/jobs + schedule
-   → external-integration clients + settings → env configs, Dockerfile, CI/CD.
-   Frontend/mobile stacks swap the middle steps: routes/pages/screens + navigation in
-   place of server routes; stores + client-side persistence in place of schema + models;
-   mobile background tasks/push in place of workers; and the final step also covers
-   build/bundle, signing, and release config.
-3. **Present the plan** (sprint contract): the stack judgment, the selected doc set with
-   a one-line skip reason per module, merge-mode handling if docs partially exist,
-   whether `PROGRESS.md` is being offered, and the file scope still to be read.
-   Interactive: wait for confirmation before writing anything. Headless: record the
-   plan in the final report and proceed.
+1. **Detect the stack** from manifests, in order, then read the matched stack file
+   (`references/stacks/<stack>.md`: detection, discovery map, diff map, linter, test
+   gate) before discovery reading:
+
+   | Signal (checked in order) | Stack → stack file |
+   |---|---|
+   | `pubspec.yaml` | Flutter → `flutter.md` |
+   | `package.json`: `react-native`/`expo` | React Native → `react-native.md` |
+   | `package.json`: `electron` | Electron → `electron.md` |
+   | `package.json`: `@tauri-apps/*` or `src-tauri/` dir | Tauri → `tauri.md` |
+   | `package.json`: `express`/`fastify`/`@nestjs/core`/`koa` | Node backend → `node-backend.md` |
+   | `package.json`: `next`/`nuxt`/`react`/`vue`/`svelte`/`vite` | Frontend web → `frontend-web.md` |
+   | `package.json`: none of the above | plain Node → `node-backend.md` |
+   | `Gemfile` / `go.mod` / `pyproject.toml` | Rails → `rails.md` / Go → `go.md` / Python → `python.md` |
+   | `serverless.yml`/`template.yaml` | Serverless → `serverless.md` |
+   | `*.xcodeproj`/`Package.swift`/`Podfile` | Apple (iOS/macOS) → `apple.md` |
+   | `build.gradle*` **plus** `AndroidManifest.xml` | Android → `android.md` |
+   | `*.sln`/`*.csproj` with desktop markers (`<UseWPF>`/`<UseWindowsForms>`/`net*-windows`/WinUI/MAUI) | Windows desktop (.NET) → `windows-dotnet.md` |
+
+   `package.json` checks scan dependencies + devDependencies in the listed order — the
+   desktop checks MUST precede the frontend check (Electron/Tauri renderers depend on
+   react/vue too). Both frontend and server deps, or a workspaces monorepo → fullstack
+   (handled at the step-3 gate). `.csproj` with `Microsoft.NET.Sdk.Web` or no desktop
+   marker, Qt/C++ (CMake), anything else → unknown stack: fall back to README +
+   entrypoint reading; say so in the output.
+2. **Discovery reading**, in order (per-stack sources + facet notes: the stack file's
+   §Discovery map): README → dependency manifest + lockfile → interface surface (server
+   routes; or pages/screens/windows + navigation + IPC) → data (schema + models; or
+   stores + client-side persistence) → background work (workers/jobs + schedule; or
+   tasks/push/tray/auto-update) → external-integration clients + settings → env
+   configs, Dockerfile, CI/CD, packaging/signing/release config.
+3. **Present the plan** (sprint contract): the stack judgment **with its detection
+   evidence** (which manifest, which deps matched) so the user can correct it, the
+   selected doc set with a one-line skip reason per module, merge-mode handling if docs
+   partially exist, whether `PROGRESS.md` is being offered, and the file scope still to
+   be read. Ambiguous signals (fullstack, several manifests, unknown) — interactive:
+   ask which stack(s) to document before proceeding; headless: document both surfaces,
+   backend facets first, and record the judgment. Interactive: wait for confirmation
+   before writing anything. Headless: record the plan in the final report and proceed.
 4. Generate **one doc at a time (WIP = 1)**, in order README → AGENTS.md →
    project-overview → selected modules: write a doc → self-verify it (checklist §2
    invariants for that file + §5 executable checks for any commands it states) → only

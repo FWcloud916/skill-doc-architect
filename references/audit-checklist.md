@@ -7,51 +7,26 @@ Used by Mode U-1 (diff-driven update) to locate affected sections, and by Mode U
 
 ## 1. Diff path → doc section mapping (Mode U-1)
 
-Map each changed path to the sections to re-verify. The first table uses Rails shapes as
-the reference example; the per-stack table below gives the equivalents, and the per-stack
-source map in `project-overview-template.md` covers anything not listed.
+Map each changed path to the sections to re-verify. The table below lists
+stack-agnostic paths; stack-specific paths (routes/navigation, models/stores, workers,
+platform manifests, signing config…) live in the matched stack file's
+§Diff → doc section map (`references/stacks/<stack>.md`), whose rows follow this
+table's shape.
 
 | Changed path | Re-verify |
 |---|---|
-| `config/routes.rb` (routers, handler registration) | project-overview §6 |
-| `db/schema.rb`, `db/migrate/` (schema, migrations) | project-overview §9; domain-models ER + field notes |
-| `app/models/` (entities) | project-overview §5; domain-models §1 Model Details + affected mechanisms |
-| `app/workers/`, `app/jobs/`, schedule/cron config | project-overview §7 |
-| `app/services/` (business logic) | domain-models mechanism/flow sections naming those classes |
+| Interface surface (see stack file: routes, pages/screens, navigation, IPC) | project-overview §6 |
+| Data layer (see stack file: schema/migrations, models, stores, client persistence) | project-overview §5, §9; domain-models §1 + ER |
+| Background work (see stack file: workers/jobs, tasks, schedules) | project-overview §7 |
+| Business-logic layer (services, mechanisms) | domain-models mechanism/flow sections naming those classes |
 | API-client wrappers / external-integration layer | project-overview §8; domain-models integration sections |
-| `app/controllers/`, handlers | project-overview §6; domain-models flow sections if behavior changed |
 | Dependency manifest/lockfile (major bumps or new key deps only) | project-overview §2 |
 | Settings/env config | project-overview §8, §10 |
-| `Dockerfile`, CI/CD config, environment definitions | project-overview §10 |
+| `Dockerfile`, CI/CD config, environment definitions, packaging/signing config | project-overview §10 |
 | Linter config | coding-style §1–2 (and §6 if commands changed) |
 | Setup/run/test commands (Makefile, package scripts, CI) | README Quickstart; AGENTS.md Commands |
 | New/changed query shape (`WHERE`/`JOIN`/`ORDER BY`/pagination) on a hot table | db-observation is the *process* doc — don't edit it; check the diff followed it |
 | Any other source dir (mailers, serializers, decorators, project-specific layers…) | grep the docs for the changed class/file names — re-verify every section that mentions them, plus the §4 directory-structure annotation for that dir |
-
-### Per-stack equivalents
-
-| Changed path | Stack | Re-verify |
-|---|---|---|
-| `main.go` / handler package (router setup) | Go | project-overview §6 |
-| struct definitions | Go | project-overview §5; domain-models §1 Model Details |
-| `migrations/` | Go | project-overview §9; domain-models ER + field notes |
-| goroutine loops, cron libs | Go | project-overview §7 |
-| `go.mod`, `.golangci.yml` | Go | project-overview §2; coding-style §1–2 |
-| route/controller definitions (Express/Nest/Next, FastAPI/Django `urls.py`) | Node / Python | project-overview §6 |
-| ORM models (Prisma schema, TypeORM entities, Django models, SQLAlchemy) | Node / Python | project-overview §5, §9; domain-models §1 |
-| queue/task definitions (Bull/Agenda, Celery + beat config) | Node / Python | project-overview §7 |
-| `serverless.yml` / `template.yaml` `functions:` | Serverless | project-overview §6 (function → trigger table) |
-| `schedule:` events in the manifest | Serverless | project-overview §7 |
-| handler payload types | Serverless | project-overview §5 |
-| manifest + runtime deps | Serverless | project-overview §2 |
-| `pages/`/`app/` routes, router/navigation config (React Router, `vue-router`, `@react-navigation`, `go_router`, storyboards, Compose `NavHost`) | Frontend / mobile | project-overview §6 |
-| `components/`, `store/` (Redux/Zustand/Pinia slices, ViewModels) | Frontend / mobile | project-overview §3, §5; domain-models §1 if store shapes are documented |
-| API-client layer (fetch wrappers, generated clients), third-party SDK config | Frontend / mobile | project-overview §8 |
-| client persistence (Core Data model, Room entities/DAOs, drift/sqflite tables, AsyncStorage usage) | Mobile | project-overview §5, §9; domain-models §1 |
-| `Info.plist`, entitlements, Xcode project settings | iOS | project-overview §2, §7 (background modes), §10 (signing) |
-| `AndroidManifest.xml`, `build.gradle*`, `libs.versions.toml` | Android | project-overview §2, §6, §7, §10 |
-| `pubspec.yaml`/`pubspec.lock` | Flutter | project-overview §2 |
-| signing/release config (`fastlane/`, provisioning, keystore refs, store metadata) | Mobile | project-overview §10 |
 
 After the mapped edits, list any section the diff did **not** touch but that reads as
 semantically related (e.g. a flow description mentioning a renamed class) — report these
@@ -173,12 +148,16 @@ finishes in seconds:
 - script existence: the named script/target appears in package scripts / Makefile / CI config
 - frontend/mobile probes: `npx vitest list`, `flutter --version`, `dart --version`,
   `xcodebuild -list` (reads project metadata only)
+- desktop probes: `dotnet --version`, `cargo --version`, `rustc --version`;
+  `cargo fmt --check` MAY be run (read-only, seconds; rustfmt missing → `unverifiable here`)
 
 **NOT SAFE — static check only, never execute:** setup/install, migrations, seeds,
 deploys, `docker compose up`, DB consoles, anything that writes files, mutates network
 state, or needs credentials — including any `./gradlew` invocation (the wrapper may
-download distributions and dependencies on first run). For these the check stays
-"exists in real config".
+download distributions and dependencies on first run), `dotnet build`/`dotnet test`/
+`dotnet format` (implicit restore touches the network), and `cargo build`/`cargo test`/
+`cargo clippy` (download and compile crates). For these the check stays "exists in
+real config".
 
 Rules:
 
@@ -218,20 +197,9 @@ but the report MUST then include a prominent warning with three parts (what / wh
 1. **What**: this project has no executable verification gate.
 2. **Why**: agents (and humans) cannot verify their own work — the harness's Feedback
    subsystem is missing, so "done" can only be declared by feel.
-3. **Fix** (suggest, never build): the stack's minimal next step —
-
-| Stack | Suggested minimal gate |
-|---|---|
-| Ruby | `rspec` or minitest, one smoke test |
-| Go | built-in `go test ./...`, one `_test.go` |
-| Node | built-in `node --test` (zero-dependency) or vitest/jest |
-| Python | `pytest`, one smoke test |
-| Frontend web | vitest or jest + Testing Library, one component smoke test |
-| React Native | jest (`jest-expo`/`react-native` preset), one component test |
-| iOS | XCTest target, run via `xcodebuild test` |
-| Android | JUnit via `./gradlew test` (static-check only per §5) |
-| Flutter | built-in `flutter test`, one widget test |
-| Serverless / other | at least one locally runnable invoke/verify path |
+3. **Fix** (suggest, never build): the stack's minimal next step — the matched stack
+   file's §Minimal test gate (`references/stacks/<stack>.md`); unknown stack / no
+   stack file → the generic floor: at least one locally runnable invoke/verify path.
 
 Establishing the test framework is the project's (working agents') job, not this
 skill's — the skill warns, suggests, and seeds the work item (`harness-template.md`

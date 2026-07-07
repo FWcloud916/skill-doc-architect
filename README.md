@@ -9,7 +9,8 @@ An agent skill that plans, bootstraps, and maintains a project's core documentat
   on undecided choices (language, architecture, datastore), and records decisions with
   rationale into a full docs skeleton.
 - **Brownfield** — reads an existing codebase (Rails, Go, Node, Python, serverless,
-  frontend web, mobile — iOS/Android/Flutter/React Native — or other), presents its
+  frontend web, mobile — iOS/Android/Flutter/React Native — desktop —
+  Electron/Tauri/macOS/Windows .NET — or other), presents its
   plan (stack, doc set, skip reasons) for confirmation, then
   writes the documentation from the code one doc at a time with per-doc self-checks
   (WIP = 1); resumable across sessions on large repos; merge mode fills gaps when some
@@ -72,6 +73,7 @@ doc-architect/
 ├── SKILL.md          # entry point: modes, doc-set selection, shared conventions
 ├── agents/           # dedicated agent definition (preloads the skill)
 └── references/       # one template per generated file + the audit checklist
+    └── stacks/       # one file per stack: detection, discovery map, diff map, linter, test gate
 ```
 
 ## Documentation
@@ -87,3 +89,4 @@ doc-architect/
 | [references/db-observation-template.md](references/db-observation-template.md) | Query/index evidence how-to for DB-owning projects |
 | [references/harness-template.md](references/harness-template.md) | PROGRESS.md state conventions + Mode-B resume state file |
 | [references/audit-checklist.md](references/audit-checklist.md) | Diff→section mapping, invariants, executable command verification, Fresh Session Test |
+| references/stacks/ | Per-stack reference (13 stacks): detection signal, discovery map, diff→section map, linter signals, minimal test gate |

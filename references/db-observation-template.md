@@ -4,7 +4,8 @@ How-to for validating index/query decisions with evidence when query shape chang
 hot table. **Applicability rule:** only generate this doc for projects that own a
 server-side relational datastore. If the project has no DB of its own, skip the file and
 record `N/A — <reason>` in `project-overview.md` §9. A client-embedded store (SQLite /
-Core Data / Room in a mobile or frontend app) does not qualify — this doc is about
+Core Data / Room / electron-store in a mobile, desktop, or frontend app) does not
+qualify — this doc is about
 observing a server-owned datastore; record the local store in `project-overview.md` §9
 instead. Greenfield (Mode G): skip until a schema exists and real query patterns can be
 observed.

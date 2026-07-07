@@ -57,13 +57,7 @@ propose one.
 
 ## Per-stack linter signals
 
-| Stack | Config files to read | Pre-merge command shape |
-|---|---|---|
-| Ruby/Rails | `.rubocop.yml` (+ inherited files) | `bundle exec rubocop`; changed-only: `git diff <base>...HEAD --name-only \| grep '\.rb$' \| xargs bundle exec rubocop` |
-| Go | `.golangci.yml`, `Makefile` lint target | `golangci-lint run`, `gofmt -l .` |
-| Python | `ruff.toml` / `[tool.ruff]` in `pyproject.toml`, `setup.cfg` | `ruff check`, `ruff format --check` |
-| JS/TS (incl. frontend web & React Native) | `eslint.config.js` / `.eslintrc*`, `.prettierrc*`, `biome.json` | `npx eslint .`, `npx prettier --check .` |
-| Swift | `.swiftlint.yml`, `.swift-format` | `swiftlint`, `swift-format lint -r Sources/` |
-| Kotlin/Android | ktlint via `.editorconfig`, `detekt.yml` | `./gradlew ktlintCheck`, `./gradlew detekt` (gradle = static check only, audit-checklist §5) |
-| Dart/Flutter | `analysis_options.yaml` | `dart analyze`, `dart format --output=none --set-exit-if-changed .` |
-| None found | CI config for any lint step; else ask the user | — |
+The config files to read and the pre-merge command shape live in the matched stack
+file: `references/stacks/<stack>.md` §Linter signals (routed from the detection step,
+SKILL.md Mode B step 1). No linter signals found there or in the repo → check the CI
+config for any lint step; else ask the user.

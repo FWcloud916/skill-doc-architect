@@ -8,7 +8,7 @@ current behavior.
 **Applicability:** generate this doc only when the project has a non-trivial data model
 (more than a couple of entities, or any business mechanism worth explaining). A stateless
 proxy or a tiny CLI records its few types in `project-overview.md` §5 and skips this file.
-Client-side apps (frontend web / mobile): non-trivial store shapes, local entities, and
+Client-side apps (frontend web / mobile / desktop): non-trivial store shapes, local entities, and
 sync state qualify the same way; a thin view over a backend API records its few types in
 `project-overview.md` §5 and skips this file.
 
