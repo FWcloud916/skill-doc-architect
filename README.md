@@ -15,11 +15,13 @@ An agent skill that plans, bootstraps, and maintains a project's core documentat
   docs already exist.
 - **Update** — syncs docs to a feature-branch diff (the diff→section mapping is
   confirmed before editing), or audits the whole doc set for drift against the current
-  code (report-first); audits execute safe read-only commands to prove documented
-  commands actually work, and finish with a 5-question Fresh Session Test. A project
-  with no runnable test gate gets an explicit warning (missing feedback loop) plus a
-  stack-appropriate suggestion — and, when PROGRESS.md is selected, the gate is seeded
-  as the feature list's first work item so iterating agents actually build it.
+  code (report-first).
+- **Verification, not vibes** — every mode proves documented commands by executing
+  safe read-only checks and ends with a 5-question Fresh Session Test. A project with
+  no runnable test gate gets an explicit warning (missing feedback loop) plus a
+  stack-appropriate suggestion — and, when `PROGRESS.md` is selected, the gate is
+  seeded as the feature list's first work item, so agents iterating on the project
+  actually build the test boundary and every later "done" is verified against it.
 
 The generated doc set is modular:
 
