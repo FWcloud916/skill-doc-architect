@@ -108,7 +108,9 @@ Either way, restate the selection when presenting results.
    `db-observation.md` until a schema exists.
 6. **Hand off**: list every TBD section, tell the user when to return for Mode U
    (e.g. "after the first models land, after CI is set up"), and run the Mode-G
-   Definition of Done (below), including the Fresh Session Test (checklist §6).
+   Definition of Done (below), including the Fresh Session Test (checklist §6). No
+   runnable test gate yet → the hand-off MUST carry the verification-gate warning
+   (§6), and a selected `PROGRESS.md` MUST have the gate work item seeded as row 1.
 
 ## Mode B — Brownfield bootstrap (write docs from the code)
 
@@ -136,7 +138,9 @@ Either way, restate the selection when presenting results.
    On session start, if it exists, offer to resume from it. Delete it when Mode B
    completes — leaving it behind fails the clean-state check (checklist §2).
 7. **Self-check** with checklist §2 + §5, then run the Fresh Session Test (§6) as the
-   final gate before presenting the result.
+   final gate before presenting the result. No runnable test gate found → the report
+   MUST carry the verification-gate warning (§6), and a selected `PROGRESS.md` MUST
+   have the gate work item seeded as row 1 (`references/harness-template.md`).
 
 ## Mode U-1 — Diff-driven update
 
@@ -171,11 +175,13 @@ checks: checklist §5; Fresh Session Test: §6):
 
 - **G** — core files + selected modules exist · every undecided section reads
   `TBD — not yet designed` · TBD list handed off with return triggers · Fresh Session
-  Test passes (Q5 via PROGRESS.md if selected, else via the TBD hand-off).
+  Test passes (Q5 via PROGRESS.md if selected, else via the TBD hand-off) · no test
+  gate → warning attached + gate item seeded (§6).
 - **B** — plan confirmed (interactive) or recorded in the report (headless) · every
   selected doc generated AND self-checked in WIP = 1 order · all stated commands
   §5-verified or flagged `unverifiable here` · Fresh Session Test passes on the new doc
-  set · `docs/.doc-architect-state.md` deleted.
+  set · no test gate → warning attached + gate item seeded (§6) ·
+  `docs/.doc-architect-state.md` deleted.
 - **U-1** — mapping confirmed (interactive) or recorded in the report (headless) ·
   every mapped section re-verified against the read source · `Last updated` bumped only
   on files actually edited · related-but-untouched sections reported.

@@ -78,7 +78,8 @@ You cannot interact with the user. Adjust as follows:
   <module — one-line reason>
   ## Verification results
   <each command checked: pass | fail | unverifiable here (<reason>);
-   Fresh Session Test Q1–Q5, each citing the doc §ection that answers it>
+   Fresh Session Test Q1–Q5, each citing the doc §ection that answers it;
+   verification-gate warning (checklist §6) when no runnable test gate exists>
   ## Progress state
   <"complete — no state file" | "resumable — docs/.doc-architect-state.md written, <N> docs remaining">
   ## TBD sections

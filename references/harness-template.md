@@ -57,10 +57,20 @@ so it does NOT live under `docs/` and does NOT use the docs frontmatter conventi
   "code written" is not `passing`; Definition of Done = verification passed.
 - **`Verify with` commands are real** — same rule as README commands: copied from CI /
   Makefile / package scripts, never invented. Greenfield: `TBD` until tooling exists.
+- **Seed the verification gate first**: when the project has no runnable test gate
+  (`audit-checklist.md` §6 Verification-gate warning), Feature-list **row 1** MUST be
+  `Establish verification gate — <stack's suggested minimal gate>`, with `Verify with`
+  set to `TBD → becomes the project's test command` and state `not_started`. When a
+  working agent completes it: that row's `Verify with` gets the real command, and the
+  `<test command>` in AGENTS.md Commands and Hard constraints is updated to match
+  (per the Docs maintenance rules). Until the gate exists, the session routine's
+  clock-in "run the test command" step is naturally skipped — the header's tests field
+  honestly reads `not run`.
 - **This skill generates the skeleton and the initial seed only** (Mode G: Feature list
   and Next steps from the interview's task breakdown; Mode B: current state as read from
   the repo). Ongoing maintenance belongs to the project's working agents via the
-  AGENTS.md session routine — not to this skill.
+  AGENTS.md session routine — not to this skill. It never writes test files — it seeds
+  the work item, not the test code.
 
 ## Coupling with AGENTS.md
 

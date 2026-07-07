@@ -195,3 +195,33 @@ repo files**, citing the doc + section that answers it.
 A question unanswerable from the repo alone is a **blocking gap** in Modes G/B (fix
 before presenting) and a **drift finding** in Mode U-2. An honest `TBD` answer passes
 for greenfield; a wrong or absent answer never does.
+
+### Verification-gate warning
+
+Triggers when Q4 finds no runnable test gate at all — no test command in real config,
+or one that exists but fails §5 execution with no working alternative. Q4 still scores
+by the rules above (greenfield `TBD` passes; the warning is additive, not a re-verdict),
+but the report MUST then include a prominent warning with three parts (what / why / fix):
+
+1. **What**: this project has no executable verification gate.
+2. **Why**: agents (and humans) cannot verify their own work — the harness's Feedback
+   subsystem is missing, so "done" can only be declared by feel.
+3. **Fix** (suggest, never build): the stack's minimal next step —
+
+| Stack | Suggested minimal gate |
+|---|---|
+| Ruby | `rspec` or minitest, one smoke test |
+| Go | built-in `go test ./...`, one `_test.go` |
+| Node | built-in `node --test` (zero-dependency) or vitest/jest |
+| Python | `pytest`, one smoke test |
+| Serverless / other | at least one locally runnable invoke/verify path |
+
+Establishing the test framework is the project's (working agents') job, not this
+skill's — the skill warns, suggests, and seeds the work item (`harness-template.md`
+§Seed the verification gate first); it never writes test files. When `PROGRESS.md` was
+not selected, the warning additionally suggests opting into the harness module so the
+gap has a carrier an agent can pick up — suggest, don't force.
+
+Mode U-2: a project still without a test gate gets this warning in the drift report as
+a `[missing]`-level finding; a `PROGRESS.md` whose feature list lacks the gate work
+item is likewise a finding.
