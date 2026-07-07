@@ -1,9 +1,11 @@
 # Stack: Frontend web
 
-> **Detection:** `package.json` with a frontend framework
-> (`next`/`nuxt`/`react`/`vue`/`svelte`/`vite`) and no server framework — checked
-> after the React Native / Electron / Tauri and server-framework signals. SSR
-> frameworks (Next/Nuxt) still count as frontend; their API routes become a §6 surface.
+> **Detection:** `package.json` with a UI framework
+> (`next`/`nuxt`/`react`/`vue`/`svelte`), or `vite` plus a root `index.html`
+> (vanilla vite site) — checked after the React Native / Electron / Tauri /
+> VS Code-extension and server-framework signals. `vite`/`vitest` alone are build/test
+> tooling, not a framework signal. SSR frameworks (Next/Nuxt) still count as frontend;
+> their API routes become a §6 surface.
 
 ## Discovery map
 

@@ -14,16 +14,17 @@ Scan the repo root for every signal in the table below, plus monorepo markers:
 
 - **Exactly one signal** → its stack file. Within `package.json`, apply the dep checks
   in table order — first hit wins there (fast path, unchanged).
-- **A dedicated backend manifest (`Gemfile`/`go.mod`/`pyproject.toml`/serverless
-  manifest) + `package.json`** → the backend stack is primary; classify the
-  package.json's **role** by its deps:
-  - UI framework (`react`/`vue`/`svelte`/`next`/`nuxt`) → **hybrid**: backend surface
-    + Frontend web surface.
+- **A dedicated backend manifest (`Gemfile`/`go.mod`/`pyproject.toml`/`Cargo.toml`/
+  serverless manifest) + `package.json`** → the backend stack is primary; classify the
+  package.json's **role**:
+  - `engines.vscode` field → hybrid with a VS Code extension surface.
+  - UI framework (`react`/`vue`/`svelte`/`next`/`nuxt`) in deps → **hybrid**: backend
+    surface + Frontend web surface.
   - `react-native`/`expo`/`electron`/`@tauri-apps/*` → hybrid with that surface.
   - Build tooling only (`esbuild`/`webpack`/`vite`/`postcss`/`tailwindcss`, no UI
     framework) → **single stack (the backend)**; note the asset pipeline in
-    project-overview §2. `vite` alone counts as a frontend signal ONLY when no
-    backend manifest exists.
+    project-overview §2. `vite`/`vitest` are tooling, never a framework signal on
+    their own.
 - **A single `package.json` containing both a server and a UI framework** → hybrid
   likewise.
 - **Two+ backend manifests**, or any combination not covered above → **ambiguous**.
@@ -44,10 +45,12 @@ project-overview §2 lists each stack; §6 gets one subsection per surface.
 | `package.json`: `react-native`/`expo` | React Native → `react-native.md` |
 | `package.json`: `electron` | Electron → `electron.md` |
 | `package.json`: `@tauri-apps/*` or `src-tauri/` dir | Tauri → `tauri.md` |
+| `package.json`: `engines.vscode` field | VS Code extension → `vscode-extension.md` |
 | `package.json`: `express`/`fastify`/`@nestjs/core`/`koa` | Node backend → `node-backend.md` |
-| `package.json`: `next`/`nuxt`/`react`/`vue`/`svelte`/`vite` | Frontend web → `frontend-web.md` |
+| `package.json`: `next`/`nuxt`/`react`/`vue`/`svelte`, or `vite` + root `index.html` | Frontend web → `frontend-web.md` |
 | `package.json`: none of the above | plain Node → `node-backend.md` |
 | `Gemfile` / `go.mod` / `pyproject.toml` | Rails → `rails.md` / Go → `go.md` / Python → `python.md` |
+| `Cargo.toml` (no `src-tauri/`) | Rust → `rust.md` |
 | `serverless.yml`/`template.yaml` | Serverless → `serverless.md` |
 | `*.xcodeproj`/`Package.swift`/`Podfile` | Apple (iOS/macOS) → `apple.md` |
 | `build.gradle*` **plus** `AndroidManifest.xml` | Android → `android.md` |

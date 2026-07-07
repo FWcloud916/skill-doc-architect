@@ -4,11 +4,11 @@ description: >-
   Plans, bootstraps, and maintains a project's core documentation set — README.md,
   AGENTS.md, a modular docs/ set (project-overview.md, domain-models.md,
   coding-style.md, db-observation.md), and an opt-in PROGRESS.md agent-harness state
-  file — for any stack: Rails, Go, Node, Python, serverless, frontend web
+  file — for any stack: Rails, Go, Node, Python, Rust, serverless, frontend web
   (React/Vue/Next.js/Nuxt/Svelte), mobile (iOS, Android, Flutter, React Native),
-  desktop (Electron, Tauri, macOS, Windows .NET), or other. Trigger this skill when:
-  (1) the user is starting a NEW project
-  and wants its documentation architecture planned — "新專案要建文件", "幫我規劃專案文件
+  desktop (Electron, Tauri, macOS, Windows .NET), VS Code extensions, or other.
+  Trigger this skill when: (1) the user is starting a NEW project and wants its
+  documentation architecture planned — "新專案要建文件", "幫我規劃專案文件
   架構", "set up docs for a new project", "greenfield docs"; (2) an EXISTING codebase
   lacks docs and needs them written from the code — "這個專案沒有文件", "幫 X 建 docs",
   "generate project docs", "create documentation for this repo", "寫 AGENTS.md",
@@ -123,9 +123,9 @@ Either way, restate the selection when presenting results.
 1. **Detect the stack** — two-phase, per the detection index
    (`references/stacks/README.md`): **collect** every manifest signal present, then
    **resolve**; never stop at the first manifest found. Single signal → its stack
-   file; within `package.json`, deps disambiguate in order — React Native → Electron
-   → Tauri → Node backend → Frontend web → plain Node (the desktop checks MUST
-   precede the frontend check). A backend manifest + `package.json` → the backend is
+   file; `package.json` disambiguates in order — React Native → Electron → Tauri →
+   VS Code extension → Node backend → Frontend web → plain Node (the desktop checks
+   MUST precede the frontend check). A backend manifest + `package.json` → backend is
    primary; the package.json's role (UI framework = frontend surface vs build tooling
    = asset pipeline) decides hybrid or single stack. Hybrid / monorepo / ambiguous →
    the step-3 gate; no match (incl. Qt/C++, ASP.NET) → unknown stack: README +

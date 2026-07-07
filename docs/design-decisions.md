@@ -9,6 +9,26 @@
 
 ---
 
+## 2026-07-07 — Real-repo test fallout: vite demoted, Rust + VS Code extension stacks
+
+A detection dry-run on a real repo (vscode-git-braid: VS Code extension + Rust native
+core via napi + pnpm workspace) confirmed collect-then-resolve correctly stops at the
+gate instead of misdetecting, and exposed three gaps, all fixed:
+
+1. **`vite` demoted from framework signal** (bug-level): vitest pulls vite into
+   devDependencies, so any pure-TS project (e.g. a VS Code extension without a Cargo
+   side) hit the frontend row on the single-manifest fast path. Frontend web now
+   requires a UI framework (react/vue/svelte/next/nuxt) or `vite` + a root
+   `index.html` (the vanilla-vite-site shape). Trade-off: a vanilla vite site without
+   a root index.html would fall to plain Node — rarer than vite-as-tooling.
+2. **Rust** (`rust.md`): `Cargo.toml` (without `src-tauri/`) is now a signal AND a
+   dedicated backend manifest for hybrid resolution — Cargo + package.json resolves
+   backend-primary with role classification.
+3. **VS Code extension** (`vscode-extension.md`): `engines.vscode` is the authoritative
+   signal, checked after Tauri and before the server/frontend checks; the `contributes`
+   block is documented as the §6 interface table. Also added to the hybrid role
+   classification (before the UI-framework check).
+
 ## 2026-07-07 — Collect-then-resolve detection (hybrid repos)
 
 First-hit-wins detection misclassified hybrid repos: Rails 7 + esbuild (Gemfile +
@@ -97,9 +117,9 @@ stacks/ index above — but the mode organization itself stands.)
 ## Appendix
 
 **Canonical stack tokens** (spell identically everywhere): `Rails`, `Go`,
-`Node backend`, `Python`, `Serverless`, `Frontend web`, `React Native`,
+`Node backend`, `Python`, `Rust`, `Serverless`, `Frontend web`, `React Native`,
 `Apple (iOS/macOS)`, `Android`, `Flutter`, `Electron`, `Tauri`,
-`Windows desktop (.NET)`.
+`Windows desktop (.NET)`, `VS Code extension`.
 
 **Adding a stack (standard procedure):**
 1. Create `references/stacks/<stack>.md` using the 5-section skeleton (copy an existing
