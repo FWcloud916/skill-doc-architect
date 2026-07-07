@@ -29,8 +29,8 @@ References:
 - `references/readme-template.md` — human-first repo entry point
 - `references/agents-md-template.md` — agent signpost file (routing + hard constraints; ≤ ~100 lines)
 - `references/project-overview-template.md` — 10-section skeleton + per-section guidance
-- `references/stacks/<stack>.md` — per-stack detection, discovery map, diff→section
-  map, linter signals, minimal test gate (routed from Mode B step 1)
+- `references/stacks/` — detection index (README.md) + one file per stack: detection,
+  discovery map, diff→section map, linter signals, minimal test gate
 - `references/domain-models-template.md` — 3 layout variants + ASCII ER diagram style
 - `references/coding-style-template.md` — generate from the project's own linter config
 - `references/db-observation-template.md` — DB observation how-to (DB-owning projects only)
@@ -81,12 +81,13 @@ Either way, restate the selection when presenting results.
 
 ## Mode selection
 
-- Project has no (or almost no) code yet → **Mode G** (greenfield).
-- Code exists but the doc set doesn't → **Mode B** (brownfield bootstrap). Some docs
-  already exist → **Mode B in merge mode**: create only what's missing, treat existing
-  docs as source material and link to them — never overwrite or rename without approval.
-- Doc set exists and needs maintenance → **Mode U** (U-1 with a diff/branch in hand;
-  U-2 for an audit).
+| Situation | Mode | Entry point |
+|---|---|---|
+| New project, little or no code | **G** | interview → advise → record decisions |
+| Code exists, docs don't | **B** | stack detection (stacks index) → discovery reading |
+| Some docs already exist | **B (merge mode)** | create only what's missing; existing docs are source material — link to them, never overwrite/rename without approval |
+| Just finished a feature branch | **U-1** | `git diff <base>...HEAD --name-only` → mapping table |
+| "Are the docs stale?" | **U-2** | checklist → drift report → confirm → fix |
 
 ---
 
@@ -119,31 +120,15 @@ Either way, restate the selection when presenting results.
 
 ## Mode B — Brownfield bootstrap (write docs from the code)
 
-1. **Detect the stack** from manifests, in order, then read the matched stack file
-   (`references/stacks/<stack>.md`: detection, discovery map, diff map, linter, test
-   gate) before discovery reading:
-
-   | Signal (checked in order) | Stack → stack file |
-   |---|---|
-   | `pubspec.yaml` | Flutter → `flutter.md` |
-   | `package.json`: `react-native`/`expo` | React Native → `react-native.md` |
-   | `package.json`: `electron` | Electron → `electron.md` |
-   | `package.json`: `@tauri-apps/*` or `src-tauri/` dir | Tauri → `tauri.md` |
-   | `package.json`: `express`/`fastify`/`@nestjs/core`/`koa` | Node backend → `node-backend.md` |
-   | `package.json`: `next`/`nuxt`/`react`/`vue`/`svelte`/`vite` | Frontend web → `frontend-web.md` |
-   | `package.json`: none of the above | plain Node → `node-backend.md` |
-   | `Gemfile` / `go.mod` / `pyproject.toml` | Rails → `rails.md` / Go → `go.md` / Python → `python.md` |
-   | `serverless.yml`/`template.yaml` | Serverless → `serverless.md` |
-   | `*.xcodeproj`/`Package.swift`/`Podfile` | Apple (iOS/macOS) → `apple.md` |
-   | `build.gradle*` **plus** `AndroidManifest.xml` | Android → `android.md` |
-   | `*.sln`/`*.csproj` with desktop markers (`<UseWPF>`/`<UseWindowsForms>`/`net*-windows`/WinUI/MAUI) | Windows desktop (.NET) → `windows-dotnet.md` |
-
-   `package.json` checks scan dependencies + devDependencies in the listed order — the
-   desktop checks MUST precede the frontend check (Electron/Tauri renderers depend on
-   react/vue too). Both frontend and server deps, or a workspaces monorepo → fullstack
-   (handled at the step-3 gate). `.csproj` with `Microsoft.NET.Sdk.Web` or no desktop
-   marker, Qt/C++ (CMake), anything else → unknown stack: fall back to README +
-   entrypoint reading; say so in the output.
+1. **Detect the stack**: match manifests against the detection index
+   (`references/stacks/README.md`) top-down, then read the matched stack file before
+   discovery reading. Core order: `pubspec.yaml`→Flutter first; `package.json`
+   disambiguates by deps — React Native → Electron → Tauri → Node backend → Frontend
+   web → plain Node (the desktop checks MUST precede the frontend check); Apple,
+   Android, and .NET desktop have dedicated signals (details in the index). Both
+   frontend and server deps, or a workspaces monorepo → fullstack (handled at the
+   step-3 gate); no match (incl. Qt/C++, ASP.NET) → unknown stack: fall back to
+   README + entrypoint reading; say so in the output.
 2. **Discovery reading**, in order (per-stack sources + facet notes: the stack file's
    §Discovery map): README → dependency manifest + lockfile → interface surface (server
    routes; or pages/screens/windows + navigation + IPC) → data (schema + models; or
@@ -220,11 +205,3 @@ checks: checklist §5; Fresh Session Test: §6):
 - **U-2** — §2 + §5 + §3 + §6 all run · report in §4 format ends with a Verification
   results block · no file changed without user confirmation.
 
-## Quick reference
-
-| Situation | Mode | Entry point |
-|---|---|---|
-| New project, little or no code | G | interview → advise → record decisions |
-| Code exists, docs don't (or partially) | B (merge mode if partial) | stack detection → discovery reading |
-| Just finished a feature branch | U-1 | `git diff <base>...HEAD --name-only` → mapping table |
-| "Are the docs stale?" | U-2 | checklist → drift report → confirm → fix |
