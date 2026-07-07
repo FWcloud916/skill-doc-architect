@@ -9,10 +9,13 @@ An agent skill that plans, bootstraps, and maintains a project's core documentat
   on undecided choices (language, architecture, datastore), and records decisions with
   rationale into a full docs skeleton.
 - **Brownfield** — reads an existing codebase (Rails, Go, Node, Python, serverless, or
-  other) and writes its documentation from the code; merge mode fills gaps when some
-  docs already exist.
+  other) and writes its documentation from the code, one doc at a time with per-doc
+  self-checks (WIP = 1); resumable across sessions on large repos; merge mode fills
+  gaps when some docs already exist.
 - **Update** — syncs docs to a feature-branch diff, or audits the whole doc set for
-  drift against the current code (report-first).
+  drift against the current code (report-first); audits execute safe read-only commands
+  to prove documented commands actually work, and finish with a 5-question Fresh
+  Session Test.
 
 The generated doc set is modular:
 
@@ -22,6 +25,7 @@ The generated doc set is modular:
 | `docs/domain-models.md` (+ `docs/domain/`) | when the data model is non-trivial |
 | `docs/coding-style.md` | when linter config or clear conventions exist |
 | `docs/db-observation.md` | when the project owns a relational datastore |
+| `PROGRESS.md` (agent-harness state, repo root) | when the project is actively developed by AI agents — opt-in |
 
 ## Install
 
@@ -69,9 +73,10 @@ doc-architect/
 |---|---|
 | [SKILL.md](SKILL.md) | Mode selection (greenfield / brownfield / update), doc-set tiers, conventions |
 | [references/readme-template.md](references/readme-template.md) | Human-first repo entry point |
-| [references/agents-md-template.md](references/agents-md-template.md) | Agent signpost file (routing only, ~60-line budget) |
+| [references/agents-md-template.md](references/agents-md-template.md) | Agent signpost file (routing + hard constraints, ~100-line budget) |
 | [references/project-overview-template.md](references/project-overview-template.md) | 10-section overview skeleton + per-stack source map |
 | [references/domain-models-template.md](references/domain-models-template.md) | Data-model reference, 3 layout variants |
 | [references/coding-style-template.md](references/coding-style-template.md) | Style guide generated from the project's own linter config |
 | [references/db-observation-template.md](references/db-observation-template.md) | Query/index evidence how-to for DB-owning projects |
-| [references/audit-checklist.md](references/audit-checklist.md) | Diff→section mapping + machine-checkable invariants |
+| [references/harness-template.md](references/harness-template.md) | PROGRESS.md state conventions + Mode-B resume state file |
+| [references/audit-checklist.md](references/audit-checklist.md) | Diff→section mapping, invariants, executable command verification, Fresh Session Test |

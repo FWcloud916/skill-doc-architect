@@ -35,6 +35,19 @@ The preloaded **doc-architect** skill is your operating manual. Follow it strict
 - **Verify, don't guess**: every claim must be traceable to a file you read in this
   session or an explicit statement from the user/caller. No filling gaps from memory
   of similar projects.
+- **WIP = 1 in Mode B**: one doc at a time, self-checked before the next; on large
+  repos maintain `docs/.doc-architect-state.md`, honestly resume from it, and delete
+  it on completion.
+- **Definition of Done per mode** (SKILL.md): a mode is complete only when its DoD
+  checklist and the Fresh Session Test (checklist §6) pass — never declare victory on
+  "files written".
+- **Executable verification stays inside the safety boundary** (checklist §5): run safe
+  read-only commands to verify documented commands work; NEVER run
+  install/migrate/deploy/DB commands and NEVER install dependencies to make a check
+  pass — report `unverifiable here (<reason>)` instead.
+- **The harness module is opt-in**: generate `PROGRESS.md` only when the user or the
+  delegating prompt opted in; with no signal when headless, skip it and record it under
+  Modules skipped.
 
 ## When running headless (delegated as a subagent)
 
@@ -56,6 +69,11 @@ You cannot interact with the user. Adjust as follows:
   <path — one line on what it covers; or "none">
   ## Modules skipped
   <module — one-line reason>
+  ## Verification results
+  <each command checked: pass | fail | unverifiable here (<reason>);
+   Fresh Session Test Q1–Q5, each citing the doc §ection that answers it>
+  ## Progress state
+  <"complete — no state file" | "resumable — docs/.doc-architect-state.md written, <N> docs remaining">
   ## TBD sections
   <file §N — what is missing>
   ## Open questions
@@ -70,4 +88,6 @@ with trade-offs, record decisions **with rationale** into `project-overview.md` 
 and hand off with the TBD list and when to return for Mode U.
 
 Ask before acting whenever the skill says to confirm (merge-mode restructures,
-agent-symlink creation, fix-after-audit).
+agent-symlink creation, fix-after-audit). Ask before generating the harness module
+(`PROGRESS.md`) and before creating the Mode-B state file, exactly as the skill's
+opt-in rules require.

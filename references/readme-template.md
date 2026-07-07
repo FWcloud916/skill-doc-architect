@@ -64,6 +64,11 @@ The README does **not** duplicate `docs/` content — it links to it.
 - **Every command must be real**: copy commands from CI config, `Makefile`, or package
   scripts — verified to exist, not invented. Greenfield projects with no tooling yet
   write `TBD — tooling not set up yet` rather than aspirational commands.
+- **The Test command is the verification gate**: it is what the audit executes
+  (safe-command rules, `audit-checklist.md` §5) and what AGENTS.md points agents at for
+  "done". It MUST come from real config.
+- **PROGRESS.md is never listed in the Documentation table** — it is harness state, not
+  documentation; AGENTS.md's session routine owns the pointer to it.
 - **No marketing language.** "Fast, blazing, enterprise-grade" style adjectives are
   banned; describe capabilities factually.
 - **One screen of orientation**: if a section grows past ~15 lines, the overflow

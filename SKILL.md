@@ -2,9 +2,9 @@
 name: doc-architect
 description: >-
   Plans, bootstraps, and maintains a project's core documentation set — README.md,
-  AGENTS.md, and a modular docs/ set (project-overview.md, domain-models.md,
-  coding-style.md, db-observation.md) — for any stack: Rails, Go, Node, Python,
-  serverless, or other. Trigger this skill when: (1) the user is starting a NEW project
+  AGENTS.md, a modular docs/ set (project-overview.md, domain-models.md,
+  coding-style.md, db-observation.md), and an opt-in PROGRESS.md agent-harness state
+  file — for any stack: Rails, Go, Node, Python, serverless, or other. Trigger this skill when: (1) the user is starting a NEW project
   and wants its documentation architecture planned — "新專案要建文件", "幫我規劃專案文件
   架構", "set up docs for a new project", "greenfield docs"; (2) an EXISTING codebase
   lacks docs and needs them written from the code — "這個專案沒有文件", "幫 X 建 docs",
@@ -24,12 +24,14 @@ know before developing in it. Self-contained: all templates live in `references/
 
 References:
 - `references/readme-template.md` — human-first repo entry point
-- `references/agents-md-template.md` — agent signpost file (routing, not content; ≤ ~60 lines)
+- `references/agents-md-template.md` — agent signpost file (routing + hard constraints; ≤ ~100 lines)
 - `references/project-overview-template.md` — 10-section skeleton + per-stack source map
 - `references/domain-models-template.md` — 3 layout variants + ASCII ER diagram style
 - `references/coding-style-template.md` — generate from the project's own linter config
 - `references/db-observation-template.md` — DB observation how-to (DB-owning projects only)
-- `references/audit-checklist.md` — diff→section mapping + verification invariants
+- `references/harness-template.md` — agent-harness state: PROGRESS.md + Mode-B resume state file
+- `references/audit-checklist.md` — diff→section mapping, verification invariants,
+  executable command checks (§5), Fresh Session Test (§6)
 
 ---
 
@@ -43,6 +45,7 @@ References:
 | `docs/domain-models.md` (+ `docs/domain/` when large) | module | the project has a non-trivial data model or business mechanisms worth explaining |
 | `docs/coding-style.md` | module | linter config or discernible conventions exist; else skip (or short factual stub on request) |
 | `docs/db-observation.md` | module | the project owns a relational datastore |
+| `PROGRESS.md` (repo root) | module | the project is actively developed by AI agents across sessions — **opt-in only** (offer in G, recommended default; offer in B when agent-driven development is stated or evident); selecting it brings the AGENTS.md Session routine with it |
 
 **State the selection**: when presenting results, list which modules were generated and
 which were skipped, with the one-line reason for each skip.
@@ -58,8 +61,12 @@ which were skipped, with the one-line reason for each skip.
 - Entity-relationship diagrams are ASCII in fenced code blocks — not mermaid.
 - Links to code and sibling docs are relative paths.
 - **Scope guard:** this skill touches ONLY the files it generates (README.md, AGENTS.md
-  + symlinks, the canonical `docs/` files, `docs/domain/`). Never edit or delete anything
-  else under `docs/` (scratch dirs, memos, pending notes…).
+  + symlinks, the canonical `docs/` files, `docs/domain/`, `PROGRESS.md` when the harness
+  module was selected, `docs/.doc-architect-state.md` while Mode B is in flight). Never
+  edit or delete anything else under `docs/` (scratch dirs, memos, pending notes…).
+- **Feedback beats prose:** the commands that verify work (test, lint, run) are the
+  highest-value lines in the doc set — they get executable verification (checklist §5),
+  not just a grep. Never write a command you did not find in real config.
 - **Verify, don't guess:** every claim written must be traceable to a file read in this
   session or a decision the user explicitly stated. Missing or contradictory source →
   ask the user; never fill gaps from memory of similar projects.
@@ -90,12 +97,15 @@ which were skipped, with the one-line reason for each skip.
    Undecided sections get `TBD — not yet designed` — an honest fact, never silently
    filled in.
 4. Generate `README.md` (skeleton + known info), `AGENTS.md`, `project-overview.md`
-   (full 10-section structure, partly TBD).
+   (full 10-section structure, partly TBD). Offer `PROGRESS.md` (harness module — see
+   doc-set table), seeding its Feature list / Next steps from the interview's task
+   breakdown.
 5. Modules: `domain-models.md` only if a data-model draft exists (marked
    `planned — no schema yet`); skip `coding-style.md` until a linter is chosen; skip
    `db-observation.md` until a schema exists.
-6. **Hand off**: list every TBD section and tell the user when to return for Mode U
-   (e.g. "after the first models land, after CI is set up").
+6. **Hand off**: list every TBD section, tell the user when to return for Mode U
+   (e.g. "after the first models land, after CI is set up"), and run the Mode-G
+   Definition of Done (below), including the Fresh Session Test (checklist §6).
 
 ## Mode B — Brownfield bootstrap (write docs from the code)
 
@@ -106,11 +116,19 @@ which were skipped, with the one-line reason for each skip.
    `references/project-overview-template.md` §Per-stack source map): README → dependency
    manifest + lockfile → routes/entrypoints → schema + models → workers/jobs + schedule
    → external-integration clients + settings → env configs, Dockerfile, CI/CD.
-3. **Select the doc set** (table above) and generate each file from its template:
-   README → AGENTS.md → project-overview → selected modules.
+3. **Select the doc set** (table above) and generate **one doc at a time (WIP = 1)**,
+   in order README → AGENTS.md → project-overview → selected modules: write a doc →
+   self-verify it (checklist §2 invariants for that file + §5 executable checks for any
+   commands it states) → only then start the next. A doc counts as done when its
+   self-check passes — more files written is not more progress.
 4. **Merge mode** when docs partially exist: fill gaps, link to existing material,
    confirm any restructure with the user first.
-5. **Self-check** with `references/audit-checklist.md` §2 before presenting the result.
+5. **Large repo / interrupted run**: when the work won't fit one session, keep
+   `docs/.doc-architect-state.md` (shape: `references/harness-template.md` §state file).
+   On session start, if it exists, offer to resume from it. Delete it when Mode B
+   completes — leaving it behind fails the clean-state check (checklist §2).
+6. **Self-check** with checklist §2 + §5, then run the Fresh Session Test (§6) as the
+   final gate before presenting the result.
 
 ## Mode U-1 — Diff-driven update
 
@@ -124,13 +142,32 @@ which were skipped, with the one-line reason for each skip.
 
 ## Mode U-2 — Full audit
 
-1. Run `references/audit-checklist.md` §2 (machine-checkable invariants) and §3
-   (semantic checks) over every file in the doc set.
-2. **Default is report-first:** output the drift report (checklist §4 format) and change
-   nothing until the user confirms — unless they asked to fix directly up front.
+1. Run `references/audit-checklist.md` §2 (machine-checkable invariants), §5 (executable
+   command checks — safe commands only), §3 (semantic checks), and §6 (Fresh Session
+   Test) over every file in the doc set.
+2. **Default is report-first:** output the drift report (checklist §4 format, ending
+   with its Verification results block) and change nothing until the user confirms —
+   unless they asked to fix directly up front. Running §5's safe read-only commands is
+   observation, not a change.
 3. When fixing, follow Mode U-1 rules (targeted edits, honest dates).
 
 ---
+
+## Definition of Done (per mode)
+
+"Docs written" is not done. A mode completes only when its checklist passes (executable
+checks: checklist §5; Fresh Session Test: §6):
+
+- **G** — core files + selected modules exist · every undecided section reads
+  `TBD — not yet designed` · TBD list handed off with return triggers · Fresh Session
+  Test passes (Q5 via PROGRESS.md if selected, else via the TBD hand-off).
+- **B** — every selected doc generated AND self-checked in WIP = 1 order · all stated
+  commands §5-verified or flagged `unverifiable here` · Fresh Session Test passes on the
+  new doc set · `docs/.doc-architect-state.md` deleted.
+- **U-1** — every mapped section re-verified against the read source · `Last updated`
+  bumped only on files actually edited · related-but-untouched sections reported.
+- **U-2** — §2 + §5 + §3 + §6 all run · report in §4 format ends with a Verification
+  results block · no file changed without user confirmation.
 
 ## Quick reference
 

@@ -61,15 +61,31 @@ Run per file; each check is a grep/ls-level comparison, not a judgment call.
 - [ ] RFC 2119 keywords are uppercase where used normatively
 
 **README.md**
-- [ ] Quickstart commands exist in the project's real config (CI / Makefile / package scripts)
+- [ ] Quickstart commands exist in the project's real config (CI / Makefile / package
+      scripts) and pass §5 executable verification
 - [ ] Documentation table rows point at files that exist
 - [ ] Project-structure tree matches the actual top-level dirs
 
 **AGENTS.md**
-- [ ] Under ~60 lines
+- [ ] Under ~100 lines (~60 when no Session routine)
+- [ ] `## Hard constraints` present directly under the identity line (top of file), ≤ 15 rules
+- [ ] Every hard-constraint rule has a source in parentheses, and the source still
+      exists (config key / file / stated rule) — retire rules whose source is gone
 - [ ] Task→doc table only lists docs that exist (no dead links, no missing generated docs)
-- [ ] Commands exist in the project's real config
+- [ ] Commands exist in the project's real config and pass §5 executable verification
 - [ ] If `CLAUDE.md`/`GEMINI.md` exist they are symlinks to `AGENTS.md`, not divergent copies
+- [ ] Session routine section present iff `PROGRESS.md` exists
+
+**PROGRESS.md (only when the harness module was selected)**
+- [ ] Header line present: last-session date, short commit hash, test status ∈
+      {passing, failing, not run}
+- [ ] Commit hash resolves in `git log`
+- [ ] Sections present: Now (WIP = 1) / Feature list / Done / Blockers / Next steps / Decision log
+- [ ] At most one Feature-list row in state `active` (WIP = 1)
+- [ ] Every Feature-list row has a `Verify with` command; states ∈
+      {not_started, active, blocked, passing}
+- [ ] No `passing` row whose `Verify with` command fails when run (§5 safety rules
+      apply; unsafe commands → static check + flag)
 
 **project-overview.md**
 - [ ] All 10 `## N.` sections present, numbered 1–10 in order (missing ones must say `N/A — <reason>` or `TBD — not yet designed`)
@@ -93,10 +109,13 @@ Run per file; each check is a grep/ls-level comparison, not a judgment call.
 **db-observation.md**
 - [ ] Example table names exist in the current schema
 
-**Scope guard**
+**Scope guard & clean state**
 - [ ] No edits outside the generated file set (README.md, AGENTS.md + its symlinks, the
-      canonical `docs/` files, `docs/domain/`). Pre-existing scratch/memo/pending
-      directories and any other non-canonical files under `docs/` are untouched.
+      canonical `docs/` files, `docs/domain/`, `PROGRESS.md` when the harness module was
+      selected, `docs/.doc-architect-state.md` while Mode B is in flight). Pre-existing
+      scratch/memo/pending directories and any other non-canonical files under `docs/`
+      are untouched.
+- [ ] No leftover `docs/.doc-architect-state.md` after a completed Mode B run
 
 ## 3. Semantic checks (judgment required — report, don't silently rewrite)
 
@@ -117,5 +136,62 @@ Group findings by file, ordered most-stale first:
 - **[missing]** model `Foo` (src/models/foo.ts, added <date>) absent from §1
 ```
 
+Use the `[command]` tag for §5 failures, e.g.
+``- **[command]** AGENTS.md test command `npm test` — script not defined in package.json``.
+
+End every U-2 report (and every Mode B/G result presentation) with a **Verification
+results** block: each command checked, with `pass | fail | unverifiable here (<reason>)`,
+plus the Fresh Session Test answers (§6) — Q1–Q5, each citing the doc + section that
+answers it.
+
 Fix only after the user confirms — unless they asked for fix-directly up front. Bump each
 file's `Last updated` only if its content actually changed.
+
+## 5. Executable command verification (safe commands only)
+
+Grep-level checks prove a command is *written down* in real config; executing it is the
+only proof it *works*. For every command stated in README Quickstart, AGENTS.md
+Commands, coding-style §6, and PROGRESS.md `Verify with` cells: classify it, then verify.
+
+**SAFE — execute it, report pass/fail.** A command is safe iff it is read-only (writes
+nothing but stdout / tool caches), touches no network state, needs no credentials, and
+finishes in seconds:
+
+- tool existence + version: `command -v <tool>`, `<tool> --version`
+- test-runner discovery / dry-run: `bundle exec rspec --dry-run`,
+  `pytest --collect-only -q`, `npx jest --listTests`, `go test -list '.*' ./...`
+- linter presence: `<linter> --version`; a check-only mode on a single file MAY be run
+- `make -n <target>` (dry-run)
+- script existence: the named script/target appears in package scripts / Makefile / CI config
+
+**NOT SAFE — static check only, never execute:** setup/install, migrations, seeds,
+deploys, `docker compose up`, DB consoles, anything that writes files, mutates network
+state, or needs credentials. For these the check stays "exists in real config".
+
+Rules:
+
+- NEVER install missing dependencies to make a check runnable. A command that cannot run
+  in this environment is reported `unverifiable here (<reason>)` — never guessed green.
+- A failing safe command is a **finding**, not a license to rewrite the command until
+  something passes — the corrected command must come from the project's real config, or
+  the question goes to the user.
+- Executing safe commands is observation, not modification: it is permitted even in
+  Mode U-2 report-first, where file changes are not.
+
+## 6. Fresh Session Test (end-to-end self-check)
+
+The final gate for Modes G and B, and part of every Mode U-2 audit. Simulate an agent
+whose only context is the repository: answer each question **using only the doc set plus
+repo files**, citing the doc + section that answers it.
+
+| # | Question | Expected answer location |
+|---|---|---|
+| 1 | What is this system? | README first paragraph / AGENTS.md identity line |
+| 2 | How is it organized? | project-overview §3–4 |
+| 3 | How do I run it? | README Quickstart Run / AGENTS.md Commands |
+| 4 | How do I verify my work? | test + lint commands — §5-verified, or honest greenfield `TBD` |
+| 5 | What is the current progress? | PROGRESS.md (harness module); else Mode G's TBD hand-off list; else state `N/A — not agent-tracked` in the report |
+
+A question unanswerable from the repo alone is a **blocking gap** in Modes G/B (fix
+before presenting) and a **drift finding** in Mode U-2. An honest `TBD` answer passes
+for greenfield; a wrong or absent answer never does.

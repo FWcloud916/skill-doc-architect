@@ -5,10 +5,12 @@ one-line project identity, a table that maps *the task an agent is about to do* 
 doc it should read first*, the commands that must not be guessed, and the doc-maintenance
 rules. Everything else lives in `docs/` — AGENTS.md points there.
 
-**Hard budget: keep the generated file under ~60 lines.** If it is growing past that,
-content is leaking in that belongs in `docs/` — move it and leave a link. An AGENTS.md
-that tries to explain the architecture inline goes stale fast and gets skimmed, which
-defeats its purpose.
+**Hard budget: keep the generated file under ~100 lines** — and near ~60 when the
+harness module (`PROGRESS.md`) was skipped, since the Session routine then drops out.
+The extra headroom over the original ~60 exists only for the Hard-constraints block and
+the Session routine; if the file grows past the budget, content is leaking in that
+belongs in `docs/` — move it and leave a link. An AGENTS.md that tries to explain the
+architecture inline goes stale fast and gets skimmed, which defeats its purpose.
 
 ---
 
@@ -18,6 +20,15 @@ defeats its purpose.
 # <Project Name> — Agent Guide
 
 <One sentence: what this project is and what it owns.>
+
+## Hard constraints
+
+<Non-negotiables only — the rules that break the build, the data, or the team's process
+ if violated. ≤ 15. Each is a MUST / MUST NOT with its source in parentheses.>
+
+- MUST run `<test command>` and see it pass before declaring any task done (source: CI gate)
+- MUST NOT edit `<generated dir>` by hand — regenerate via `<tool>` (source: <config file>)
+- MUST NOT commit directly to `<default branch>` (source: repo settings / team rule)
 
 ## Read before you work
 
@@ -35,9 +46,20 @@ edits, running tests) can skip; do not pre-load all docs.
 
 ```bash
 <setup command>     # install dependencies
-<test command>      # run the test suite
+<run command>       # start locally
+<test command>      # run the test suite — the verification gate for "done"
 <lint command>      # lint / format check
 ```
+
+## Session routine
+
+<Include this section ONLY when PROGRESS.md exists (harness module selected).>
+
+- **Clock-in:** read [PROGRESS.md](PROGRESS.md) → `git log -3` + `git status` → run the
+  test command → pick up the single active item (WIP = 1).
+- **Clock-out:** verification command passes → update PROGRESS.md (state, commit hash,
+  test status) → remove stale artifacts (debug logs, commented-out code) → commit.
+  Session complete = task verified AND clean state — not before.
 
 ## Conventions
 
@@ -52,6 +74,19 @@ frontmatter to today's date. Requirement keywords (MUST, SHOULD, MAY) follow RFC
 
 ## Writing rules
 
+- **Hard constraints are positional and sourced.** The block sits directly under the
+  identity line and MUST NOT be moved lower — models attend to the extremes of a file,
+  not its middle ("lost in the middle"); `Docs maintenance` holds the other extreme, so
+  nothing critical goes between them. ≤ 15 rules; each cites its source (linter/CI
+  config, an incident, an explicit user statement) so an audit can retire it when the
+  source disappears — actively delete stale rules, never let the list ratchet up. No
+  generic best-practice filler: a rule with no repo-specific source doesn't belong here.
+- **Session routine is conditional**: include it only when the harness module
+  (`harness-template.md`) was selected and `PROGRESS.md` exists; adapt its wording to
+  the project's real commands. Without PROGRESS.md the section is omitted entirely.
+- **Every instruction earns its lines**: when the file nears the ~100 budget, cut from
+  the middle sections first (Conventions overflow → `docs/coding-style.md`) — never
+  from Hard constraints or Docs maintenance.
 - **The task→doc table only lists docs that actually exist.** Rows for modules the doc
   set skipped (no `domain-models.md`, no `db-observation.md`, …) are removed, not left
   as dead links.
