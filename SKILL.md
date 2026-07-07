@@ -120,15 +120,17 @@ Either way, restate the selection when presenting results.
 
 ## Mode B — Brownfield bootstrap (write docs from the code)
 
-1. **Detect the stack**: match manifests against the detection index
-   (`references/stacks/README.md`) top-down, then read the matched stack file before
-   discovery reading. Core order: `pubspec.yaml`→Flutter first; `package.json`
-   disambiguates by deps — React Native → Electron → Tauri → Node backend → Frontend
-   web → plain Node (the desktop checks MUST precede the frontend check); Apple,
-   Android, and .NET desktop have dedicated signals (details in the index). Both
-   frontend and server deps, or a workspaces monorepo → fullstack (handled at the
-   step-3 gate); no match (incl. Qt/C++, ASP.NET) → unknown stack: fall back to
-   README + entrypoint reading; say so in the output.
+1. **Detect the stack** — two-phase, per the detection index
+   (`references/stacks/README.md`): **collect** every manifest signal present, then
+   **resolve**; never stop at the first manifest found. Single signal → its stack
+   file; within `package.json`, deps disambiguate in order — React Native → Electron
+   → Tauri → Node backend → Frontend web → plain Node (the desktop checks MUST
+   precede the frontend check). A backend manifest + `package.json` → the backend is
+   primary; the package.json's role (UI framework = frontend surface vs build tooling
+   = asset pipeline) decides hybrid or single stack. Hybrid / monorepo / ambiguous →
+   the step-3 gate; no match (incl. Qt/C++, ASP.NET) → unknown stack: README +
+   entrypoint reading, say so. Read every documented surface's stack file before
+   discovery reading.
 2. **Discovery reading**, in order (per-stack sources + facet notes: the stack file's
    §Discovery map): README → dependency manifest + lockfile → interface surface (server
    routes; or pages/screens/windows + navigation + IPC) → data (schema + models; or
@@ -139,10 +141,11 @@ Either way, restate the selection when presenting results.
    evidence** (which manifest, which deps matched) so the user can correct it, the
    selected doc set with a one-line skip reason per module, merge-mode handling if docs
    partially exist, whether `PROGRESS.md` is being offered, and the file scope still to
-   be read. Ambiguous signals (fullstack, several manifests, unknown) — interactive:
-   ask which stack(s) to document before proceeding; headless: document both surfaces,
-   backend facets first, and record the judgment. Interactive: wait for confirmation
-   before writing anything. Headless: record the plan in the final report and proceed.
+   be read. Hybrid/ambiguous (multiple surfaces, several manifests, monorepo,
+   unknown): list every detected surface with its evidence; interactive: ask which
+   surface(s) to document (default: all); headless: document all, backend facets
+   first, and record the judgment. Interactive: wait for confirmation before writing
+   anything. Headless: record the plan in the final report and proceed.
 4. Generate **one doc at a time (WIP = 1)**, in order README → AGENTS.md →
    project-overview → selected modules: write a doc → self-verify it (checklist §2
    invariants for that file + §5 executable checks for any commands it states) → only

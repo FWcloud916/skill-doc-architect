@@ -9,6 +9,24 @@
 
 ---
 
+## 2026-07-07 — Collect-then-resolve detection (hybrid repos)
+
+First-hit-wins detection misclassified hybrid repos: Rails 7 + esbuild (Gemfile +
+package.json holding only build tools) resolved to **plain Node**, and Rails + React
+in one repo resolved to **Frontend web** — the package.json rows sit above the backend
+manifests in the signal table. Fix: detection is now **two-phase** — collect every
+manifest signal present, then resolve. A dedicated backend manifest + package.json →
+the backend is primary, and the package.json's **role** is classified by deps: a UI
+framework (react/vue/svelte/next/nuxt) makes it a real frontend surface (**hybrid**,
+both surfaces documented); build tooling only (esbuild/webpack/vite/postcss/tailwind)
+makes it the backend's asset pipeline, noted in project-overview §2. `vite` alone is a
+frontend signal only when no backend manifest exists. Monorepos (workspaces,
+pnpm-workspace, lerna, apps/+packages/) enumerate sub-projects and detect per
+sub-project. Hybrid / ambiguous / monorepo all resolve at the Mode B step-3 gate
+(list every surface with evidence; interactive: ask, default all; headless: document
+all, backend first). No template changes were needed — project-overview §2 lists
+multiple stacks and §6 is one-subsection-per-surface by design.
+
 ## 2026-07-07 — Modes stay inline in SKILL.md (index-pattern boundary)
 
 Extracting per-stack guidance into `references/stacks/` paid off; extracting modes

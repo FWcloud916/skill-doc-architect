@@ -1,10 +1,44 @@
 # Stack detection index
 
-Routes a repository's manifest signals to its stack file (routed from SKILL.md
-Mode B step 1). Match top-down — the first hit wins; then read the matched
-`<stack>.md` before discovery reading.
+Routes a repository's manifest signals to stack files (routed from SKILL.md Mode B
+step 1). Detection is two-phase: **collect** every signal present, then **resolve** —
+never stop at the first manifest found.
 
-| Signal (checked in order) | Stack → stack file |
+## Phase 1 — Collect
+
+Scan the repo root for every signal in the table below, plus monorepo markers:
+`workspaces` in package.json, `pnpm-workspace.yaml`, `lerna.json`, `apps/` +
+`packages/` conventions.
+
+## Phase 2 — Resolve
+
+- **Exactly one signal** → its stack file. Within `package.json`, apply the dep checks
+  in table order — first hit wins there (fast path, unchanged).
+- **A dedicated backend manifest (`Gemfile`/`go.mod`/`pyproject.toml`/serverless
+  manifest) + `package.json`** → the backend stack is primary; classify the
+  package.json's **role** by its deps:
+  - UI framework (`react`/`vue`/`svelte`/`next`/`nuxt`) → **hybrid**: backend surface
+    + Frontend web surface.
+  - `react-native`/`expo`/`electron`/`@tauri-apps/*` → hybrid with that surface.
+  - Build tooling only (`esbuild`/`webpack`/`vite`/`postcss`/`tailwindcss`, no UI
+    framework) → **single stack (the backend)**; note the asset pipeline in
+    project-overview §2. `vite` alone counts as a frontend signal ONLY when no
+    backend manifest exists.
+- **A single `package.json` containing both a server and a UI framework** → hybrid
+  likewise.
+- **Two+ backend manifests**, or any combination not covered above → **ambiguous**.
+- **Monorepo markers** → enumerate sub-projects (workspace globs, `apps/*`), run
+  detection per sub-project; treat as multi-surface.
+
+**Hybrid / ambiguous / monorepo resolve at the Mode B step-3 gate**: list every
+detected surface with its evidence; interactive: ask which surface(s) to document
+(default: all); headless: document all, backend facets first. Read the stack file of
+every surface being documented. The templates already carry multi-surface output:
+project-overview §2 lists each stack; §6 gets one subsection per surface.
+
+## Signal table
+
+| Signal (`package.json` rows checked in order) | Stack → stack file |
 |---|---|
 | `pubspec.yaml` | Flutter → `flutter.md` |
 | `package.json`: `react-native`/`expo` | React Native → `react-native.md` |
@@ -21,11 +55,7 @@ Mode B step 1). Match top-down — the first hit wins; then read the matched
 
 Notes:
 
-- `package.json` checks scan dependencies + devDependencies in the listed order — the
-  desktop checks MUST precede the frontend check (Electron/Tauri renderers depend on
-  react/vue too).
-- Both frontend and server deps, or a workspaces monorepo → fullstack: handled at the
-  Mode B step-3 gate (interactive: ask which surface(s); headless: document both,
-  backend facets first).
+- `package.json` dep checks scan dependencies + devDependencies — the desktop checks
+  MUST precede the frontend check (Electron/Tauri renderers depend on react/vue too).
 - `.csproj` with `Microsoft.NET.Sdk.Web` or no desktop marker, Qt/C++ (CMake), anything
   else → unknown stack: fall back to README + entrypoint reading; say so in the output.
