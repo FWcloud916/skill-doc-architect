@@ -66,14 +66,25 @@ the same layout) will pick the skill up. The agent definition preloads the skill
 - Greenfield planning needs interaction (interview → advice → recorded decisions), so
   run it as the main session: `claude --agent doc-architect`.
 
+## Develop
+
+Working on the skill itself? Read [AGENTS.md](AGENTS.md) first, then verify any change:
+
+```bash
+bash scripts/verify.sh   # consistency gate — must pass before a change is done
+```
+
 ## Project structure
 
 ```
 doc-architect/
 ├── SKILL.md          # entry point: modes, doc-set selection, shared conventions
+├── AGENTS.md         # maintainer guide for this repo (CLAUDE.md is a symlink to it)
 ├── agents/           # dedicated agent definition (preloads the skill)
+├── docs/             # design-decisions.md — why the skill is built this way
+├── scripts/          # verify.sh — consistency gate for changes to this repo
 └── references/       # one template per generated file + the audit checklist
-    └── stacks/       # one file per stack: detection, discovery map, diff map, linter, test gate
+    └── stacks/       # detection index (README.md) + one file per stack
 ```
 
 ## Documentation
@@ -81,6 +92,8 @@ doc-architect/
 | Doc | What it covers |
 |---|---|
 | [SKILL.md](SKILL.md) | Mode selection (greenfield / brownfield / update), doc-set tiers, conventions |
+| [AGENTS.md](AGENTS.md) | Maintainer guide: hard constraints, task→doc routing, the verify gate |
+| [docs/design-decisions.md](docs/design-decisions.md) | Decision log with rationale: index-pattern boundary, detection gate, safety rules |
 | [references/readme-template.md](references/readme-template.md) | Human-first repo entry point |
 | [references/agents-md-template.md](references/agents-md-template.md) | Agent signpost file (routing + hard constraints, ~100-line budget) |
 | [references/project-overview-template.md](references/project-overview-template.md) | 10-section overview skeleton + per-stack source map |
