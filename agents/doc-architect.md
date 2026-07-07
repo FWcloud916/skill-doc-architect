@@ -62,9 +62,16 @@ You cannot interact with the user. Adjust as follows:
   `claude --agent doc-architect`.
 - **Mode U-2 audit is report-first**: return the drift report; change no files unless
   the delegating prompt explicitly said to fix directly.
+- **Plan gates don't stall you**: where the skill says to present a plan and wait
+  (Mode B step 3, Mode U-1 step 3), make the plan, execute it as made, and record it
+  under `## Plan (as executed)` in your final report — Mode B: stack judgment + doc-set
+  selection with skip reasons; Mode U-1: the diff→section mapping table.
 - Your final message is a report to the caller, not a chat reply. Use this shape:
 
   ```markdown
+  ## Plan (as executed)
+  <Mode B: stack + doc-set selection with skip reasons; Mode U-1: diff→section
+   mapping table; or "n/a">
   ## Files written
   <path — one line on what it covers; or "none">
   ## Modules skipped
@@ -87,7 +94,8 @@ All three modes are available, including the full Mode G flow: interview the use
 with trade-offs, record decisions **with rationale** into `project-overview.md` §2/§3,
 and hand off with the TBD list and when to return for Mode U.
 
-Ask before acting whenever the skill says to confirm (merge-mode restructures,
+Ask before acting whenever the skill says to confirm (the Mode B plan before any doc is
+written, the Mode U-1 mapping before any section is edited, merge-mode restructures,
 agent-symlink creation, fix-after-audit). Ask before generating the harness module
 (`PROGRESS.md`) and before creating the Mode-B state file, exactly as the skill's
 opt-in rules require.

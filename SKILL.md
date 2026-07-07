@@ -47,8 +47,11 @@ References:
 | `docs/db-observation.md` | module | the project owns a relational datastore |
 | `PROGRESS.md` (repo root) | module | the project is actively developed by AI agents across sessions — **opt-in only** (offer in G, recommended default; offer in B when agent-driven development is stated or evident); selecting it brings the AGENTS.md Session routine with it |
 
-**State the selection**: when presenting results, list which modules were generated and
-which were skipped, with the one-line reason for each skip.
+**Plan before you write**: the doc-set selection (modules generated, modules skipped,
+one-line reason for each skip) is a plan, not an afterthought. Interactive: present it
+**before generating** and wait for confirmation (Mode B step 3, Mode U-1 step 3).
+Headless: do not stall — execute the plan as made and record it in the final report.
+Either way, restate the selection when presenting results.
 
 ## Shared conventions (all modes)
 
@@ -116,18 +119,23 @@ which were skipped, with the one-line reason for each skip.
    `references/project-overview-template.md` §Per-stack source map): README → dependency
    manifest + lockfile → routes/entrypoints → schema + models → workers/jobs + schedule
    → external-integration clients + settings → env configs, Dockerfile, CI/CD.
-3. **Select the doc set** (table above) and generate **one doc at a time (WIP = 1)**,
-   in order README → AGENTS.md → project-overview → selected modules: write a doc →
-   self-verify it (checklist §2 invariants for that file + §5 executable checks for any
-   commands it states) → only then start the next. A doc counts as done when its
-   self-check passes — more files written is not more progress.
-4. **Merge mode** when docs partially exist: fill gaps, link to existing material,
+3. **Present the plan** (sprint contract): the stack judgment, the selected doc set with
+   a one-line skip reason per module, merge-mode handling if docs partially exist,
+   whether `PROGRESS.md` is being offered, and the file scope still to be read.
+   Interactive: wait for confirmation before writing anything. Headless: record the
+   plan in the final report and proceed.
+4. Generate **one doc at a time (WIP = 1)**, in order README → AGENTS.md →
+   project-overview → selected modules: write a doc → self-verify it (checklist §2
+   invariants for that file + §5 executable checks for any commands it states) → only
+   then start the next. A doc counts as done when its self-check passes — more files
+   written is not more progress.
+5. **Merge mode** when docs partially exist: fill gaps, link to existing material,
    confirm any restructure with the user first.
-5. **Large repo / interrupted run**: when the work won't fit one session, keep
+6. **Large repo / interrupted run**: when the work won't fit one session, keep
    `docs/.doc-architect-state.md` (shape: `references/harness-template.md` §state file).
    On session start, if it exists, offer to resume from it. Delete it when Mode B
    completes — leaving it behind fails the clean-state check (checklist §2).
-6. **Self-check** with checklist §2 + §5, then run the Fresh Session Test (§6) as the
+7. **Self-check** with checklist §2 + §5, then run the Fresh Session Test (§6) as the
    final gate before presenting the result.
 
 ## Mode U-1 — Diff-driven update
@@ -135,9 +143,12 @@ which were skipped, with the one-line reason for each skip.
 1. Determine the diff range: user-specified branch/range/PR, else
    `git diff <default-branch>...HEAD --name-only` (detect master vs main).
 2. Map changed paths → affected doc sections via `references/audit-checklist.md` §1.
-3. Read the changed source files, then rewrite **only the affected sections**. Bump
+3. **Present the mapping**: the changed-paths → doc-sections table about to be
+   rewritten. Interactive: wait for confirmation before editing. Headless: record the
+   mapping in the final report and proceed.
+4. Read the changed source files, then rewrite **only the affected sections**. Bump
    `Last updated` only on files actually edited.
-4. Report sections the diff didn't touch but that look semantically related (renamed
+5. Report sections the diff didn't touch but that look semantically related (renamed
    classes, moved flows) — flag, don't silently rewrite.
 
 ## Mode U-2 — Full audit
@@ -161,11 +172,13 @@ checks: checklist §5; Fresh Session Test: §6):
 - **G** — core files + selected modules exist · every undecided section reads
   `TBD — not yet designed` · TBD list handed off with return triggers · Fresh Session
   Test passes (Q5 via PROGRESS.md if selected, else via the TBD hand-off).
-- **B** — every selected doc generated AND self-checked in WIP = 1 order · all stated
-  commands §5-verified or flagged `unverifiable here` · Fresh Session Test passes on the
-  new doc set · `docs/.doc-architect-state.md` deleted.
-- **U-1** — every mapped section re-verified against the read source · `Last updated`
-  bumped only on files actually edited · related-but-untouched sections reported.
+- **B** — plan confirmed (interactive) or recorded in the report (headless) · every
+  selected doc generated AND self-checked in WIP = 1 order · all stated commands
+  §5-verified or flagged `unverifiable here` · Fresh Session Test passes on the new doc
+  set · `docs/.doc-architect-state.md` deleted.
+- **U-1** — mapping confirmed (interactive) or recorded in the report (headless) ·
+  every mapped section re-verified against the read source · `Last updated` bumped only
+  on files actually edited · related-but-untouched sections reported.
 - **U-2** — §2 + §5 + §3 + §6 all run · report in §4 format ends with a Verification
   results block · no file changed without user confirmation.
 

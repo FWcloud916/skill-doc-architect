@@ -9,13 +9,14 @@ An agent skill that plans, bootstraps, and maintains a project's core documentat
   on undecided choices (language, architecture, datastore), and records decisions with
   rationale into a full docs skeleton.
 - **Brownfield** — reads an existing codebase (Rails, Go, Node, Python, serverless, or
-  other) and writes its documentation from the code, one doc at a time with per-doc
-  self-checks (WIP = 1); resumable across sessions on large repos; merge mode fills
-  gaps when some docs already exist.
-- **Update** — syncs docs to a feature-branch diff, or audits the whole doc set for
-  drift against the current code (report-first); audits execute safe read-only commands
-  to prove documented commands actually work, and finish with a 5-question Fresh
-  Session Test.
+  other), presents its plan (stack, doc set, skip reasons) for confirmation, then
+  writes the documentation from the code one doc at a time with per-doc self-checks
+  (WIP = 1); resumable across sessions on large repos; merge mode fills gaps when some
+  docs already exist.
+- **Update** — syncs docs to a feature-branch diff (the diff→section mapping is
+  confirmed before editing), or audits the whole doc set for drift against the current
+  code (report-first); audits execute safe read-only commands to prove documented
+  commands actually work, and finish with a 5-question Fresh Session Test.
 
 The generated doc set is modular:
 
