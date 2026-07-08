@@ -7,9 +7,10 @@
 # "Run workflow" for that to happen.
 #
 # Requires: an ANTHROPIC_API_KEY repo secret (Settings -> Secrets and
-# variables -> Actions). Model is pinned to claude-sonnet-5 — never rely on
-# the CLI's unpinned default in a bare-API-key environment; see the
-# evals/README.md cost note for why that's unpredictable and can be pricier.
+# variables -> Actions). The "model" dispatch input defaults to claude-sonnet-5
+# and should always be set explicitly to SOME model — never leave the CLI's
+# unpinned default in a bare-API-key environment; see the evals/README.md
+# cost note for why that's unpredictable and can be pricier.
 name: Detection evals
 
 on:
@@ -23,6 +24,10 @@ on:
         description: "Optional fixture name substring, e.g. basic-rails, for a cheap single-fixture debug run."
         required: false
         default: ""
+      model:
+        description: "Model to pin (never leave the CLI default in a bare-API-key env — unpredictable and can be pricier). See evals/README.md cost note."
+        required: false
+        default: "claude-sonnet-5"
 
 concurrency:
   group: detection-evals
@@ -50,7 +55,7 @@ jobs:
       - name: Run detection sweep
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          MODEL: claude-sonnet-5
+          MODEL: ${{ inputs.model }}
         run: |
           ./evals/scripts/run_detection.sh \
             "$GITHUB_WORKSPACE/evals/results/ci" \

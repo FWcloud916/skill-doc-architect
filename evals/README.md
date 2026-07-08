@@ -141,12 +141,13 @@ that's what the verify.sh fixture lint is for.
   **manual trigger only** (`workflow_dispatch`) — deliberately not on push, PR,
   or a schedule, since each run costs real API spend (~$16 at the N=3 default;
   see cost note above). Requires an `ANTHROPIC_API_KEY` repo secret (Settings →
-  Secrets and variables → Actions) before the first run. Pins
-  `MODEL=claude-sonnet-5` — never rely on the CLI's unpinned default in a
-  bare-API-key environment. Dispatch inputs let you run a cheap single-fixture
-  debug pass (`filter: basic-rails`, ~$0.20) before committing to a full sweep.
-  Results (including `stderr.log` per fixture) upload as a workflow artifact
-  whether the run passes or fails.
+  Secrets and variables → Actions) before the first run. A `model` dispatch
+  input lets you pick the model per run (defaults to `claude-sonnet-5`) — always
+  set it to some real model explicitly, never leave the CLI's unpinned default
+  in a bare-API-key environment. Dispatch inputs also let you run a cheap
+  single-fixture debug pass (`filter: basic-rails`, ~$0.20) before committing to
+  a full sweep. Results (including `stderr.log` per fixture) upload as a
+  workflow artifact whether the run passes or fails.
 
 ## Known limits
 
