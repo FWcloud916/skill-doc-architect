@@ -39,13 +39,16 @@ The generated doc set is modular:
 
 ### Option 1 — skills CLI (recommended)
 
-[vercel-labs/skills](https://github.com/vercel-labs/skills) discovers this repo's root
-`SKILL.md` and installs it for the agent(s) you pick (Claude Code, Cursor, Codex, and
-70+ more), creating any missing directories along the way:
+[vercel-labs/skills](https://github.com/vercel-labs/skills) installs the skill for the
+agent(s) you pick (Claude Code, Cursor, Codex, and 70+ more), creating any missing
+directories along the way. Because this repo's `SKILL.md` lives at the repo root,
+install from a local clone — the CLI installs remote root-level skills as a single
+`SKILL.md` file, which would drop the `references/` the skill needs:
 
 ```bash
-npx skills add FWcloud916/skill-doc-architect                      # interactive: pick agents + scope
-npx skills add FWcloud916/skill-doc-architect -g -a claude-code -y # non-interactive, global
+git clone https://github.com/FWcloud916/skill-doc-architect.git
+npx skills add ./skill-doc-architect                      # interactive: pick agents + scope
+npx skills add ./skill-doc-architect -g -a claude-code -y # non-interactive, global
 ```
 
 The CLI installs the skill only. To also use the dedicated Claude Code agent, add the
