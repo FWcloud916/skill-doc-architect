@@ -49,6 +49,7 @@ edits) can skip; do not pre-load all docs.
 ```bash
 bash scripts/verify.sh              # consistency gate — the verification gate for "done"
 ./evals/scripts/run_detection.sh    # live detection sweep (headless claude -p; costs runs)
+scripts/fresh_session_test.sh <repo> # independent Fresh Session Test (paid; checklist §6)
 ```
 
 ## Conventions

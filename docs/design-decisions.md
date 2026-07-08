@@ -46,8 +46,20 @@ permanent `trap-*` regression fixtures with `regression_for` pointing at their e
   resolve-rule→expected.json) now hard constraints in `AGENTS.md`. CI wiring (E4)
   landed as `.github/workflows/detection-evals.yml`, **manual trigger only**
   (`workflow_dispatch`) — deliberately not on push/PR/schedule, since each run
-  costs real API spend. The independent Fresh Session Test (E6) remains future
-  work.
+  costs real API spend. **The independent Fresh Session Test (E6) landed**:
+  `scripts/fresh_session_test.sh` gets answers to the 5 Fresh Session Test questions
+  from a headless `claude -p` subprocess with zero conversation history — the writing
+  session self-simulating "a fresh agent" isn't actually fresh, since it remembers
+  every decision it just made, which systematically overestimates doc quality.
+  Grading stays the writing session's job (blocking-gap vs pass vs honest `TBD` is a
+  judgment call); the script only supplies independent answers. Design call: routes
+  through `Bash` + a plain `claude -p` call rather than the `Agent`/Task tool, because
+  `agents/doc-architect.md`'s tool list (`Read, Grep, Glob, Bash, Write, Edit`) has no
+  Agent tool in either its headless-subagent or main-session mode — `Bash` is the one
+  mechanism available everywhere doc-architect runs. `SKILL.md`'s line budget was
+  bumped 210→215 to fit one pointer line in the Definition of Done section (checked in
+  `scripts/verify.sh`); the mechanism detail itself lives in
+  `references/audit-checklist.md` §6, which has no line cap.
 
 ## 2026-07-07 — Real-repo test fallout: vite demoted, Rust + VS Code extension stacks
 

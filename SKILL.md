@@ -191,7 +191,9 @@ Either way, restate the selection when presenting results.
 ## Definition of Done (per mode)
 
 "Docs written" is not done. A mode completes only when its checklist passes (executable
-checks: checklist §5; Fresh Session Test: §6):
+checks: checklist §5; Fresh Session Test: §6). Fresh Session Test: prefer the
+independent runner (`scripts/fresh_session_test.sh`, checklist §6) over
+self-simulation when the `claude` CLI is available.
 
 - **G** — core files + selected modules exist · every undecided section reads
   `TBD — not yet designed` · TBD list handed off with return triggers · Fresh Session

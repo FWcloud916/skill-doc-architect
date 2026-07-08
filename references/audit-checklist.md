@@ -187,6 +187,28 @@ A question unanswerable from the repo alone is a **blocking gap** in Modes G/B (
 before presenting) and a **drift finding** in Mode U-2. An honest `TBD` answer passes
 for greenfield; a wrong or absent answer never does.
 
+### Running it independently (preferred)
+
+Self-simulating "an agent with only the repo as context" in the same session that just
+wrote the docs isn't actually a fresh context — it remembers every decision it just
+made, which systematically overestimates doc quality. Prefer a genuinely independent
+context instead:
+
+- If the `claude` CLI is available, run `scripts/fresh_session_test.sh <repo root>`.
+  It spawns a headless subprocess with zero conversation history, asks it the 5
+  questions above, and returns its answers with citations as JSON.
+- Only fall back to self-simulation (the method above) when the script fails or the
+  CLI isn't available — a transient failure (e.g. an API overload) is a reason to
+  retry or fall back, not a reason to block the mode's completion.
+- **Grading is unchanged and stays this session's job.** The script only supplies
+  answers; judging blocking-gap vs pass vs honest `TBD` is still the rules above,
+  applied by the session that has full context of what the project actually needs.
+- Cost note: one extra headless call per Fresh Session Test — modest compared to doc
+  generation itself, paid for context purity, the same trade-off already made for the
+  detection report's per-run cost (`evals/README.md`).
+- The 5 questions are hard-coded in the script's prompt from this table. If this
+  table's wording changes, update the script's prompt in the same change.
+
 ### Verification-gate warning
 
 Triggers when Q4 finds no runnable test gate at all — no test command in real config,

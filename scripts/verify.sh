@@ -65,7 +65,7 @@ report "$([ "$n" -eq 10 ]; echo $?)" "project-overview-template has exactly 10 n
 
 # 7. Line budgets
 skill_lines=$(wc -l < SKILL.md)
-report "$([ "$skill_lines" -le 210 ]; echo $?)" "SKILL.md within 210-line budget" "$skill_lines lines"
+report "$([ "$skill_lines" -le 215 ]; echo $?)" "SKILL.md within 215-line budget" "$skill_lines lines"
 agents_lines=$(wc -l < AGENTS.md)
 report "$([ "$agents_lines" -le 100 ]; echo $?)" "AGENTS.md within 100-line budget" "$agents_lines lines"
 
@@ -78,6 +78,11 @@ for p in $(grep -hoE '\]\((docs/[a-z-]+\.md|SKILL\.md|AGENTS\.md)\)' README.md A
   [ -f "$p" ] || dead_refs="$dead_refs $p"
 done
 report "$([ -z "$dead_refs" ]; echo $?)" "cited reference/doc paths exist" "missing:$dead_refs"
+
+script_hits=$(grep -rl "scripts/fresh_session_test\.sh" SKILL.md AGENTS.md references/ 2>/dev/null)
+report "$([ -n "$script_hits" ] && [ -f "scripts/fresh_session_test.sh" ]; echo $?)" \
+  "scripts/fresh_session_test.sh is referenced and exists" \
+  "referenced: ${script_hits:-none}; exists: $([ -f scripts/fresh_session_test.sh ] && echo yes || echo no)"
 
 # 9. Eval fixture lint: every fixture has expected.json; every stack name
 #    referenced in any expected.json resolves to references/stacks/<name>.md
