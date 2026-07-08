@@ -1,0 +1,15 @@
+{
+  "name": "doc-architect",
+  "description": "Marketplace for the doc-architect skill and agent — documentation planning, bootstrap, and maintenance for any stack.",
+  "owner": {
+    "name": "FWcloud916",
+    "url": "https://github.com/FWcloud916"
+  },
+  "plugins": [
+    {
+      "name": "doc-architect",
+      "source": "./",
+      "description": "Documentation architect — bootstraps and maintains README.md, AGENTS.md, and a modular docs/ set for any stack; includes the doc-architect subagent."
+    }
+  ]
+}

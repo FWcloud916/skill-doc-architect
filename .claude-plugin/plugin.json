@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "doc-architect",
+  "displayName": "Doc Architect",
+  "version": "1.0.0",
+  "description": "Plans, bootstraps, and maintains a project's core documentation set (README.md, AGENTS.md, modular docs/) for any stack.",
+  "author": {
+    "name": "FWcloud916",
+    "url": "https://github.com/FWcloud916"
+  },
+  "repository": "https://github.com/FWcloud916/skill-doc-architect",
+  "keywords": ["documentation", "docs", "readme", "agents-md", "bootstrap", "audit"]
+}

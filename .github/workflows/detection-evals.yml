@@ -50,7 +50,7 @@ jobs:
       - name: Install skill (symlink checkout into ~/.claude/skills)
         run: |
           mkdir -p ~/.claude/skills
-          ln -s "$GITHUB_WORKSPACE" ~/.claude/skills/doc-architect
+          ln -s "$GITHUB_WORKSPACE/skills/doc-architect" ~/.claude/skills/doc-architect
 
       - name: Run detection sweep
         env:

@@ -37,24 +37,32 @@ The generated doc set is modular:
 
 ## Install
 
-### Option 1 — skills CLI (recommended)
+### Option 1 — Claude Code plugin (recommended for Claude Code)
 
-[vercel-labs/skills](https://github.com/vercel-labs/skills) installs the skill for the
-agent(s) you pick (Claude Code, Cursor, Codex, and 70+ more), creating any missing
-directories along the way. Because this repo's `SKILL.md` lives at the repo root,
-install from a local clone — the CLI installs remote root-level skills as a single
-`SKILL.md` file, which would drop the `references/` the skill needs:
+The repo is a Claude Code plugin marketplace; installing the plugin gives you the
+skill **and** the dedicated `doc-architect` agent in one step, with version-pinned
+updates:
 
-```bash
-git clone https://github.com/FWcloud916/skill-doc-architect.git
-npx skills add ./skill-doc-architect                      # interactive: pick agents + scope
-npx skills add ./skill-doc-architect -g -a claude-code -y # non-interactive, global
+```
+/plugin marketplace add FWcloud916/skill-doc-architect
+/plugin install doc-architect@doc-architect
 ```
 
-The CLI installs the skill only. To also use the dedicated Claude Code agent, add the
-agent symlink from Option 2's last step.
+### Option 2 — skills CLI (any of 70+ agents)
 
-### Option 2 — manual clone + symlink
+[vercel-labs/skills](https://github.com/vercel-labs/skills) installs the skill for
+the agent(s) you pick (Claude Code, Cursor, Codex, and more), creating any missing
+directories along the way:
+
+```bash
+npx skills add FWcloud916/skill-doc-architect                      # interactive: pick agents + scope
+npx skills add FWcloud916/skill-doc-architect -g -a claude-code -y # non-interactive, global
+```
+
+This route installs the skill only. To also use the dedicated Claude Code agent, add
+the agent symlink from Option 3's last step.
+
+### Option 3 — manual clone + symlink
 
 Pick the layout your runtime reads — `~/.claude/skills` for Claude Code, or the
 universal `~/.agents/skills` for runtimes that share it. `mkdir -p` covers the case
@@ -65,20 +73,23 @@ git clone https://github.com/FWcloud916/skill-doc-architect.git
 
 # Claude Code layout
 mkdir -p ~/.claude/skills
-ln -s "$(pwd)/skill-doc-architect" ~/.claude/skills/doc-architect
+ln -s "$(pwd)/skill-doc-architect/skills/doc-architect" ~/.claude/skills/doc-architect
 
 # or: universal agents layout
 mkdir -p ~/.agents/skills
-ln -s "$(pwd)/skill-doc-architect" ~/.agents/skills/doc-architect
+ln -s "$(pwd)/skill-doc-architect/skills/doc-architect" ~/.agents/skills/doc-architect
 
 # optional: dedicated Claude Code agent (requires the skill symlink above)
 mkdir -p ~/.claude/agents
 ln -s "$(pwd)/skill-doc-architect/agents/doc-architect.md" ~/.claude/agents/doc-architect.md
 ```
 
-Any agent runtime that discovers `SKILL.md`-based skills (Claude Code, or others reading
-the same layout) will pick the skill up. The agent definition preloads the skill via its
-`skills:` frontmatter, so the skill symlink is a prerequisite for the agent symlink.
+The agent definition preloads the skill via its `skills:` frontmatter, so the skill
+symlink is a prerequisite for the agent symlink.
+
+> **Migrating from an older install?** The skill used to live at the repo root;
+> symlinks pointing at the clone itself no longer resolve to a skill. Re-link to
+> `<clone>/skills/doc-architect` as shown above.
 
 ## Use
 
@@ -109,28 +120,33 @@ bash scripts/verify.sh   # consistency gate — must pass before a change is don
 
 ```
 doc-architect/
-├── SKILL.md          # entry point: modes, doc-set selection, shared conventions
-├── AGENTS.md         # maintainer guide for this repo (CLAUDE.md is a symlink to it)
+├── .claude-plugin/   # plugin.json + marketplace.json — Claude Code plugin packaging
+├── skills/
+│   └── doc-architect/
+│       ├── SKILL.md      # entry point: modes, doc-set selection, shared conventions
+│       ├── references/   # one template per generated file + the audit checklist
+│       │   └── stacks/   # detection index (README.md) + one file per stack
+│       └── scripts/      # fresh_session_test.sh — independent Fresh Session Test
 ├── agents/           # dedicated agent definition (preloads the skill)
+├── AGENTS.md         # maintainer guide for this repo (CLAUDE.md is a symlink to it)
 ├── docs/             # design-decisions.md — why the skill is built this way
 ├── scripts/          # verify.sh — consistency gate for changes to this repo
-└── references/       # one template per generated file + the audit checklist
-    └── stacks/       # detection index (README.md) + one file per stack
+└── evals/            # detection eval fixtures + graders
 ```
 
 ## Documentation
 
 | Doc | What it covers |
 |---|---|
-| [SKILL.md](SKILL.md) | Mode selection (greenfield / brownfield / update), doc-set tiers, conventions |
+| [SKILL.md](skills/doc-architect/SKILL.md) | Mode selection (greenfield / brownfield / update), doc-set tiers, conventions |
 | [AGENTS.md](AGENTS.md) | Maintainer guide: hard constraints, task→doc routing, the verify gate |
 | [docs/design-decisions.md](docs/design-decisions.md) | Decision log with rationale: index-pattern boundary, detection gate, safety rules |
-| [references/readme-template.md](references/readme-template.md) | Human-first repo entry point |
-| [references/agents-md-template.md](references/agents-md-template.md) | Agent signpost file (routing + hard constraints, ~100-line budget) |
-| [references/project-overview-template.md](references/project-overview-template.md) | 10-section overview skeleton + per-stack source map |
-| [references/domain-models-template.md](references/domain-models-template.md) | Data-model reference, 3 layout variants |
-| [references/coding-style-template.md](references/coding-style-template.md) | Style guide generated from the project's own linter config |
-| [references/db-observation-template.md](references/db-observation-template.md) | Query/index evidence how-to for DB-owning projects |
-| [references/harness-template.md](references/harness-template.md) | PROGRESS.md state conventions + Mode-B resume state file |
-| [references/audit-checklist.md](references/audit-checklist.md) | Diff→section mapping, invariants, executable command verification, Fresh Session Test |
-| references/stacks/ | Per-stack reference (13 stacks): detection signal, discovery map, diff→section map, linter signals, minimal test gate |
+| [readme-template.md](skills/doc-architect/references/readme-template.md) | Human-first repo entry point |
+| [agents-md-template.md](skills/doc-architect/references/agents-md-template.md) | Agent signpost file (routing + hard constraints, ~100-line budget) |
+| [project-overview-template.md](skills/doc-architect/references/project-overview-template.md) | 10-section overview skeleton + per-stack source map |
+| [domain-models-template.md](skills/doc-architect/references/domain-models-template.md) | Data-model reference, 3 layout variants |
+| [coding-style-template.md](skills/doc-architect/references/coding-style-template.md) | Style guide generated from the project's own linter config |
+| [db-observation-template.md](skills/doc-architect/references/db-observation-template.md) | Query/index evidence how-to for DB-owning projects |
+| [harness-template.md](skills/doc-architect/references/harness-template.md) | PROGRESS.md state conventions + Mode-B resume state file |
+| [audit-checklist.md](skills/doc-architect/references/audit-checklist.md) | Diff→section mapping, invariants, executable command verification, Fresh Session Test |
+| skills/doc-architect/references/stacks/ | Per-stack reference (13 stacks): detection signal, discovery map, diff→section map, linter signals, minimal test gate |

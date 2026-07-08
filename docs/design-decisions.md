@@ -2,12 +2,43 @@
 
 > **Type:** Explanation
 > **Audience:** Maintainers (human and AI) of this skill
-> **Last updated:** 2026-07-08
+> **Last updated:** 2026-07-09
 >
 > Decision log for this skill's architecture, newest first. Portable source of truth —
 > everything a fresh clone needs to modify the skill without prior session context.
+> Entries older than 2026-07-09 cite pre-restructure paths (`SKILL.md`, `references/`
+> at repo root); those now live under `skills/doc-architect/`.
 
 ---
+
+## 2026-07-09 — Skill moved to `skills/doc-architect/` + Claude plugin packaging
+
+The skill (SKILL.md, references/, fresh_session_test.sh) moved from the repo root into
+`skills/doc-architect/`, and the repo gained `.claude-plugin/plugin.json` +
+`marketplace.json` making it a single-plugin Claude Code marketplace. Four reasons:
+
+- **Remote one-line install was silently broken.** `npx skills add <repo>` on a
+  root-level SKILL.md hits vercel-labs/skills' deliberate special case (`add.ts`:
+  "install the skill file, not the whole repository") — only SKILL.md landed, no
+  `references/`, and the CLI reported success. The `skills/<name>/` layout gets the
+  full-directory copy path. Verified empirically both ways.
+- **Spec compliance.** The Agent Skills spec requires the SKILL.md frontmatter `name`
+  to match the parent directory name; at the repo root that held only after an
+  aptly-named symlink.
+- **Ecosystem convention.** anthropics/skills, index sites (SkillsMP, LobeHub), and
+  Claude Code plugins all standardize on `skills/<name>/SKILL.md`.
+- **Plugin route installs the agent too.** A plugin auto-discovers `skills/` and
+  `agents/`, so `/plugin install` ships the dedicated subagent that the skills CLI
+  cannot (it installs skills only).
+
+Trade-offs accepted: existing root-pointing symlinks broke (README carries a migration
+note); the plugin cache copy includes the whole repo (evals/ fixtures included — inert,
+~1MB) because the plugin root is the repo root; splitting a separate plugin root was
+rejected as it would break the skills-CLI discovery and symlink ergonomics.
+`fresh_session_test.sh` moved inside the skill because SKILL.md instructs agents to run
+it — it must ship with every install route; `verify.sh` stays at the repo root as a
+maintainer-only tool. User-visible skill changes must bump `plugin.json` `version`
+(plugin users only see updates on a bump; see AGENTS.md hard constraints).
 
 ## 2026-07-08 — Detection eval suite (`evals/`) + machine-readable report contract
 
@@ -174,9 +205,9 @@ stacks/ index above — but the mode organization itself stands.)
 `Windows desktop (.NET)`, `VS Code extension`.
 
 **Adding a stack (standard procedure):**
-1. Create `references/stacks/<stack>.md` using the 5-section skeleton (copy an existing
+1. Create `skills/doc-architect/references/stacks/<stack>.md` using the 5-section skeleton (copy an existing
    file, e.g. `rails.md`).
-2. Add one row to the detection table in `references/stacks/README.md` (mind the
+2. Add one row to the detection table in `skills/doc-architect/references/stacks/README.md` (mind the
    check order — disambiguation is top-down, first hit wins).
 3. Add `evals/fixtures/basic-<stack>/` plus at least one `trap-*` fixture exercising
    the new row's position in the first-hit-wins ordering (every insertion can shadow

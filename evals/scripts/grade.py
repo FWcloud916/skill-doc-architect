@@ -15,7 +15,7 @@ Grading is deterministic (no LLM judge needed — detection has objective answer
   * all surfaces      set of surface stacks must match exactly, hard fail
   * forbidden_stacks  none may appear anywhere in the report, hard fail
   * package_json_role exact match when specified, hard fail (the role vocabulary
-    is part of the detection report contract in references/stacks/README.md)
+    is part of the detection report contract in skills/doc-architect/references/stacks/README.md)
 
 A fixture PASSES only if every run passes (default N=3): detection must be
 stable across runs, not just right on average.

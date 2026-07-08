@@ -10,7 +10,7 @@ repo's manifest signals to stack files**.
 
 Detection is executed by the model, not by code, so it cannot be unit-tested.
 But its output *is* deterministic in spec: given a set of manifests, the
-resolve rules in `references/stacks/README.md` define exactly one correct
+resolve rules in `skills/doc-architect/references/stacks/README.md` define exactly one correct
 answer. That makes it eval-able: run headless Claude against tiny fixture
 repos, demand a machine-readable report, and diff it against ground truth
 with a plain script — no LLM judge required.
@@ -50,12 +50,12 @@ shape — see `run_detection.sh`):
 ```
 
 `stack` values are stack-file basenames (`rails`, `frontend-web`, ...), so the
-contract stays in lockstep with `references/stacks/`. The `evidence` field is
+contract stays in lockstep with `skills/doc-architect/references/stacks/`. The `evidence` field is
 what makes failures debuggable: when a run misroutes, the report says which
 file it blamed.
 
 This contract IS the skill's interface: it lives in the "Machine-readable
-detection report" subsection of `references/stacks/README.md`, and headless Mode B
+detection report" subsection of `skills/doc-architect/references/stacks/README.md`, and headless Mode B
 always emits it. The evals therefore test the real interface, not a lookalike.
 Vocabulary changes go to the contract, `grade.py`, and `expected.json` in the
 same PR.
@@ -74,7 +74,7 @@ contributor (human or agent).
 3. **Bug -> fixture, permanently.** Every detection bug that reaches the
    decision log must gain a `trap-*` fixture with a `regression_for` field
    pointing at the log entry. Same discipline as the log itself.
-4. **New stack -> two fixtures minimum.** Any PR adding `references/stacks/X.md`
+4. **New stack -> two fixtures minimum.** Any PR adding `skills/doc-architect/references/stacks/X.md`
    must add `basic-X` plus at least one trap exercising its position in the
    signal-table ordering (the table is first-hit-wins inside package.json, so
    every insertion can silently shadow or be shadowed).
@@ -119,7 +119,7 @@ Cost note (measured 2026-07-08, claude CLI 2.1.204, full N=3 sweep validated —
 | `--model claude-sonnet-5` | ~29s | ~$0.17 | ~16 min / ~$5.30 | ~47 min / ~$16 |
 
 Dollar cost sampled via instrumented `--output-format json` calls (`total_cost_usd`
-field) with a warm prompt cache (SKILL.md + `references/stacks/` shared across
+field) with a warm prompt cache (SKILL.md + `skills/doc-architect/references/stacks/` shared across
 fixtures cache well). The no-flag row resolved to a Sonnet 5 + Haiku 4.5 mix in
 this environment — **CI must not rely on that**: a bare `ANTHROPIC_API_KEY`
 runner has no local account/settings context, so default-model resolution there
