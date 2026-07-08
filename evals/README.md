@@ -130,15 +130,23 @@ fixture is higher — these are steady-state estimates, the realistic case once 
 sweep is underway. Cheap enough for nightly either way, too slow for per-PR —
 that's what the verify.sh fixture lint is for.
 
-## CI recommendation
+## CI
 
-- **Per PR**: `verify.sh` + a fixture lint (every fixture has `expected.json`,
+- **Per PR**: `verify.sh` + the fixture lint (every fixture has `expected.json`,
   every `expected.json` references only existing stack basenames). Fast, free,
-  deterministic.
-- **Nightly / pre-release / on `references/stacks/**` changes**: full sweep via
-  a workflow with `ANTHROPIC_API_KEY`, failing the build on grader exit 1. Pin
-  `MODEL=claude-sonnet-5` in the workflow — never rely on the CLI's unpinned
-  default in a bare-API-key environment (see cost note above).
+  deterministic. No GitHub Actions workflow for this yet — it's currently
+  enforced as an `AGENTS.md` hard constraint (agents must run it before
+  declaring a change done), not by push-triggered CI.
+- **Full sweep**: [`.github/workflows/detection-evals.yml`](../.github/workflows/detection-evals.yml),
+  **manual trigger only** (`workflow_dispatch`) — deliberately not on push, PR,
+  or a schedule, since each run costs real API spend (~$16 at the N=3 default;
+  see cost note above). Requires an `ANTHROPIC_API_KEY` repo secret (Settings →
+  Secrets and variables → Actions) before the first run. Pins
+  `MODEL=claude-sonnet-5` — never rely on the CLI's unpinned default in a
+  bare-API-key environment. Dispatch inputs let you run a cheap single-fixture
+  debug pass (`filter: basic-rails`, ~$0.20) before committing to a full sweep.
+  Results (including `stderr.log` per fixture) upload as a workflow artifact
+  whether the run passes or fails.
 
 ## Known limits
 

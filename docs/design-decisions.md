@@ -44,7 +44,10 @@ permanent `trap-*` regression fixtures with `regression_for` pointing at their e
   runner prompt + `references/stacks/README.md` updated together). Cost/wall-clock
   measured in `evals/README.md`; process rules (bug→fixture, new-stack→two-fixtures,
   resolve-rule→expected.json) now hard constraints in `AGENTS.md`. CI wiring (E4)
-  and the independent Fresh Session Test (E6) remain future work.
+  landed as `.github/workflows/detection-evals.yml`, **manual trigger only**
+  (`workflow_dispatch`) — deliberately not on push/PR/schedule, since each run
+  costs real API spend. The independent Fresh Session Test (E6) remains future
+  work.
 
 ## 2026-07-07 — Real-repo test fallout: vite demoted, Rust + VS Code extension stacks
 
