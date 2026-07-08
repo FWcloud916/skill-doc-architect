@@ -37,11 +37,39 @@ The generated doc set is modular:
 
 ## Install
 
-Clone and symlink the skill (and optionally the dedicated agent) into place:
+### Option 1 — skills CLI (recommended)
+
+[vercel-labs/skills](https://github.com/vercel-labs/skills) discovers this repo's root
+`SKILL.md` and installs it for the agent(s) you pick (Claude Code, Cursor, Codex, and
+70+ more), creating any missing directories along the way:
+
+```bash
+npx skills add FWcloud916/skill-doc-architect                      # interactive: pick agents + scope
+npx skills add FWcloud916/skill-doc-architect -g -a claude-code -y # non-interactive, global
+```
+
+The CLI installs the skill only. To also use the dedicated Claude Code agent, add the
+agent symlink from Option 2's last step.
+
+### Option 2 — manual clone + symlink
+
+Pick the layout your runtime reads — `~/.claude/skills` for Claude Code, or the
+universal `~/.agents/skills` for runtimes that share it. `mkdir -p` covers the case
+where the target directory doesn't exist yet:
 
 ```bash
 git clone https://github.com/FWcloud916/skill-doc-architect.git
+
+# Claude Code layout
+mkdir -p ~/.claude/skills
 ln -s "$(pwd)/skill-doc-architect" ~/.claude/skills/doc-architect
+
+# or: universal agents layout
+mkdir -p ~/.agents/skills
+ln -s "$(pwd)/skill-doc-architect" ~/.agents/skills/doc-architect
+
+# optional: dedicated Claude Code agent (requires the skill symlink above)
+mkdir -p ~/.claude/agents
 ln -s "$(pwd)/skill-doc-architect/agents/doc-architect.md" ~/.claude/agents/doc-architect.md
 ```
 
