@@ -33,11 +33,18 @@ permanent `trap-*` regression fixtures with `regression_for` pointing at their e
 - **Free gate:** `verify.sh` lints fixtures on every run — each fixture has
   `expected.json`, and every referenced stack name resolves to
   `references/stacks/<name>.md`, so fixtures cannot drift from the stack set.
-- **Status:** suite landed and linted, but the live sweep (runner bring-up + N=3
-  baseline triage, CI wiring, bug→fixture / new-stack→two-fixtures process rules)
-  has **not yet run** — the `--allowedTools` flag set in `run_detection.sh` is
-  unvalidated against the current CLI. Debug against `basic-rails` then
-  `trap-rails-esbuild` before any full sweep.
+- **Status:** live sweep validated — **32/32 fixtures pass at N=3, zero flaky
+  runs**. Runner bring-up found two real bugs, both fixed: (1) `--max-turns` is
+  not a valid CLI flag on 2.1.204 — removed; (2) plain-text `-p` stdout truncated
+  on some runs (`basic-python`) — switched to `--output-format json` and unwrap
+  the envelope. Triage also caught a report-contract ambiguity: `trap-monorepo-pnpm`
+  correctly resolved `monorepo` but marked a sub-project `primary`, which the
+  original role spec didn't actually forbid — fixed by clarifying that a
+  monorepo report has **no primary**, every sub-project is `surface` (contract +
+  runner prompt + `references/stacks/README.md` updated together). Cost/wall-clock
+  measured in `evals/README.md`; process rules (bug→fixture, new-stack→two-fixtures,
+  resolve-rule→expected.json) now hard constraints in `AGENTS.md`. CI wiring (E4)
+  and the independent Fresh Session Test (E6) remain future work.
 
 ## 2026-07-07 — Real-repo test fallout: vite demoted, Rust + VS Code extension stacks
 
@@ -156,5 +163,8 @@ stacks/ index above — but the mode organization itself stands.)
    file, e.g. `rails.md`).
 2. Add one row to the detection table in `references/stacks/README.md` (mind the
    check order — disambiguation is top-down, first hit wins).
-3. Run `bash scripts/verify.sh`; all checks must pass. Do not touch SKILL.md or the
+3. Add `evals/fixtures/basic-<stack>/` plus at least one `trap-*` fixture exercising
+   the new row's position in the first-hit-wins ordering (every insertion can shadow
+   or be shadowed).
+4. Run `bash scripts/verify.sh`; all checks must pass. Do not touch SKILL.md or the
    templates.

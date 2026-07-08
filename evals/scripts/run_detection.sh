@@ -16,6 +16,8 @@ FIXTURES_DIR="$EVALS_DIR/fixtures"
 RESULTS_DIR="${1:-$EVALS_DIR/results/$(date +%Y%m%d-%H%M%S)}"
 RUNS="${2:-3}"
 FILTER="${3:-}"
+MODEL_ARGS=()
+[[ -n "${MODEL:-}" ]] && MODEL_ARGS=(--model "$MODEL")
 
 PROMPT_TEMPLATE='Use the doc-architect skill, but perform ONLY Mode B step 1
 (stack detection) on the repository at __FIXTURE_PATH__. Follow the two-phase
@@ -37,8 +39,10 @@ Output ONLY a JSON object (no prose, no markdown fences) with this shape:
 
 Rules for the report:
 - "surfaces" is empty for resolution=unknown.
-- role=primary for the main stack, surface for additional hybrid/monorepo
-  surfaces, candidate for ambiguous alternatives.
+- role=primary for the main stack of a single-rooted repo (single/hybrid; in a
+  hybrid the backend is the one primary). surface for additional hybrid surfaces
+  and for EVERY monorepo sub-project (a monorepo report has no primary).
+  candidate for ambiguous alternatives.
 - Every surface needs at least one evidence entry naming a real file.'
 
 mkdir -p "$RESULTS_DIR"
@@ -55,17 +59,32 @@ for fixture in "$FIXTURES_DIR"/*/; do
     echo "[$name] run $i/$RUNS"
     prompt="${PROMPT_TEMPLATE//__FIXTURE_PATH__/$fixture}"
 
+    # --output-format json wraps the answer in a result envelope; plain-text -p
+    # output proved prone to truncated stdout on some runs.
     raw="$(claude -p "$prompt" \
       --allowedTools "Read,Glob,Grep,Skill" \
-      --max-turns 15 2>>"$RESULTS_DIR/$name/stderr.log" || true)"
+      --output-format json \
+      "${MODEL_ARGS[@]}" \
+      2>>"$RESULTS_DIR/$name/stderr.log" || true)"
 
-    # Extract the outermost JSON object; models occasionally add prose anyway.
+    # Unwrap the envelope, then extract the outermost JSON object from the
+    # answer text; models occasionally add prose anyway.
     echo "$raw" | python3 -c '
 import json, re, sys
 raw = sys.stdin.read()
-m = re.search(r"\{.*\}", raw, re.DOTALL)
+text = raw
+try:
+    env = json.loads(raw)
+    if isinstance(env, dict) and "result" in env:
+        if env.get("is_error"):
+            print(json.dumps({"_parse_error": "run errored", "_raw": str(env)[:2000]}))
+            sys.exit()
+        text = env["result"]
+except Exception:
+    pass
+m = re.search(r"\{.*\}", text, re.DOTALL)
 if not m:
-    print(json.dumps({"_parse_error": "no JSON object in output", "_raw": raw[:2000]}))
+    print(json.dumps({"_parse_error": "no JSON object in output", "_raw": text[:2000]}))
 else:
     try:
         print(json.dumps(json.loads(m.group(0))))

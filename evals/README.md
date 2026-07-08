@@ -62,6 +62,9 @@ same PR.
 
 ## Fixture design rules
 
+Rules 3–4 are hard constraints in [AGENTS.md](../AGENTS.md), enforced on every
+contributor (human or agent).
+
 1. **Manifests only.** Detection reads manifests, so fixtures contain nothing
    else. Whole suite is a few KB; runs stay cheap and fast.
 2. **One assertion focus per trap.** Each `trap-*` fixture exists to break one
@@ -107,9 +110,23 @@ Requires the `claude` CLI with this skill installed, plus Python 3. The runner
 is resumable (skips existing `run-*.json`), keeps per-fixture `stderr.log`, and
 calls the grader at the end.
 
-Cost note: each run loads SKILL.md + stacks/README.md + a handful of tiny
-manifests and emits ~150 tokens — a full 32-fixture x3 sweep is roughly 100
-short runs. Cheap enough for nightly; probably too slow for per-PR.
+Cost note (measured 2026-07-08, claude CLI 2.1.204, full N=3 sweep validated —
+32/32 fixtures passed, zero flaky runs):
+
+| Model | Wall-clock/run | Full N=1 sweep (32 runs) | Full N=3 sweep (96 runs) |
+|---|---|---|---|
+| default (Opus) | ~62s | ~33 min | ~100 min |
+| `--model claude-sonnet-5` | ~29s | ~16 min | ~47 min |
+
+Dollar cost sampled via a single instrumented `--output-format json` call
+(`total_cost_usd` field) on `claude-sonnet-5` with a warm prompt cache (SKILL.md
++ `references/stacks/` shared across fixtures cache well): **~$0.17/run**, so a
+full N=1 sweep is **~$5.30** and a full N=3 sweep is **~$16**. First-run
+(cold-cache) cost per fixture is higher — this is a steady-state estimate, the
+realistic case once a sweep is underway. Use `MODEL=claude-sonnet-5
+./scripts/run_detection.sh` for the faster/cheaper path; cheap enough for
+nightly either way, too slow for per-PR — that's what the verify.sh fixture
+lint is for.
 
 ## CI recommendation
 

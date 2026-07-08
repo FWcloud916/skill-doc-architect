@@ -16,8 +16,14 @@ An agent skill that plans, bootstraps, and maintains a project's core documentat
 - MUST spell canonical stack tokens identically everywhere: `Apple (iOS/macOS)`,
   `Windows desktop (.NET)`, `Electron`, `Tauri` (source: scripts/verify.sh token check)
 - Adding a stack = create `references/stacks/<stack>.md` with the 5-section skeleton
-  + one row in `references/stacks/README.md`; MUST NOT add per-stack rows back into
-  SKILL.md or the templates (source: docs/design-decisions.md, index-pattern boundary)
+  + one row in `references/stacks/README.md` + `evals/fixtures/basic-<stack>/` and
+  ≥1 `trap-*` fixture exercising its signal-table position; MUST NOT add per-stack
+  rows back into SKILL.md or the templates (source: docs/design-decisions.md)
+- Every detection bug that reaches the decision log MUST add a `trap-*` fixture
+  with `regression_for` naming the log entry (source: evals/README.md)
+- Changing a resolve rule or the report contract MUST update the affected
+  `evals/fixtures/*/expected.json` (+ `grade.py` for vocabulary) in the same
+  change — never loosen the grader to make a red suite pass (source: evals/README.md)
 - MUST annotate `./gradlew` / `cargo build|test|clippy` / `dotnet build|test|format`
   as static-check-only (per §5) wherever they appear (source: scripts/verify.sh)
 - MUST NOT extract modes (G/B/U) out of SKILL.md into an index — they are fixed,
@@ -34,13 +40,15 @@ edits) can skip; do not pre-load all docs.
 | Changing mode flow (G/B/U) or cross-stack logic | [SKILL.md](SKILL.md) |
 | Adding or updating a stack | [references/stacks/README.md](references/stacks/README.md) + an existing stack file as skeleton example (e.g. [rails.md](references/stacks/rails.md)) |
 | Changing verification/audit behavior | [references/audit-checklist.md](references/audit-checklist.md) |
+| Changing detection rules or eval fixtures | [evals/README.md](evals/README.md) |
 | Changing a generated doc's shape | the matching `references/*-template.md` |
 | Understanding why it's built this way | [docs/design-decisions.md](docs/design-decisions.md) |
 
 ## Commands
 
 ```bash
-bash scripts/verify.sh   # consistency gate — the verification gate for "done"
+bash scripts/verify.sh              # consistency gate — the verification gate for "done"
+./evals/scripts/run_detection.sh    # live detection sweep (headless claude -p; costs runs)
 ```
 
 ## Conventions

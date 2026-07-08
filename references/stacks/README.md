@@ -59,8 +59,12 @@ against this exact contract — vocabulary changes here require updating
 
 - `surfaces` is empty iff `resolution` is `unknown`; every surface carries ≥1
   evidence entry naming a real file.
-- `role`: `primary` for the main stack, `surface` for additional hybrid/monorepo
-  surfaces, `candidate` for ambiguous alternatives.
+- `role`: `primary` for the main stack of a single-rooted repo (`single`/`hybrid`
+  — in a hybrid the backend is the one primary); `surface` for additional hybrid
+  surfaces and for **every** monorepo sub-project (a monorepo report has no
+  primary — sub-projects are coequal; "backend facets first" orders
+  documentation, it does not confer primacy); `candidate` for ambiguous
+  alternatives.
 
 ## Signal table
 
