@@ -113,20 +113,22 @@ calls the grader at the end.
 Cost note (measured 2026-07-08, claude CLI 2.1.204, full N=3 sweep validated —
 32/32 fixtures passed, zero flaky runs):
 
-| Model | Wall-clock/run | Full N=1 sweep (32 runs) | Full N=3 sweep (96 runs) |
-|---|---|---|---|
-| default (Opus) | ~62s | ~33 min | ~100 min |
-| `--model claude-sonnet-5` | ~29s | ~16 min | ~47 min |
+| Model | Wall-clock/run | $/run | Full N=1 sweep (32 runs) | Full N=3 sweep (96 runs) |
+|---|---|---|---|---|
+| no `--model` flag (session default) | ~62s | ~$0.23 | ~33 min / ~$7.30 | ~100 min / ~$22 |
+| `--model claude-sonnet-5` | ~29s | ~$0.17 | ~16 min / ~$5.30 | ~47 min / ~$16 |
 
-Dollar cost sampled via a single instrumented `--output-format json` call
-(`total_cost_usd` field) on `claude-sonnet-5` with a warm prompt cache (SKILL.md
-+ `references/stacks/` shared across fixtures cache well): **~$0.17/run**, so a
-full N=1 sweep is **~$5.30** and a full N=3 sweep is **~$16**. First-run
-(cold-cache) cost per fixture is higher — this is a steady-state estimate, the
-realistic case once a sweep is underway. Use `MODEL=claude-sonnet-5
-./scripts/run_detection.sh` for the faster/cheaper path; cheap enough for
-nightly either way, too slow for per-PR — that's what the verify.sh fixture
-lint is for.
+Dollar cost sampled via instrumented `--output-format json` calls (`total_cost_usd`
+field) with a warm prompt cache (SKILL.md + `references/stacks/` shared across
+fixtures cache well). The no-flag row resolved to a Sonnet 5 + Haiku 4.5 mix in
+this environment — **CI must not rely on that**: a bare `ANTHROPIC_API_KEY`
+runner has no local account/settings context, so default-model resolution there
+is unverified and could silently land on a pricier model. Always pass
+`MODEL=claude-sonnet-5 ./scripts/run_detection.sh` (or `--model claude-sonnet-5`
+directly) for a predictable cost. First-run-of-a-sweep (cold-cache) cost per
+fixture is higher — these are steady-state estimates, the realistic case once a
+sweep is underway. Cheap enough for nightly either way, too slow for per-PR —
+that's what the verify.sh fixture lint is for.
 
 ## CI recommendation
 
@@ -134,7 +136,9 @@ lint is for.
   every `expected.json` references only existing stack basenames). Fast, free,
   deterministic.
 - **Nightly / pre-release / on `references/stacks/**` changes**: full sweep via
-  a workflow with `ANTHROPIC_API_KEY`, failing the build on grader exit 1.
+  a workflow with `ANTHROPIC_API_KEY`, failing the build on grader exit 1. Pin
+  `MODEL=claude-sonnet-5` in the workflow — never rely on the CLI's unpinned
+  default in a bare-API-key environment (see cost note above).
 
 ## Known limits
 
