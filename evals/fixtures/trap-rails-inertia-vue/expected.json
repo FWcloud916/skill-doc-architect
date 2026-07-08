@@ -1,0 +1,15 @@
+{
+  "resolution": "hybrid",
+  "surfaces": [
+    {
+      "stack": "rails",
+      "role": "primary"
+    },
+    {
+      "stack": "frontend-web",
+      "role": "surface"
+    }
+  ],
+  "package_json_role": "ui-framework",
+  "notes": "Backend manifest + UI framework -> hybrid, backend primary."
+}

@@ -1,0 +1,14 @@
+{
+  "resolution": "monorepo",
+  "surfaces": [
+    {
+      "stack": "frontend-web",
+      "role": "surface"
+    },
+    {
+      "stack": "node-backend",
+      "role": "surface"
+    }
+  ],
+  "notes": "Monorepo markers -> enumerate sub-projects and detect per sub-project. Root package.json alone must not decide."
+}

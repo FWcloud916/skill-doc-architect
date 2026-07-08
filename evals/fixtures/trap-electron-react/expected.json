@@ -1,0 +1,13 @@
+{
+  "resolution": "single",
+  "surfaces": [
+    {
+      "stack": "electron",
+      "role": "primary"
+    }
+  ],
+  "forbidden_stacks": [
+    "frontend-web"
+  ],
+  "regression_for": "table note: desktop checks MUST precede the frontend check (renderers depend on react/vue too)"
+}

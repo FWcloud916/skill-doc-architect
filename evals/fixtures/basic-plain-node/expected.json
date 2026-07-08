@@ -1,0 +1,10 @@
+{
+  "resolution": "single",
+  "surfaces": [
+    {
+      "stack": "node-backend",
+      "role": "primary"
+    }
+  ],
+  "notes": "No framework signal: plain Node routes to node-backend.md"
+}

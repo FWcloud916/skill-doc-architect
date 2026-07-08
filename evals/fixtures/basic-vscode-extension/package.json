@@ -1,0 +1,12 @@
+{
+  "name": "fixture",
+  "version": "0.0.1",
+  "private": true,
+  "devDependencies": {
+    "@types/vscode": "1.90.0",
+    "typescript": "5.4.0"
+  },
+  "engines": {
+    "vscode": "^1.90.0"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "resolution": "single",
+  "surfaces": [
+    {
+      "stack": "flutter",
+      "role": "primary"
+    }
+  ]
+}

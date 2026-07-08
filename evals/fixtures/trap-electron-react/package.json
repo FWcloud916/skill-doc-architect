@@ -1,0 +1,12 @@
+{
+  "name": "fixture",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "react": "18.2.0"
+  },
+  "devDependencies": {
+    "electron": "31.0.0",
+    "vite": "5.0.0"
+  }
+}

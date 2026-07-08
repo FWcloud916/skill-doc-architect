@@ -1,0 +1,9 @@
+{
+  "resolution": "single",
+  "surfaces": [
+    {
+      "stack": "node-backend",
+      "role": "primary"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "resolution": "single",
+  "surfaces": [
+    {
+      "stack": "node-backend",
+      "role": "primary"
+    }
+  ],
+  "forbidden_stacks": [
+    "frontend-web"
+  ],
+  "notes": "vite without root index.html does not satisfy the frontend row; falls through to plain Node."
+}

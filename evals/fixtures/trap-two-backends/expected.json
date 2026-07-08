@@ -1,0 +1,14 @@
+{
+  "resolution": "ambiguous",
+  "surfaces": [
+    {
+      "stack": "rails",
+      "role": "candidate"
+    },
+    {
+      "stack": "go",
+      "role": "candidate"
+    }
+  ],
+  "notes": "Two+ backend manifests -> ambiguous; must surface both with evidence at the Mode B step-3 gate, not silently pick one."
+}

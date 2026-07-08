@@ -1,0 +1,14 @@
+{
+  "resolution": "single",
+  "surfaces": [
+    {
+      "stack": "node-backend",
+      "role": "primary"
+    }
+  ],
+  "forbidden_stacks": [
+    "frontend-web"
+  ],
+  "regression_for": "design-decisions 2026-07-07: vitest dep pulled 'vite' substring match -> pure TS lib misdetected as frontend",
+  "notes": "vite/vitest are tooling, never a framework signal on their own."
+}

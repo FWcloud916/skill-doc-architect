@@ -1,0 +1,14 @@
+{
+  "resolution": "single",
+  "surfaces": [
+    {
+      "stack": "tauri",
+      "role": "primary"
+    }
+  ],
+  "forbidden_stacks": [
+    "rust",
+    "frontend-web"
+  ],
+  "notes": "Desktop check must precede frontend check; Cargo.toml with src-tauri/ is Tauri, not Rust. Docs must flag cargo build as NOT SAFE."
+}

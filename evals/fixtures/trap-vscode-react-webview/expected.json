@@ -1,0 +1,13 @@
+{
+  "resolution": "single",
+  "surfaces": [
+    {
+      "stack": "vscode-extension",
+      "role": "primary"
+    }
+  ],
+  "forbidden_stacks": [
+    "frontend-web"
+  ],
+  "notes": "engines.vscode wins over react webview deps. Mirrors the vscode-git-braid dry-run case."
+}

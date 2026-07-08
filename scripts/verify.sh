@@ -79,6 +79,22 @@ for p in $(grep -hoE '\]\((docs/[a-z-]+\.md|SKILL\.md|AGENTS\.md)\)' README.md A
 done
 report "$([ -z "$dead_refs" ]; echo $?)" "cited reference/doc paths exist" "missing:$dead_refs"
 
+# 9. Eval fixture lint: every fixture has expected.json; every stack name
+#    referenced in any expected.json resolves to references/stacks/<name>.md
+no_expected=""
+for d in evals/fixtures/*/; do
+  [ -f "${d}expected.json" ] || no_expected="$no_expected $(basename "$d")"
+done
+report "$([ -z "$no_expected" ]; echo $?)" "every eval fixture has expected.json" "missing:$no_expected"
+
+bad_stacks=""
+stacks_refd=$( { grep -hoE '"stack": *"[a-z-]+"' evals/fixtures/*/expected.json | grep -oE '[a-z-]+"$' | tr -d '"'; \
+  awk '/"forbidden_stacks"/,/\]/' evals/fixtures/*/expected.json | grep -oE '"[a-z-]+"' | tr -d '"'; } | sort -u)
+for name in $stacks_refd; do
+  [ -f "references/stacks/$name.md" ] || bad_stacks="$bad_stacks $name"
+done
+report "$([ -z "$bad_stacks" ]; echo $?)" "eval fixtures reference only existing stack files" "unknown stacks:$bad_stacks"
+
 # CLAUDE.md symlink sanity
 link=$(readlink CLAUDE.md 2>/dev/null || true)
 report "$([ "$link" = "AGENTS.md" ]; echo $?)" "CLAUDE.md is a symlink to AGENTS.md" "got: ${link:-not a symlink}"

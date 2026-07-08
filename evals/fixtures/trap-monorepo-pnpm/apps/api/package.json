@@ -1,0 +1,8 @@
+{
+  "name": "fixture",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "fastify": "4.26.0"
+  }
+}

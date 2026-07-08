@@ -1,0 +1,8 @@
+{
+  "resolution": "unknown",
+  "surfaces": [],
+  "forbidden_stacks": [
+    "android"
+  ],
+  "notes": "build.gradle without AndroidManifest.xml must not match the Android row."
+}

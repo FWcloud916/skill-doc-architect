@@ -1,0 +1,8 @@
+{
+  "resolution": "unknown",
+  "surfaces": [],
+  "forbidden_stacks": [
+    "windows-dotnet"
+  ],
+  "notes": "Microsoft.NET.Sdk.Web has no desktop marker -> unknown fallback (README + entrypoint reading), stated explicitly in output."
+}

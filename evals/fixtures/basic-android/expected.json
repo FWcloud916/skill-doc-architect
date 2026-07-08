@@ -1,0 +1,10 @@
+{
+  "resolution": "single",
+  "surfaces": [
+    {
+      "stack": "android",
+      "role": "primary"
+    }
+  ],
+  "notes": "Docs must flag ./gradlew build as NOT SAFE to auto-execute (implicit dependency download)."
+}

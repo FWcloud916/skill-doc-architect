@@ -1,0 +1,11 @@
+{
+  "name": "fixture",
+  "version": "0.0.1",
+  "private": true,
+  "devDependencies": {
+    "esbuild": "0.21.0"
+  },
+  "scripts": {
+    "build": "esbuild app/javascript/*.* --bundle --outdir=app/assets/builds"
+  }
+}

@@ -2,12 +2,42 @@
 
 > **Type:** Explanation
 > **Audience:** Maintainers (human and AI) of this skill
-> **Last updated:** 2026-07-07
+> **Last updated:** 2026-07-08
 >
 > Decision log for this skill's architecture, newest first. Portable source of truth —
 > everything a fresh clone needs to modify the skill without prior session context.
 
 ---
+
+## 2026-07-08 — Detection eval suite (`evals/`) + machine-readable report contract
+
+Detection routing gets automated evals; nothing else in the skill does. The boundary:
+detection is the only behavior with **objective ground truth** — given a set of
+manifests, the resolve rules in `references/stacks/README.md` define exactly one
+correct answer, so a plain script can grade it (no LLM judge). Doc generation quality,
+command-verification honesty, and the Fresh Session Test stay human-in-the-loop by
+design. Both historical detection bugs (vitest→vite substring misdetection;
+Rails+esbuild hybrid misread — see the two 2026-07-07 entries below) now have
+permanent `trap-*` regression fixtures with `regression_for` pointing at their entry.
+
+- **Suite shape:** 32 manifest-only fixtures (16 `basic-*`, one per stack + plain
+  Node; 16 `trap-*` for ordering/role/fallback/monorepo traps), headless runner
+  (`claude -p`, N=3, all-runs-must-pass — a flaky router is a bug, not variance),
+  deterministic grader. See `evals/README.md`.
+- **Contract adopted into the skill:** the detection report JSON (resolution /
+  surfaces with evidence / package_json_role / unsafe_commands_flagged) lives in
+  `references/stacks/README.md`, and headless Mode B **always emits it** into
+  PROGRESS.md state when in use — ~150 tokens buys post-hoc auditability of every
+  run, the same verification philosophy as the rest of the skill. Consequently
+  `package_json_role` grades as a hard fail (it is spec, not suite invention).
+- **Free gate:** `verify.sh` lints fixtures on every run — each fixture has
+  `expected.json`, and every referenced stack name resolves to
+  `references/stacks/<name>.md`, so fixtures cannot drift from the stack set.
+- **Status:** suite landed and linted, but the live sweep (runner bring-up + N=3
+  baseline triage, CI wiring, bug→fixture / new-stack→two-fixtures process rules)
+  has **not yet run** — the `--allowedTools` flag set in `run_detection.sh` is
+  unvalidated against the current CLI. Debug against `basic-rails` then
+  `trap-rails-esbuild` before any full sweep.
 
 ## 2026-07-07 — Real-repo test fallout: vite demoted, Rust + VS Code extension stacks
 

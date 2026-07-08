@@ -1,0 +1,12 @@
+{
+  "resolution": "single",
+  "surfaces": [
+    {
+      "stack": "react-native",
+      "role": "primary"
+    }
+  ],
+  "forbidden_stacks": [
+    "frontend-web"
+  ]
+}

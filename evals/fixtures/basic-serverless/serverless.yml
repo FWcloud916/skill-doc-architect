@@ -1,0 +1,7 @@
+service: fixture
+provider:
+  name: aws
+  runtime: nodejs20.x
+functions:
+  hello:
+    handler: handler.hello

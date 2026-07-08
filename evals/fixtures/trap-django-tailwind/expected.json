@@ -1,0 +1,14 @@
+{
+  "resolution": "single",
+  "surfaces": [
+    {
+      "stack": "python",
+      "role": "primary"
+    }
+  ],
+  "package_json_role": "build-tooling",
+  "forbidden_stacks": [
+    "frontend-web"
+  ],
+  "notes": "Backend manifest + tooling-only package.json -> single backend stack."
+}

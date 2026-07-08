@@ -1,0 +1,5 @@
+{
+  "resolution": "unknown",
+  "surfaces": [],
+  "notes": "No signals -> unknown fallback; detection must say so, never guess."
+}

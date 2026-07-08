@@ -1,0 +1,15 @@
+{
+  "resolution": "hybrid",
+  "surfaces": [
+    {
+      "stack": "python",
+      "role": "primary"
+    },
+    {
+      "stack": "frontend-web",
+      "role": "surface"
+    }
+  ],
+  "package_json_role": "ui-framework",
+  "notes": "Backend manifest + UI framework in package.json -> hybrid; both stack files must be read."
+}

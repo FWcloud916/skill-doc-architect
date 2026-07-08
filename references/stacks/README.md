@@ -37,6 +37,31 @@ detected surface with its evidence; interactive: ask which surface(s) to documen
 every surface being documented. The templates already carry multi-surface output:
 project-overview §2 lists each stack; §6 gets one subsection per surface.
 
+## Machine-readable detection report
+
+Detection's result is reported in this JSON shape. Headless Mode B always emits it
+(into PROGRESS.md state when PROGRESS.md is in use) so every run is auditable after
+the fact; interactive runs emit it on request. The eval suite (`evals/`) grades
+against this exact contract — vocabulary changes here require updating
+`evals/scripts/grade.py` and every `expected.json` in the same PR.
+
+```json
+{
+  "resolution": "single | hybrid | ambiguous | monorepo | unknown",
+  "surfaces": [{"stack": "<stack file basename, no .md>",
+                "role": "primary | surface | candidate",
+                "evidence": ["<file or signal that triggered this>"]}],
+  "package_json_role": "ui-framework | build-tooling | desktop | extension | server | absent",
+  "unsafe_commands_flagged": ["<commands to mark NOT SAFE per audit-checklist §5>"],
+  "notes": ""
+}
+```
+
+- `surfaces` is empty iff `resolution` is `unknown`; every surface carries ≥1
+  evidence entry naming a real file.
+- `role`: `primary` for the main stack, `surface` for additional hybrid/monorepo
+  surfaces, `candidate` for ambiguous alternatives.
+
 ## Signal table
 
 | Signal (`package.json` rows checked in order) | Stack → stack file |

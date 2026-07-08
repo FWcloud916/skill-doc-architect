@@ -1,0 +1,9 @@
+{
+  "name": "fixture",
+  "version": "0.0.1",
+  "private": true,
+  "devDependencies": {
+    "tailwindcss": "3.4.0",
+    "postcss": "8.4.0"
+  }
+}

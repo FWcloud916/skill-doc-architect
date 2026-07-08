@@ -1,0 +1,13 @@
+{
+  "resolution": "single",
+  "surfaces": [
+    {
+      "stack": "tauri",
+      "role": "primary"
+    }
+  ],
+  "forbidden_stacks": [
+    "rust",
+    "frontend-web"
+  ]
+}

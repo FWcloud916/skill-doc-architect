@@ -1,0 +1,16 @@
+{
+  "resolution": "single",
+  "surfaces": [
+    {
+      "stack": "rails",
+      "role": "primary"
+    }
+  ],
+  "package_json_role": "build-tooling",
+  "forbidden_stacks": [
+    "frontend-web",
+    "node-backend"
+  ],
+  "regression_for": "design-decisions 2026-07-07: Rails+esbuild misdetected as hybrid before collect-then-resolve",
+  "notes": "package.json has build tooling only, no UI framework -> Rails single stack; asset pipeline noted in project-overview section 2."
+}

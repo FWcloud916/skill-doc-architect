@@ -1,0 +1,14 @@
+{
+  "resolution": "hybrid",
+  "surfaces": [
+    {
+      "stack": "go",
+      "role": "primary"
+    },
+    {
+      "stack": "frontend-web",
+      "role": "surface"
+    }
+  ],
+  "package_json_role": "ui-framework"
+}
