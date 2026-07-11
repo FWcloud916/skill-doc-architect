@@ -3,6 +3,7 @@
 > **Detection:** `package.json` with `react-native` or `expo` in dependencies +
 > devDependencies — the FIRST `package.json` check, before Electron/Tauri and the
 > server/frontend framework checks.
+> **UI surface:** yes — offer the `DESIGN.md` module (see `design-template.md`).
 
 ## Discovery map
 
@@ -26,6 +27,7 @@ Facet notes: §3 — state-management approach + native-module boundary;
 | API-client layer, SDK config | project-overview §8 |
 | `app.json`/`app.config.*`, `ios/`/`android/` configs | project-overview §2, §10 |
 | signing/release config (fastlane, EAS profiles, store metadata) | project-overview §10 |
+| theme/token sources (theme modules, NativeWind config, tamagui/restyle themes) | DESIGN.md tokens + matching prose — when the design module was selected |
 
 ## Linter signals
 

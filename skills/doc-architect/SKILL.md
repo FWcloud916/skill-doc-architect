@@ -3,10 +3,12 @@ name: doc-architect
 description: >-
   Plans, bootstraps, and maintains a project's core documentation set — README.md,
   AGENTS.md, a modular docs/ set (project-overview.md, domain-models.md,
-  coding-style.md, db-observation.md), and an opt-in PROGRESS.md agent-harness state
-  file — for any stack: Rails, Go, Node, Python, Rust, serverless, frontend web
-  (React/Vue/Next.js/Nuxt/Svelte), mobile (iOS, Android, Flutter, React Native),
-  desktop (Electron, Tauri, macOS, Windows .NET), VS Code extensions, or other.
+  coding-style.md, db-observation.md), an opt-in PROGRESS.md agent-harness state
+  file, and an opt-in DESIGN.md UI design-system doc (design tokens + visual
+  conventions for AI-generated UI) — for any stack: Rails, Go, Node, Python, Rust,
+  serverless, frontend web (React/Vue/Next.js/Nuxt/Svelte), mobile (iOS, Android,
+  Flutter, React Native), desktop (Electron, Tauri, macOS, Windows .NET), VS Code
+  extensions, or other.
   Trigger this skill when: (1) the user is starting a NEW project and wants its
   documentation architecture planned — "新專案要建文件", "幫我規劃專案文件
   架構", "set up docs for a new project", "greenfield docs"; (2) an EXISTING codebase
@@ -35,6 +37,8 @@ References:
 - `references/coding-style-template.md` — generate from the project's own linter config
 - `references/db-observation-template.md` — DB observation how-to (DB-owning projects only)
 - `references/harness-template.md` — agent-harness state: PROGRESS.md + Mode-B resume state file
+- `references/design-template.md` — UI design-system doc (opt-in, repo root):
+  Stitch-compatible YAML design tokens + prose, extraction map, Mode-G design interview
 - `references/audit-checklist.md` — diff→section mapping, verification invariants,
   executable command checks (§5), Fresh Session Test (§6)
 
@@ -50,6 +54,7 @@ References:
 | `docs/domain-models.md` (+ `docs/domain/` when large) | module | the project has a non-trivial data model or business mechanisms worth explaining |
 | `docs/coding-style.md` | module | linter config or discernible conventions exist; else skip (or short factual stub on request) |
 | `docs/db-observation.md` | module | the project owns a server-side relational datastore (a client-embedded store — SQLite/Core Data/Room — doesn't qualify; record it in project-overview §9) |
+| `DESIGN.md` (repo root) | module | the project renders a UI (the matched stack file declares a **UI surface**) — **opt-in only** (offer in B at the step-3 gate; offer in G when a UI is planned); Stitch-compatible YAML design tokens + prose; Mode B extracts tokens from theme sources (`design-template.md` §Extraction map), gaps stay honest `TODO` |
 | `PROGRESS.md` (repo root) | module | the project is actively developed by AI agents across sessions — **opt-in only** (offer in G, recommended default; offer in B when agent-driven development is stated or evident); selecting it brings the AGENTS.md Session routine with it |
 
 **Plan before you write**: the doc-set selection (modules generated, modules skipped,
@@ -69,9 +74,10 @@ Either way, restate the selection when presenting results.
 - Entity-relationship diagrams are ASCII in fenced code blocks — not mermaid.
 - Links to code and sibling docs are relative paths.
 - **Scope guard:** this skill touches ONLY the files it generates (README.md, AGENTS.md
-  + symlinks, the canonical `docs/` files, `docs/domain/`, `PROGRESS.md` when the harness
-  module was selected, `docs/.doc-architect-state.md` while Mode B is in flight). Never
-  edit or delete anything else under `docs/` (scratch dirs, memos, pending notes…).
+  + symlinks, the canonical `docs/` files, `docs/domain/`, `PROGRESS.md` when the
+  harness module was selected, `DESIGN.md` when the design module was selected,
+  `docs/.doc-architect-state.md` while Mode B is in flight). Never edit or delete
+  anything else under `docs/` (scratch dirs, memos, pending notes…).
 - **Feedback beats prose:** the commands that verify work (test, lint, run) are the
   highest-value lines in the doc set — they get executable verification (checklist §5),
   not just a grep. Never write a command you did not find in real config.
@@ -108,7 +114,9 @@ Either way, restate the selection when presenting results.
 4. Generate `README.md` (skeleton + known info), `AGENTS.md`, `project-overview.md`
    (full 10-section structure, partly TBD). Offer `PROGRESS.md` (harness module — see
    doc-set table), seeding its Feature list / Next steps from the interview's task
-   breakdown.
+   breakdown. When a UI is planned, also offer `DESIGN.md` (design module): interview
+   the design direction or adapt a starter template — `references/design-template.md`
+   §Mode G design interview.
 5. Modules: `domain-models.md` only if a data-model draft exists (marked
    `planned — no schema yet`); skip `coding-style.md` until a linter is chosen; skip
    `db-observation.md` until a schema exists.
@@ -140,8 +148,10 @@ Either way, restate the selection when presenting results.
 3. **Present the plan** (sprint contract): the stack judgment **with its detection
    evidence** (which manifest, which deps matched) so the user can correct it, the
    selected doc set with a one-line skip reason per module, merge-mode handling if docs
-   partially exist, whether `PROGRESS.md` is being offered, and the file scope still to
-   be read. Hybrid/ambiguous (multiple surfaces, several manifests, monorepo,
+   partially exist, whether `PROGRESS.md` is being offered — and `DESIGN.md` when a
+   documented surface's stack file declares a **UI surface** (selected → discovery
+   additionally reads its theme/token sources: `design-template.md` §Extraction map) —
+   and the file scope still to be read. Hybrid/ambiguous (multiple surfaces, several manifests, monorepo,
    unknown): list every detected surface with its evidence; interactive: ask which
    surface(s) to document (default: all); headless: document all, backend facets
    first, and record the judgment. Interactive: wait for confirmation before writing

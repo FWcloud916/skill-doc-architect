@@ -1,6 +1,7 @@
 # Stack: Flutter
 
 > **Detection:** `pubspec.yaml` at the repo root — checked BEFORE `package.json`.
+> **UI surface:** yes — offer the `DESIGN.md` module (see `design-template.md`).
 
 ## Discovery map
 
@@ -23,6 +24,7 @@ boundary; §8 — consumed backend APIs + third-party SDKs; §10 — build flavo
 | model classes, drift/sqflite/hive/isar definitions | project-overview §5, §9; domain-models §1 |
 | `pubspec.yaml`/`pubspec.lock` | project-overview §2 |
 | `android/`/`ios/` configs, signing/release setup | project-overview §10 |
+| theme/token sources (`ThemeData`/`ColorScheme`/`TextTheme`, `ThemeExtension`s) | DESIGN.md tokens + matching prose — when the design module was selected |
 
 ## Linter signals
 

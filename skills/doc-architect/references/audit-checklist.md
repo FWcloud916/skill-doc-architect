@@ -26,6 +26,7 @@ table's shape.
 | Linter config | coding-style §1–2 (and §6 if commands changed) |
 | Setup/run/test commands (Makefile, package scripts, CI) | README Quickstart; AGENTS.md Commands |
 | New/changed query shape (`WHERE`/`JOIN`/`ORDER BY`/pagination) on a hot table | db-observation is the *process* doc — don't edit it; check the diff followed it |
+| Theme/design-token sources (see stack file diff map: tailwind/CSS custom properties, theme objects, asset catalogs, theme XML, XAML resources) | DESIGN.md frontmatter tokens + the matching prose section (Colors/Typography/Shapes/Components) — only when `DESIGN.md` exists |
 | Any other source dir (mailers, serializers, decorators, project-specific layers…) | grep the docs for the changed class/file names — re-verify every section that mentions them, plus the §4 directory-structure annotation for that dir |
 
 After the mapped edits, list any section the diff did **not** touch but that reads as
@@ -92,10 +93,26 @@ Run per file; each check is a grep/ls-level comparison, not a judgment call.
 **db-observation.md**
 - [ ] Example table names exist in the current schema
 
+**DESIGN.md (only when the design module was selected)**
+- [ ] YAML frontmatter parses; top-level keys ⊆ {colors, typography, rounded, spacing,
+      components}
+- [ ] Every `{group.key}` reference in `components` resolves to a defined token
+- [ ] Color values are valid hex (`#RGB`/`#RRGGBB`); no empty token values — gaps say
+      `TODO — <reason>`
+- [ ] Hex values named in prose sections match the frontmatter tokens (no prose/token drift)
+- [ ] Mode B-extracted docs: each non-TODO hex appears in the project's theme sources
+      (grep; sources per stack: `design-template.md` §Extraction map) — flag docs-only
+      ghost colors
+- [ ] Required prose sections present: Overview, Colors, Typography, Layout, Components,
+      Do's and Don'ts (Elevation & Depth/Shapes/Responsive Behavior/Agent Prompt Guide
+      MAY read `N/A — <reason>`)
+- [ ] AGENTS.md task→doc table has the DESIGN.md row iff `DESIGN.md` exists
+
 **Scope guard & clean state**
 - [ ] No edits outside the generated file set (README.md, AGENTS.md + its symlinks, the
       canonical `docs/` files, `docs/domain/`, `PROGRESS.md` when the harness module was
-      selected, `docs/.doc-architect-state.md` while Mode B is in flight). Pre-existing
+      selected, `DESIGN.md` when the design module was selected,
+      `docs/.doc-architect-state.md` while Mode B is in flight). Pre-existing
       scratch/memo/pending directories and any other non-canonical files under `docs/`
       are untouched.
 - [ ] No leftover `docs/.doc-architect-state.md` after a completed Mode B run

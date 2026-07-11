@@ -3,6 +3,7 @@
 > **Detection:** `build.gradle`/`build.gradle.kts` **plus** `AndroidManifest.xml`
 > (or the `com.android.application` plugin) — the manifest requirement keeps
 > JVM-backend gradle repos in the unknown-stack fallback.
+> **UI surface:** yes — offer the `DESIGN.md` module (see `design-template.md`).
 
 ## Discovery map
 
@@ -25,6 +26,7 @@ Facet notes: §8 — consumed backend APIs + third-party SDKs (analytics, push, 
 | `AndroidManifest.xml`, `build.gradle*`, `libs.versions.toml` | project-overview §2, §6, §7, §10 |
 | API-client layer, SDK config | project-overview §8 |
 | signing/release config (keystore refs, `fastlane/`, store metadata) | project-overview §10 |
+| theme/token sources (`res/values/colors.xml`, `themes.xml`, Compose `MaterialTheme`) | DESIGN.md tokens + matching prose — when the design module was selected |
 
 ## Linter signals
 

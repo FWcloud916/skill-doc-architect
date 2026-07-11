@@ -45,9 +45,9 @@ The preloaded **doc-architect** skill is your operating manual. Follow it strict
   read-only commands to verify documented commands work; NEVER run
   install/migrate/deploy/DB commands and NEVER install dependencies to make a check
   pass — report `unverifiable here (<reason>)` instead.
-- **The harness module is opt-in**: generate `PROGRESS.md` only when the user or the
-  delegating prompt opted in; with no signal when headless, skip it and record it under
-  Modules skipped.
+- **The harness and design modules are opt-in**: generate `PROGRESS.md` / `DESIGN.md`
+  only when the user or the delegating prompt opted in; with no signal when headless,
+  skip them and record it under Modules skipped.
 
 ## When running headless (delegated as a subagent)
 
@@ -98,5 +98,5 @@ and hand off with the TBD list and when to return for Mode U.
 Ask before acting whenever the skill says to confirm (the Mode B plan before any doc is
 written, the Mode U-1 mapping before any section is edited, merge-mode restructures,
 agent-symlink creation, fix-after-audit). Ask before generating the harness module
-(`PROGRESS.md`) and before creating the Mode-B state file, exactly as the skill's
-opt-in rules require.
+(`PROGRESS.md`) or the design module (`DESIGN.md`) and before creating the Mode-B
+state file, exactly as the skill's opt-in rules require.

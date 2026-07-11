@@ -33,6 +33,7 @@ The generated doc set is modular:
 | `docs/domain-models.md` (+ `docs/domain/`) | when the data model is non-trivial |
 | `docs/coding-style.md` | when linter config or clear conventions exist |
 | `docs/db-observation.md` | when the project owns a server-side relational datastore |
+| `DESIGN.md` (UI design system, repo root) | when the project renders a UI — opt-in; Stitch-compatible design tokens + prose |
 | `PROGRESS.md` (agent-harness state, repo root) | when the project is actively developed by AI agents — opt-in |
 
 ## Install
@@ -148,5 +149,6 @@ doc-architect/
 | [coding-style-template.md](skills/doc-architect/references/coding-style-template.md) | Style guide generated from the project's own linter config |
 | [db-observation-template.md](skills/doc-architect/references/db-observation-template.md) | Query/index evidence how-to for DB-owning projects |
 | [harness-template.md](skills/doc-architect/references/harness-template.md) | PROGRESS.md state conventions + Mode-B resume state file |
+| [design-template.md](skills/doc-architect/references/design-template.md) | DESIGN.md UI design system: YAML design tokens + prose, per-stack extraction map |
 | [audit-checklist.md](skills/doc-architect/references/audit-checklist.md) | Diff→section mapping, invariants, executable command verification, Fresh Session Test |
 | skills/doc-architect/references/stacks/ | Per-stack reference (13 stacks): detection signal, discovery map, diff→section map, linter signals, minimal test gate |

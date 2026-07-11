@@ -3,6 +3,7 @@
 > **Detection:** `package.json` with `@tauri-apps/api`/`@tauri-apps/cli` in
 > dependencies + devDependencies, or a `src-tauri/` directory — checked BEFORE the
 > frontend-framework signal (the frontend depends on react/vue too).
+> **UI surface:** yes — offer the `DESIGN.md` module (see `design-template.md`).
 
 ## Discovery map
 
@@ -25,6 +26,7 @@ Facet notes: §3 — frontend + Rust command-layer architecture (the IPC boundar
 | frontend `components/`, `store/`, routes | project-overview §3, §5, §6 |
 | local persistence (tauri-plugin-store/-sql schemas) | project-overview §9; domain-models §1 |
 | `tauri.conf.json`, `src-tauri/Cargo.toml` | project-overview §2, §10 (bundle/signing/updater) |
+| frontend theme/token sources (tailwind config, `:root` CSS custom properties, theme objects) | DESIGN.md tokens + matching prose — when the design module was selected |
 
 ## Linter signals
 

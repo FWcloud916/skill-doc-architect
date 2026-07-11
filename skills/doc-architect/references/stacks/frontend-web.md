@@ -6,6 +6,7 @@
 > VS Code-extension and server-framework signals. `vite`/`vitest` alone are build/test
 > tooling, not a framework signal. SSR frameworks (Next/Nuxt) still count as frontend;
 > their API routes become a §6 surface.
+> **UI surface:** yes — offer the `DESIGN.md` module (see `design-template.md`).
 
 ## Discovery map
 
@@ -28,6 +29,7 @@ Facet notes: §3 — rendering strategy (SPA/SSR/SSG) + state-management approac
 | `components/`, `store/` (Redux/Zustand/Pinia slices) | project-overview §3, §5; domain-models §1 if store shapes are documented |
 | API-client layer (fetch wrappers, generated clients), SDK config | project-overview §8 |
 | framework/build config | project-overview §2, §10 |
+| theme/token sources (`tailwind.config.*`, `:root` CSS custom properties, UI-lib theme objects) | DESIGN.md tokens + matching prose — when the design module was selected |
 
 ## Linter signals
 

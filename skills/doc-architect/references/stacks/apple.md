@@ -3,6 +3,7 @@
 > **Detection:** `*.xcodeproj`/`*.xcworkspace`, `Package.swift`, or `Podfile`.
 > Read the platform (iOS vs macOS vs both) from the deployment target/SDK in the
 > project settings — the facets below differ per platform.
+> **UI surface:** yes — offer the `DESIGN.md` module (see `design-template.md`).
 
 ## Discovery map
 
@@ -25,6 +26,7 @@ App Store/TestFlight (iOS); notarization + DMG + Sparkle updates (macOS).
 | `Info.plist`, entitlements, Xcode project settings | project-overview §2, §7 (background modes), §10 (signing; macOS: notarization) |
 | API-client layer, SDK config | project-overview §8 |
 | signing/release config (`fastlane/`, provisioning, store metadata) | project-overview §10 |
+| theme/token sources (asset-catalog `.colorset`s, `Color`/`Font` extensions) | DESIGN.md tokens + matching prose — when the design module was selected |
 
 ## Linter signals
 

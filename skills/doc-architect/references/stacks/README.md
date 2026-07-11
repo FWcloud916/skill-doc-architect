@@ -91,3 +91,6 @@ Notes:
   MUST precede the frontend check (Electron/Tauri renderers depend on react/vue too).
 - `.csproj` with `Microsoft.NET.Sdk.Web` or no desktop marker, Qt/C++ (CMake), anything
   else → unknown stack: fall back to README + entrypoint reading; say so in the output.
+- UI-bearing stacks carry a `> **UI surface:** yes` marker in their header blockquote;
+  the Mode B step-3 gate offers the `DESIGN.md` module iff a documented surface's stack
+  file carries it. Backend/CLI/extension stacks carry no marker.

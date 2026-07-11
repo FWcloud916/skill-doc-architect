@@ -4,6 +4,7 @@
 > `<UseWindowsForms>`, a `net*-windows` TFM, or WinUI/MAUI packages.
 > A `.csproj` with `Microsoft.NET.Sdk.Web` or no desktop marker is out of scope —
 > treat as unknown stack and say so.
+> **UI surface:** yes — offer the `DESIGN.md` module (see `design-template.md`).
 
 ## Discovery map
 
@@ -26,6 +27,7 @@ Facet notes: §3 — MVVM (or equivalent) layering + the view/view-model boundar
 | model classes, EF Core entities/migrations | project-overview §5, §9; domain-models §1 |
 | `*.sln`/`*.csproj`, `global.json` | project-overview §2, §10 |
 | packaging/signing config (MSIX manifest, installer scripts) | project-overview §10 |
+| theme/token sources (XAML `ResourceDictionary`: `App.xaml`, `Themes/*.xaml`) | DESIGN.md tokens + matching prose — when the design module was selected |
 
 ## Linter signals
 

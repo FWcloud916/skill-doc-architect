@@ -63,13 +63,23 @@ report "$([ -z "$unref" ]; echo $?)" "build-tool mentions point back to audit-ch
 residue=$(grep -nE 'flutter\.md|electron\.md|node-backend\.md|Zustand|WorkManager|go_router' "$SKILL_MD")
 report "$([ -z "$residue" ]; echo $?)" "SKILL.md has no per-stack residue" "$residue"
 
+# 5b. UI-surface marker: any stack file mentioning it must spell it exactly
+bad_ui=""
+for f in "$REFS"/stacks/*.md; do
+  [ "$(basename "$f")" = "README.md" ] && continue
+  if grep -q "UI surface" "$f" && ! grep -q '^> \*\*UI surface:\*\* yes' "$f"; then
+    bad_ui="$bad_ui $(basename "$f")"
+  fi
+done
+report "$([ -z "$bad_ui" ]; echo $?)" "UI-surface markers spelled canonically" "malformed:$bad_ui"
+
 # 6. project-overview-template keeps sections ## 1. through ## 10.
 n=$(grep -c '^## [0-9]*\.' "$REFS/project-overview-template.md")
 report "$([ "$n" -eq 10 ]; echo $?)" "project-overview-template has exactly 10 numbered sections" "found $n"
 
 # 7. Line budgets
 skill_lines=$(wc -l < "$SKILL_MD")
-report "$([ "$skill_lines" -le 215 ]; echo $?)" "SKILL.md within 215-line budget" "$skill_lines lines"
+report "$([ "$skill_lines" -le 225 ]; echo $?)" "SKILL.md within 225-line budget" "$skill_lines lines"
 agents_lines=$(wc -l < AGENTS.md)
 report "$([ "$agents_lines" -le 100 ]; echo $?)" "AGENTS.md within 100-line budget" "$agents_lines lines"
 

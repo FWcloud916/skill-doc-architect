@@ -2,7 +2,7 @@
 
 > **Type:** Explanation
 > **Audience:** Maintainers (human and AI) of this skill
-> **Last updated:** 2026-07-09
+> **Last updated:** 2026-07-11
 >
 > Decision log for this skill's architecture, newest first. Portable source of truth —
 > everything a fresh clone needs to modify the skill without prior session context.
@@ -10,6 +10,36 @@
 > at repo root); those now live under `skills/doc-architect/`.
 
 ---
+
+## 2026-07-11 — DESIGN.md UI design-system module (opt-in)
+
+A new opt-in module doc, `DESIGN.md` at the repo root: a Stitch-convention design-system
+document (YAML frontmatter of design tokens + prose sections) that AI agents read before
+generating or restyling UI. Provenance: Google Stitch's DESIGN.md concept, ecosystem of
+examples at [VoltAgent/awesome-design-md](https://github.com/VoltAgent/awesome-design-md).
+Design choices:
+
+- **Repo root, not `docs/`** — the cross-tool convention is that any agent finds
+  `DESIGN.md` at the root; `PROGRESS.md` set the root-level opt-in precedent. Like
+  PROGRESS.md it is exempt from the docs frontmatter convention — its YAML frontmatter
+  IS the token block.
+- **Offered via a per-stack-file `> **UI surface:** yes` marker**, not a stack list in
+  SKILL.md (forbidden: no per-stack residue, verify.sh check 5) and not a signal-table
+  column in `stacks/README.md` (the detection-report contract stays untouched, so
+  evals/`grade.py`/`expected.json` need no changes). Mode B already reads every
+  documented surface's stack file, so the marker costs no extra read. Eight stacks
+  carry it (the UI-bearing ones); backend/CLI/`vscode-extension` do not.
+- **Token-extraction knowledge is centralized** in `design-template.md` §Extraction map
+  (per-ecosystem theme sources); stack files carry only a diff-map row pointing at
+  DESIGN.md — mirrors the §5 command-safety centralization (2026-07-07).
+- **Machine-checkable boundary**: the audit-checklist §2 DESIGN.md block checks what a
+  grep/parse can prove (frontmatter parses, `{group.key}` references resolve, prose/token
+  hex agreement, extracted hexes exist in theme sources); aesthetic judgment is
+  deliberately out of scope. The same extract-never-invent rule as commands applies:
+  Mode B token values must be traceable to a theme source read this session.
+- **SKILL.md line budget bumped 215 → 225** (verify.sh) for the doc-set row, plan-gate
+  wiring, and Mode G offer — same precedent as the 210→215 bump (2026-07-08). A new
+  verify.sh check (5b) pins the marker's canonical spelling.
 
 ## 2026-07-09 — Skill moved to `skills/doc-architect/` + Claude plugin packaging
 

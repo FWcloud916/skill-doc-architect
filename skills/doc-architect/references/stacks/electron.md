@@ -2,6 +2,7 @@
 
 > **Detection:** `package.json` with `electron` in dependencies + devDependencies —
 > checked BEFORE the frontend-framework signal (the renderer depends on react/vue too).
+> **UI surface:** yes — offer the `DESIGN.md` module (see `design-template.md`).
 
 ## Discovery map
 
@@ -25,6 +26,7 @@ Facet notes: §3 — main/renderer process architecture + the IPC boundary;
 | renderer `components/`, `store/`, routes | project-overview §3, §5, §6 |
 | local persistence (electron-store schema, SQLite) | project-overview §9; domain-models §1 |
 | `electron-builder`/forge config | project-overview §2, §10 (packaging/signing/update channel) |
+| renderer theme/token sources (tailwind config, `:root` CSS custom properties, theme objects) | DESIGN.md tokens + matching prose — when the design module was selected |
 
 ## Linter signals
 
