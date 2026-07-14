@@ -1,44 +1,104 @@
-# Detection eval sweep — see evals/README.md for what this tests and why.
+# Detection eval sweep — see evals/README.md for contract, cost, and security notes.
 #
-# Manual-trigger ONLY (workflow_dispatch). Deliberately no push/pull_request/
-# schedule trigger: each run drives the doc-architect skill live via the
-# claude CLI against 35 fixtures, which costs real API spend (~$18 for a
-# default N=3 run — see the cost note in evals/README.md). A human must click
-# "Run workflow" for that to happen.
+# Manual-trigger ONLY. Each provider call costs real API spend, so this workflow has
+# no push, pull_request, or schedule trigger. Choose anthropic, openai, or both; each
+# provider records and grades its own results against the same checked-in contract.
 #
-# Requires: an ANTHROPIC_API_KEY repo secret (Settings -> Secrets and
-# variables -> Actions). The "model" dispatch input defaults to claude-sonnet-5
-# and should always be set explicitly to SOME model — never leave the CLI's
-# unpinned default in a bare-API-key environment; see the evals/README.md
-# cost note for why that's unpredictable and can be pricier.
+# Required repository secrets depend on the selected provider:
+# - ANTHROPIC_API_KEY for anthropic/both
+# - OPENAI_API_KEY for openai/both (passed only to openai/codex-action)
 name: Detection evals
 
 on:
   workflow_dispatch:
     inputs:
+      provider:
+        description: "Provider to run. 'both' executes independent jobs in parallel."
+        required: true
+        default: "anthropic"
+        type: choice
+        options:
+          - anthropic
+          - openai
+          - both
       runs:
-        description: "Runs per fixture (N). Suite default is 3 (all-runs-must-pass)."
-        required: false
+        description: "Runs per fixture (N). All runs must pass."
+        required: true
         default: "3"
+        type: string
       filter:
-        description: "Optional fixture name substring, e.g. basic-rails, for a cheap single-fixture debug run."
+        description: "Optional fixture substring, e.g. basic-rails."
         required: false
         default: ""
-      model:
-        description: "Model to pin (never leave the CLI default in a bare-API-key env — unpredictable and can be pricier). See evals/README.md cost note."
-        required: false
+        type: string
+      anthropic_model:
+        description: "Claude model passed to the Anthropic runner."
+        required: true
         default: "claude-sonnet-5"
+        type: string
+      openai_model:
+        description: "OpenAI model passed to Codex Action."
+        required: true
+        default: "gpt-5.6-luna"
+        type: string
+      openai_effort:
+        description: "Reasoning effort for the OpenAI model."
+        required: true
+        default: "medium"
+        type: choice
+        options:
+          - low
+          - medium
+          - high
 
 concurrency:
-  group: detection-evals
+  group: detection-evals-${{ inputs.provider }}
   cancel-in-progress: true
 
 jobs:
-  sweep:
+  prepare:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      matrix: ${{ steps.config.outputs.matrix }}
+      selected: ${{ steps.config.outputs.selected }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - name: Validate inputs and build fixture matrix
+        id: config
+        env:
+          INPUT_PROVIDER: ${{ inputs.provider }}
+          INPUT_RUNS: ${{ inputs.runs }}
+          INPUT_FILTER: ${{ inputs.filter }}
+          INPUT_ANTHROPIC_MODEL: ${{ inputs.anthropic_model }}
+          INPUT_OPENAI_MODEL: ${{ inputs.openai_model }}
+          INPUT_OPENAI_EFFORT: ${{ inputs.openai_effort }}
+        run: |
+          python3 evals/scripts/detection_ci.py prepare \
+            --fixtures "$GITHUB_WORKSPACE/evals/fixtures" \
+            --runs "$INPUT_RUNS" \
+            --filter "$INPUT_FILTER" \
+            --provider "$INPUT_PROVIDER" \
+            --anthropic-model "$INPUT_ANTHROPIC_MODEL" \
+            --openai-model "$INPUT_OPENAI_MODEL" \
+            --openai-effort "$INPUT_OPENAI_EFFORT" \
+            --github-output "$GITHUB_OUTPUT"
+
+  anthropic:
+    if: ${{ inputs.provider == 'anthropic' || inputs.provider == 'both' }}
+    needs: prepare
     runs-on: ubuntu-latest
     timeout-minutes: 90
+    permissions:
+      contents: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
 
       - uses: actions/setup-node@v4
         with:
@@ -47,25 +107,125 @@ jobs:
       - name: Install Claude Code CLI
         run: npm install -g @anthropic-ai/claude-code
 
-      - name: Install skill (symlink checkout into ~/.claude/skills)
+      - name: Install skill for Claude Code
         run: |
           mkdir -p ~/.claude/skills
           ln -s "$GITHUB_WORKSPACE/skills/doc-architect" ~/.claude/skills/doc-architect
 
-      - name: Run detection sweep
+      - name: Run Anthropic detection sweep
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          MODEL: ${{ inputs.model }}
+          EVAL_CLI: claude
+          MODEL: ${{ inputs.anthropic_model }}
         run: |
           ./evals/scripts/run_detection.sh \
-            "$GITHUB_WORKSPACE/evals/results/ci" \
+            "$GITHUB_WORKSPACE/evals/results/ci-anthropic" \
             "${{ inputs.runs }}" \
             "${{ inputs.filter }}"
 
-      - name: Upload results
+      - name: Upload Anthropic results
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: detection-eval-results
-          path: evals/results/ci/
+          name: detection-anthropic-results
+          path: evals/results/ci-anthropic/
+          if-no-files-found: warn
+
+  openai:
+    if: ${{ inputs.provider == 'openai' || inputs.provider == 'both' }}
+    needs: prepare
+    name: OpenAI — ${{ matrix.fixture }} — run ${{ matrix.run }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      max-parallel: 3
+      matrix: ${{ fromJSON(needs.prepare.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - name: Render shared detection prompt
+        env:
+          FIXTURE: ${{ matrix.fixture }}
+        run: |
+          mkdir -p .github/codex/runtime "evals/results/openai/$FIXTURE"
+          python3 evals/scripts/detection_prompt.py \
+            "$GITHUB_WORKSPACE/evals/fixtures/$FIXTURE" \
+            "$GITHUB_WORKSPACE/skills/doc-architect/SKILL.md" \
+            > .github/codex/runtime/detection-prompt.md
+
+      - name: Run OpenAI detection
+        id: codex
+        uses: openai/codex-action@v1
+        with:
+          openai-api-key: ${{ secrets.OPENAI_API_KEY }}
+          model: ${{ inputs.openai_model }}
+          effort: ${{ inputs.openai_effort }}
+          prompt-file: ${{ github.workspace }}/.github/codex/runtime/detection-prompt.md
+          working-directory: ${{ github.workspace }}/evals/fixtures/${{ matrix.fixture }}
+          output-schema-file: ${{ github.workspace }}/evals/detection-report.schema.json
+          permission-profile: ":read-only"
+          safety-strategy: drop-sudo
+          codex-version: "0.144.2"
+          output-file: ${{ github.workspace }}/evals/results/openai/${{ matrix.fixture }}/run-${{ matrix.run }}.json
+          codex-args: '["--ephemeral"]'
+
+      - name: Upload OpenAI matrix result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: detection-openai-${{ matrix.fixture }}-run-${{ matrix.run }}
+          path: evals/results/openai/
+          if-no-files-found: warn
+
+  openai-grade:
+    if: ${{ always() && (inputs.provider == 'openai' || inputs.provider == 'both') }}
+    needs:
+      - prepare
+      - openai
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - name: Download OpenAI matrix results
+        continue-on-error: true
+        uses: actions/download-artifact@v5
+        with:
+          pattern: detection-openai-*
+          path: evals/results/ci-openai/
+          merge-multiple: true
+
+      - name: Write OpenAI manifest
+        env:
+          INPUT_RUNS: ${{ inputs.runs }}
+          INPUT_FILTER: ${{ inputs.filter }}
+          INPUT_MODEL: ${{ inputs.openai_model }}
+          INPUT_EFFORT: ${{ inputs.openai_effort }}
+        run: |
+          python3 evals/scripts/detection_ci.py manifest \
+            --fixtures "$GITHUB_WORKSPACE/evals/fixtures" \
+            --runs "$INPUT_RUNS" \
+            --filter "$INPUT_FILTER" \
+            --provider openai \
+            --model "$INPUT_MODEL" \
+            --effort "$INPUT_EFFORT" \
+            --results "$GITHUB_WORKSPACE/evals/results/ci-openai"
+
+      - name: Grade OpenAI detection sweep
+        run: python3 evals/scripts/grade.py evals/results/ci-openai
+
+      - name: Upload aggregate OpenAI results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: detection-openai-results
+          path: evals/results/ci-openai/
           if-no-files-found: warn

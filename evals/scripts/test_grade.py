@@ -143,6 +143,18 @@ class GradeRunTests(unittest.TestCase):
 
 
 class SuiteCompletenessTests(unittest.TestCase):
+    @staticmethod
+    def manifest(runs=1, selected=None, **overrides):
+        data = {
+            "runs_per_fixture": runs,
+            "selected_fixtures": selected if selected is not None else ["basic-rails"],
+            "provider": "openai",
+            "model": "gpt-test",
+            "effort": "medium",
+        }
+        data.update(overrides)
+        return data
+
     def validate(self, manifest=None, fixture_dirs=(), run_files=()):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
@@ -158,12 +170,12 @@ class SuiteCompletenessTests(unittest.TestCase):
         self.assertTrue(self.validate())
 
     def test_zero_selected_fixtures_fail(self):
-        errors = self.validate({"runs_per_fixture": 1, "selected_fixtures": []})
+        errors = self.validate(self.manifest(selected=[]))
         self.assertTrue(errors)
 
     def test_missing_run_fails(self):
         errors = self.validate(
-            {"runs_per_fixture": 2, "selected_fixtures": ["basic-rails"]},
+            self.manifest(runs=2),
             fixture_dirs=["basic-rails"],
             run_files=[("basic-rails", "run-1.json")],
         )
@@ -171,11 +183,29 @@ class SuiteCompletenessTests(unittest.TestCase):
 
     def test_complete_suite_shape_passes(self):
         errors = self.validate(
-            {"runs_per_fixture": 1, "selected_fixtures": ["basic-rails"]},
+            self.manifest(),
             fixture_dirs=["basic-rails"],
             run_files=[("basic-rails", "run-1.json")],
         )
         self.assertEqual([], errors)
+
+    def test_missing_provider_metadata_fails(self):
+        manifest = self.manifest()
+        del manifest["provider"]
+        errors = self.validate(
+            manifest,
+            fixture_dirs=["basic-rails"],
+            run_files=[("basic-rails", "run-1.json")],
+        )
+        self.assertTrue(any("manifest keys" in error for error in errors))
+
+    def test_blank_model_fails(self):
+        errors = self.validate(
+            self.manifest(model=" "),
+            fixture_dirs=["basic-rails"],
+            run_files=[("basic-rails", "run-1.json")],
+        )
+        self.assertTrue(any("invalid model" in error for error in errors))
 
 
 if __name__ == "__main__":

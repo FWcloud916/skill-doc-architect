@@ -11,6 +11,35 @@
 
 ---
 
+## 2026-07-14 — Provider-selectable detection CI with protected OpenAI execution
+
+The detection runner already supported `EVAL_CLI=claude|codex`, but GitHub Actions
+installed only Claude Code and exposed only an Anthropic model input. Adding Codex by
+installing its CLI in the same shell job would have made `OPENAI_API_KEY` visible to
+repository-controlled scripts. OpenAI's CI guidance instead recommends
+[`openai/codex-action`](https://github.com/openai/codex-action), which keeps the key
+behind a Responses API proxy.
+
+Decisions:
+
+- **Providers stay independent.** `provider=anthropic|openai|both` selects separate
+  jobs and artifacts. `both` runs them in parallel but never averages or merges their
+  grades; either provider can fail the workflow.
+- **Models are dispatch inputs.** `anthropic_model` and `openai_model` are free text,
+  while `openai_effort` is constrained to low/medium/high. OpenAI defaults to
+  `gpt-5.6-luna`; every run can override it. Provider, model, and effort are mandatory
+  manifest fields so a result cannot lose its execution identity.
+- **OpenAI uses a bounded matrix.** Each fixture/run is one read-only, ephemeral,
+  schema-constrained Codex Action invocation. `max-parallel: 3` limits concurrency;
+  the CLI and Responses API proxy share one pinned version; a secret-free aggregate
+  job reconstructs the expected manifest and lets `grade.py` hard-fail missing
+  artifacts.
+- **One prompt contract.** `detection_prompt.py` renders the prompt for both local
+  CLI runs and hosted Actions. The workflow does not carry a second prompt copy that
+  could drift from the tested runner.
+- **No plugin version bump.** This changes eval orchestration and provenance only;
+  the installed skill behavior and machine-readable detection report remain 2.1.1.
+
 ## 2026-07-14 — Claude N=3 contract stabilization
 
 The first Claude 2.1 N=3 release sweep selected the correct stack in every detection

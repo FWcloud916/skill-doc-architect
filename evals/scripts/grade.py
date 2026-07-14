@@ -20,6 +20,10 @@ PACKAGE_ROLE_ORDER = (
 )
 PACKAGE_ROLES = set(PACKAGE_ROLE_ORDER)
 REPORT_KEYS = {"resolution", "surfaces", "package_json", "notes"}
+MANIFEST_KEYS = {
+    "runs_per_fixture", "selected_fixtures", "provider", "model", "effort"
+}
+PROVIDERS = {"anthropic", "openai"}
 
 
 def load(path):
@@ -175,8 +179,18 @@ def validate_suite(results):
     runs = manifest.get("runs_per_fixture")
     selected = manifest.get("selected_fixtures")
     errors = []
+    if set(manifest) != MANIFEST_KEYS:
+        errors.append(
+            f"manifest keys: want={sorted(MANIFEST_KEYS)} got={sorted(manifest)}"
+        )
     if not isinstance(runs, int) or runs < 1:
         errors.append(f"invalid runs_per_fixture: {runs}")
+    if manifest.get("provider") not in PROVIDERS:
+        errors.append(f"invalid provider: {manifest.get('provider')}")
+    for key in ("model", "effort"):
+        value = manifest.get(key)
+        if not isinstance(value, str) or not value.strip():
+            errors.append(f"invalid {key}: {value}")
     if not isinstance(selected, list) or not selected or len(selected) != len(set(selected)):
         errors.append(f"invalid selected_fixtures: {selected}")
         return None, errors

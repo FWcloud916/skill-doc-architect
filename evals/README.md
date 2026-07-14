@@ -111,6 +111,7 @@ contributor (human or agent).
 | no `forbidden_stacks` appear | hard fail |
 | every package path + roles exact | hard fail |
 | selected fixture/run set complete | hard fail |
+| provider/model/effort manifest metadata present | hard fail |
 
 A fixture passes only if **all N runs pass** (default N=3). Detection is a
 routing decision downstream steps depend on; "right 2 out of 3 times" is a
@@ -132,9 +133,11 @@ EVAL_CLI=codex ./evals/scripts/run_detection.sh /tmp/out-codex 1 trap-rails-esbu
 Requires Python 3 plus the selected CLI (`EVAL_CLI=claude|codex`, default Claude).
 Claude uses its installed skill; both providers are explicitly pointed at this
 checkout's SKILL.md, and Codex runs ephemeral + read-only with the checked-in JSON
-Schema. The runner
-is resumable (skips existing `run-*.json`), keeps per-fixture `stderr.log`, and
-calls the grader at the end.
+Schema. `detection_prompt.py` renders the same prompt used by GitHub Actions, so local
+and CI runs cannot silently drift. Every manifest records the provider, selected model,
+and reasoning effort (`not-applicable` for Claude; `cli-default` for an unconfigured
+local Codex run). The runner is resumable (skips existing `run-*.json`), keeps
+per-fixture `stderr.log`, and calls the grader at the end.
 
 Codex validation note (2026-07-14, Codex CLI 0.144.1, `gpt-5.6-sol`): the complete
 detection N=1 sweep passed **34/34**, the end-to-end N=1 sweep passed **6/6**, and an
@@ -187,15 +190,28 @@ that's what the verify.sh fixture lint is for.
   declaring a change done), not by push-triggered CI.
 - **Full sweep**: [`.github/workflows/detection-evals.yml`](../.github/workflows/detection-evals.yml),
   **manual trigger only** (`workflow_dispatch`) — deliberately not on push, PR,
-  or a schedule, since each run costs real API spend (~$17 at the N=3 default;
-  see cost note above). Requires an `ANTHROPIC_API_KEY` repo secret (Settings →
-  Secrets and variables → Actions) before the first run. A `model` dispatch
-  input lets you pick the model per run (defaults to `claude-sonnet-5`) — always
-  set it to some real model explicitly, never leave the CLI's unpinned default
-  in a bare-API-key environment. Dispatch inputs also let you run a cheap
-  single-fixture debug pass (`filter: basic-rails`, ~$0.20) before committing to
-  a full sweep. Results (including `stderr.log` per fixture) upload as a
-  workflow artifact whether the run passes or fails.
+  or a schedule, since each run costs real API spend. `provider` accepts
+  `anthropic | openai | both`; `both` starts independent provider jobs in parallel,
+  never mixes their reports, and fails if either provider fails its own grade.
+- **Model inputs**: `anthropic_model` and `openai_model` are free-text dispatch inputs,
+  so a caller can pin any model available to the corresponding account without editing
+  the workflow. They default to `claude-sonnet-5` and `gpt-5.6-luna`, respectively.
+  `openai_effort` is independently selectable as `low | medium | high`. The selected
+  values are written to each provider's manifest and artifact.
+- **Secrets**: configure `ANTHROPIC_API_KEY` for `anthropic` and `OPENAI_API_KEY` for
+  `openai`; `both` requires both. The OpenAI key is passed only to
+  `openai/codex-action@v1`, never to a repository-controlled shell environment. Codex
+  runs one read-only, ephemeral, schema-constrained matrix cell per fixture/run with
+  `max-parallel: 3`, then a secret-free aggregation job downloads every artifact and
+  grades the complete manifest. Input preparation rejects OpenAI matrices above
+  GitHub Actions' 256-job limit before any paid call starts. The Codex CLI and its
+  Responses API proxy are pinned together at `0.144.2`.
+- **Artifacts**: Anthropic uploads `detection-anthropic-results`; OpenAI matrix cells
+  upload unique intermediate artifacts and the aggregation job publishes
+  `detection-openai-results`. Uploads run even after failures so missing/invalid runs
+  remain diagnosable. Start with `filter: trap-react-native-role`, `runs: 1` before a
+  full OpenAI sweep. The checked-in OpenAI workflow path remains unvalidated against
+  the hosted service until that first manual canary succeeds.
 
 ## End-to-end mode scenarios
 

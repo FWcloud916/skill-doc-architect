@@ -219,6 +219,11 @@ grade_tests_ok=1
 python3 evals/scripts/test_grade.py >/dev/null 2>&1 && grade_tests_ok=0
 report "$grade_tests_ok" "detection grader false-green regression tests pass" "test_grade.py failed"
 
+detection_ci_tests_ok=1
+python3 evals/scripts/test_detection_ci.py >/dev/null 2>&1 && detection_ci_tests_ok=0
+report "$detection_ci_tests_ok" "shared detection prompt and CI contracts pass" \
+  "test_detection_ci.py failed"
+
 # 9b. End-to-end scenarios and trigger boundary contract
 scenario_count=$(find evals/scenarios -mindepth 1 -maxdepth 1 -type d | wc -l | tr -d ' ')
 scenario_layout_ok=1
