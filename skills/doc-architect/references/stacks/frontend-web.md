@@ -6,7 +6,7 @@
 > VS Code-extension and server-framework signals. `vite`/`vitest` alone are build/test
 > tooling, not a framework signal. SSR frameworks (Next/Nuxt) still count as frontend;
 > their API routes become a §6 surface.
-> **UI surface:** yes — offer the `DESIGN.md` module (see `design-template.md`).
+> **Design surface:** inherent — offer the `DESIGN.md` module (see `design-template.md`).
 
 ## Discovery map
 
@@ -16,6 +16,7 @@
 | §5/§9 models & data | store definitions (Redux/Zustand/Pinia), API types; §9 usually `N/A — client of <backend>` |
 | §6 interface | pages/routes: Next `app/`/`pages/`, Nuxt `pages/`, router config (React Router, `vue-router`); SSR API routes |
 | §7 background work | usually `N/A`; service workers, client-side scheduled sync |
+| Design-surface evidence | pages/components plus CSS, theme objects, tokens, Tailwind config |
 
 Facet notes: §3 — rendering strategy (SPA/SSR/SSG) + state-management approach;
 §8 — consumed backend APIs + third-party SDKs (analytics, auth, payments);
@@ -34,7 +35,8 @@ Facet notes: §3 — rendering strategy (SPA/SSR/SSG) + state-management approac
 ## Linter signals
 
 Config: `eslint.config.js` / `.eslintrc*`, `.prettierrc*`, `biome.json`.
-Pre-merge: `npx eslint .`, `npx prettier --check .`.
+Prefer a real package script; otherwise use a confirmed local binary such as
+`./node_modules/.bin/eslint .` or `./node_modules/.bin/prettier --check .`.
 
 ## Minimal test gate
 
@@ -42,5 +44,6 @@ vitest or jest + Testing Library, one component smoke test.
 
 ## Command safety notes
 
-SAFE probes (audit-checklist §5): `node --version`, `npx vitest list`,
-`npx jest --listTests`. NOT SAFE — static check only: `npm install`, builds, deploys.
+SAFE probes (audit-checklist §5): `node --version`; after confirming it exists,
+`./node_modules/.bin/vitest list` or `./node_modules/.bin/jest --listTests`.
+NOT SAFE — static check only: on-demand package runners, installs, builds, deploys.

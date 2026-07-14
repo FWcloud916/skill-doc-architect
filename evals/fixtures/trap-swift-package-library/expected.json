@@ -1,0 +1,7 @@
+{
+  "resolution": "unknown",
+  "surfaces": [],
+  "forbidden_stacks": ["apple"],
+  "regression_for": "design-decisions 2026-07-14: broad manifest signals and evidence-based design surfaces",
+  "notes": "A generic Swift package without an Apple platform or Xcode project is unknown."
+}

@@ -2,7 +2,6 @@
 import PackageDescription
 let package = Package(
   name: "Fixture",
-  platforms: [.iOS(.v16)],
   products: [.library(name: "Fixture", targets: ["Fixture"])],
   targets: [.target(name: "Fixture")]
 )

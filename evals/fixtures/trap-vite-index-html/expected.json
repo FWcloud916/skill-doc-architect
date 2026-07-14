@@ -6,5 +6,6 @@
       "role": "primary"
     }
   ],
+  "package_json": [{"path": "package.json", "roles": ["build-tooling", "frontend-entrypoint"]}],
   "notes": "vite + root index.html satisfies the frontend row even with no UI framework dep."
 }

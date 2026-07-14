@@ -8,19 +8,21 @@
 #   ./run_detection.sh                          # all fixtures, N=3
 #   ./run_detection.sh out 1 trap-rails-esbuild # one fixture, single run (debug)
 #
-# Requires: claude CLI, doc-architect installed as a skill, jq.
+# Requires: Python 3 plus the selected CLI (`EVAL_CLI=claude|codex`, default claude).
 set -euo pipefail
 
 EVALS_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+REPO_ROOT="$(cd "$EVALS_DIR/.." && pwd)"
 FIXTURES_DIR="$EVALS_DIR/fixtures"
 RESULTS_DIR="${1:-$EVALS_DIR/results/$(date +%Y%m%d-%H%M%S)}"
 RUNS="${2:-3}"
 FILTER="${3:-}"
-MODEL_ARGS=()
-[[ -n "${MODEL:-}" ]] && MODEL_ARGS=(--model "$MODEL")
+EVAL_CLI="${EVAL_CLI:-claude}"
+MODEL_NAME="${MODEL:-}"
 
 PROMPT_TEMPLATE='Use the doc-architect skill, but perform ONLY Mode B step 1
-(stack detection) on the repository at __FIXTURE_PATH__. Follow the two-phase
+(stack detection) on the repository at __FIXTURE_PATH__. Read the current checkout
+skill at __SKILL_PATH__ and follow its references/stacks/README.md two-phase
 collect-then-resolve procedure in references/stacks/README.md exactly. Do NOT
 generate or modify any documentation.
 
@@ -30,10 +32,12 @@ Output ONLY a JSON object (no prose, no markdown fences) with this shape:
   "surfaces": [
     {"stack": "<stack file basename without .md>",
      "role": "primary" | "surface" | "candidate",
-     "evidence": ["<file or signal that triggered this>"]}
+     "evidence": ["<repo-relative path that triggered this>"]}
   ],
-  "package_json_role": "ui-framework" | "build-tooling" | "desktop" | "extension" | "server" | "absent",
-  "unsafe_commands_flagged": ["<any build/verify command you would mark NOT SAFE>"],
+  "package_json": [
+    {"path": "<repo-relative package.json path>",
+     "roles": ["server" | "ui-framework" | "build-tooling" | "desktop" | "extension" | "workspace" | "plain-node" | "frontend-entrypoint"]}
+  ],
   "notes": "<one line, optional>"
 }
 
@@ -43,10 +47,50 @@ Rules for the report:
   hybrid the backend is the one primary). surface for additional hybrid surfaces
   and for EVERY monorepo sub-project (a monorepo report has no primary).
   candidate for ambiguous alternatives.
-- Every surface needs at least one evidence entry naming a real file.'
+- Every surface needs at least one evidence entry naming a real repo-relative file.
+  Put dependency/key details in notes, not in evidence.
+- package_json has one entry per package.json and is empty when none. roles includes
+  every matching role in this order: server, ui-framework, build-tooling, desktop,
+  extension, workspace, plain-node, frontend-entrypoint. Multiple roles are valid.'
+
+if ! [[ "$RUNS" =~ ^[1-9][0-9]*$ ]]; then
+  echo "runs_per_fixture must be a positive integer: $RUNS" >&2
+  exit 2
+fi
+
+if [[ "$EVAL_CLI" != "claude" && "$EVAL_CLI" != "codex" ]]; then
+  echo "EVAL_CLI must be claude or codex: $EVAL_CLI" >&2
+  exit 2
+fi
+if ! command -v "$EVAL_CLI" >/dev/null 2>&1; then
+  echo "$EVAL_CLI CLI not found" >&2
+  exit 2
+fi
+
+selected=()
+for fixture in "$FIXTURES_DIR"/*/; do
+  name="$(basename "$fixture")"
+  [[ -n "$FILTER" && "$name" != *"$FILTER"* ]] && continue
+  selected+=("$name")
+done
+
+if [[ "${#selected[@]}" -eq 0 ]]; then
+  echo "fixture filter matched nothing: ${FILTER:-<all>}" >&2
+  exit 2
+fi
 
 mkdir -p "$RESULTS_DIR"
 echo "results -> $RESULTS_DIR"
+
+python3 - "$RESULTS_DIR/manifest.json" "$RUNS" "${selected[@]}" <<'PY'
+import json
+import sys
+
+path, runs, *fixtures = sys.argv[1:]
+with open(path, "w") as f:
+    json.dump({"runs_per_fixture": int(runs), "selected_fixtures": fixtures}, f, indent=2)
+    f.write("\n")
+PY
 
 for fixture in "$FIXTURES_DIR"/*/; do
   name="$(basename "$fixture")"
@@ -58,14 +102,41 @@ for fixture in "$FIXTURES_DIR"/*/; do
     [[ -s "$out" ]] && continue  # resumable
     echo "[$name] run $i/$RUNS"
     prompt="${PROMPT_TEMPLATE//__FIXTURE_PATH__/$fixture}"
+    prompt="${prompt//__SKILL_PATH__/$REPO_ROOT/skills/doc-architect/SKILL.md}"
 
-    # --output-format json wraps the answer in a result envelope; plain-text -p
-    # output proved prone to truncated stdout on some runs.
-    raw="$(claude -p "$prompt" \
-      --allowedTools "Read,Glob,Grep,Skill" \
-      --output-format json \
-      "${MODEL_ARGS[@]}" \
-      2>>"$RESULTS_DIR/$name/stderr.log" || true)"
+    if [[ "$EVAL_CLI" = "claude" ]]; then
+      # --output-format json wraps the answer in a result envelope; plain-text -p
+      # output proved prone to truncated stdout on some runs.
+      if [[ -n "$MODEL_NAME" ]]; then
+        raw="$(claude -p "$prompt" \
+          --allowedTools "Read,Glob,Grep,Skill" \
+          --output-format json --model "$MODEL_NAME" \
+          2>>"$RESULTS_DIR/$name/stderr.log" || true)"
+      else
+        raw="$(claude -p "$prompt" \
+          --allowedTools "Read,Glob,Grep,Skill" \
+          --output-format json \
+          2>>"$RESULTS_DIR/$name/stderr.log" || true)"
+      fi
+    else
+      raw_file="$RESULTS_DIR/$name/run-$i.raw.txt"
+      if [[ -n "$MODEL_NAME" ]]; then
+        codex exec --ephemeral --sandbox read-only --cd "$REPO_ROOT" \
+          --output-schema "$EVALS_DIR/detection-report.schema.json" \
+          --output-last-message "$raw_file" --model "$MODEL_NAME" \
+          "$prompt" >>"$RESULTS_DIR/$name/stderr.log" 2>&1 || true
+      else
+        codex exec --ephemeral --sandbox read-only --cd "$REPO_ROOT" \
+          --output-schema "$EVALS_DIR/detection-report.schema.json" \
+          --output-last-message "$raw_file" \
+          "$prompt" >>"$RESULTS_DIR/$name/stderr.log" 2>&1 || true
+      fi
+      if [[ -f "$raw_file" ]]; then
+        raw="$(sed -n '1,$p' "$raw_file")"
+      else
+        raw=""
+      fi
+    fi
 
     # Unwrap the envelope, then extract the outermost JSON object from the
     # answer text; models occasionally add prose anyway.

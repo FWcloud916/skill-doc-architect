@@ -1,6 +1,7 @@
 # Stack: Python
 
 > **Detection:** `pyproject.toml` at the repo root.
+> **Design surface:** conditional — offer `DESIGN.md` only when the evidence row matches.
 
 ## Discovery map
 
@@ -10,6 +11,7 @@
 | §5/§9 models & schema | Django models / SQLAlchemy / Pydantic |
 | §6 interface | FastAPI/Django/Flask routers, `urls.py` |
 | §7 background work | Celery tasks, `celery beat` config |
+| Design-surface evidence | Django/Jinja templates, static styles/assets, or desktop GUI toolkit themes |
 
 Facet notes: §8 — API-client modules, SDK deps in the manifest; §10 — env/settings
 modules, Dockerfile, CI/CD.
@@ -22,6 +24,7 @@ modules, Dockerfile, CI/CD.
 | Django models / SQLAlchemy / Pydantic models | project-overview §5, §9; domain-models §1 |
 | Celery tasks + beat config | project-overview §7 |
 | `pyproject.toml`, `ruff.toml` | project-overview §2; coding-style §1–2 |
+| template/static styles or desktop GUI theme definitions | DESIGN.md tokens + matching prose — when the design module was selected |
 
 ## Linter signals
 

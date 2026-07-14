@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["resolution", "surfaces", "package_json", "notes"],
+  "properties": {
+    "resolution": {
+      "enum": ["single", "hybrid", "ambiguous", "monorepo", "unknown"]
+    },
+    "surfaces": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["stack", "role", "evidence"],
+        "properties": {
+          "stack": {
+            "enum": [
+              "android", "apple", "electron", "flutter", "frontend-web",
+              "go", "node-backend", "python", "rails", "react-native",
+              "rust", "serverless", "tauri", "vscode-extension", "windows-dotnet"
+            ]
+          },
+          "role": {
+            "enum": ["primary", "surface", "candidate"]
+          },
+          "evidence": {
+            "type": "array",
+            "minItems": 1,
+            "items": {"type": "string", "minLength": 1}
+          }
+        }
+      }
+    },
+    "package_json": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "roles"],
+        "properties": {
+          "path": {
+            "type": "string",
+            "pattern": "(^|/)package\\.json$"
+          },
+          "roles": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "enum": [
+                "server", "ui-framework", "build-tooling", "desktop",
+                "extension", "workspace", "plain-node", "frontend-entrypoint"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "notes": {"type": "string"}
+  }
+}

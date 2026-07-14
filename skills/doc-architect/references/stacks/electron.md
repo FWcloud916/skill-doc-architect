@@ -2,7 +2,7 @@
 
 > **Detection:** `package.json` with `electron` in dependencies + devDependencies —
 > checked BEFORE the frontend-framework signal (the renderer depends on react/vue too).
-> **UI surface:** yes — offer the `DESIGN.md` module (see `design-template.md`).
+> **Design surface:** inherent — offer the `DESIGN.md` module (see `design-template.md`).
 
 ## Discovery map
 
@@ -12,6 +12,7 @@
 | §5/§9 models & data | renderer store shapes; electron-store, SQLite, `app.getPath('userData')` files |
 | §6 interface | windows (`BrowserWindow`s) + renderer routes; **`ipcMain.handle` channels are a §6 surface** |
 | §7 background work | tray/menubar tasks, main-process timers, auto-update checks |
+| Design-surface evidence | renderer routes/components plus CSS/theme/token sources |
 
 Facet notes: §3 — main/renderer process architecture + the IPC boundary;
 §8 — consumed backend APIs + third-party SDKs + the update server;
@@ -31,7 +32,8 @@ Facet notes: §3 — main/renderer process architecture + the IPC boundary;
 ## Linter signals
 
 Config: `eslint.config.js` / `.eslintrc*`, `.prettierrc*`, `biome.json`.
-Pre-merge: `npx eslint .`, `npx prettier --check .`.
+Prefer a real package script; otherwise use a confirmed local binary such as
+`./node_modules/.bin/eslint .` or `./node_modules/.bin/prettier --check .`.
 
 ## Minimal test gate
 
@@ -39,6 +41,7 @@ vitest/jest on main + renderer units, one smoke test.
 
 ## Command safety notes
 
-SAFE probes (audit-checklist §5): `node --version`, `npx vitest list`,
-`npx jest --listTests`. NOT SAFE — static check only: `npm install`, packaging builds
+SAFE probes (audit-checklist §5): `node --version`; after confirming it exists,
+`./node_modules/.bin/vitest list` or `./node_modules/.bin/jest --listTests`.
+NOT SAFE — static check only: on-demand package runners, installs, packaging builds
 (electron-builder/forge), notarization/signing steps.

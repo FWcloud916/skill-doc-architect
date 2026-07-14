@@ -4,6 +4,7 @@
 > `src-tauri/` directory (that combination is Tauri). Also a dedicated backend
 > manifest for hybrid resolution (see the index): `Cargo.toml` + `package.json`
 > → Rust is primary, package.json classified by role.
+> **Design surface:** conditional — offer `DESIGN.md` only when the evidence row matches.
 
 ## Discovery map
 
@@ -13,6 +14,7 @@
 | §5/§9 models & schema | struct definitions; diesel/sqlx/sea-orm `migrations/` |
 | §6 interface | HTTP routes (axum/actix-web/rocket/warp router setup); clap CLI commands; or the lib's pub API / napi/pyo3 binding exports |
 | §7 background work | tokio spawned tasks/loops, cron crates |
+| Design-surface evidence | GUI crates (egui/iced/slint/dioxus) or server-rendered templates/static styles |
 
 Facet notes: §8 — API-client crates, SDK deps in `Cargo.toml`; §10 — release
 profiles, Dockerfile, CI/CD.
@@ -25,6 +27,7 @@ profiles, Dockerfile, CI/CD.
 | struct definitions, `migrations/` | project-overview §5, §9; domain-models §1 + ER |
 | tokio tasks, cron setup | project-overview §7 |
 | `Cargo.toml`, `rustfmt.toml`/`clippy.toml` | project-overview §2; coding-style §1–2 |
+| GUI theme/style modules or template/static styles | DESIGN.md tokens + matching prose — when the design module was selected |
 
 ## Linter signals
 

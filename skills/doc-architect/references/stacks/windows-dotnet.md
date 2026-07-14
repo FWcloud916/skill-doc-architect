@@ -4,7 +4,7 @@
 > `<UseWindowsForms>`, a `net*-windows` TFM, or WinUI/MAUI packages.
 > A `.csproj` with `Microsoft.NET.Sdk.Web` or no desktop marker is out of scope —
 > treat as unknown stack and say so.
-> **UI surface:** yes — offer the `DESIGN.md` module (see `design-template.md`).
+> **Design surface:** inherent — offer the `DESIGN.md` module (see `design-template.md`).
 
 ## Discovery map
 
@@ -14,6 +14,7 @@
 | §5/§9 models & data | model classes; EF Core/SQLite, `%APPDATA%` files |
 | §6 interface | windows/pages: XAML views + ViewModels, App manifest |
 | §7 background work | `BackgroundService`/timers, tray icon, updater (Squirrel/MSIX) |
+| Design-surface evidence | XAML views plus `ResourceDictionary`, Colors/Brushes/Styles |
 
 Facet notes: §3 — MVVM (or equivalent) layering + the view/view-model boundary;
 §8 — consumed backend APIs + third-party SDKs + the update server;

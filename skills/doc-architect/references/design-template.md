@@ -7,12 +7,12 @@ The format follows the Google Stitch `DESIGN.md` convention (ecosystem of exampl
 **machine contract** (YAML frontmatter of design tokens) plus **human/agent guidance**
 (prose sections). Any tool-agnostic AI agent picks it up from the repo root.
 
-**Applicability:** generate only when the project renders a UI — the matched stack
-file carries the `> **UI surface:** yes` marker in its header blockquote — and only
-with the user's explicit opt-in. Mode G: offer it when a UI is planned. Mode B: offer
-it at the step-3 plan gate; selected → discovery additionally reads the theme/token
-sources (§Extraction map below). Skipped → one-line reason in the module-selection
-report, like any other module.
+**Applicability:** generate only when the project owns a styled visual surface and the
+user explicitly opts in. Each stack declares `> **Design surface:** inherent |
+conditional | none`; Mode B offers this module for `inherent`, or when a `conditional`
+stack's Discovery-map evidence exists. Unknown stacks get the same generic scan for
+screens/templates plus theme/style/token sources. Selected → read the extraction
+sources below. Skipped → one-line reason in the module-selection report.
 
 **Location: repo root**, next to `AGENTS.md` — the cross-tool convention is that
 agents find `DESIGN.md` at the root. It does NOT use the docs frontmatter convention;
@@ -101,6 +101,13 @@ Read only the sources for the detected surface(s); the matched stack file's
 | Electron | renderer theme sources — same as Frontend web |
 | Tauri | frontend theme sources — same as Frontend web |
 | Windows desktop (.NET) | XAML `ResourceDictionary` (`App.xaml`, `Themes/*.xaml`): Colors/Brushes/Styles, ThemeResources |
+| Rails | `app/assets/stylesheets`, Tailwind config, CSS custom properties, ViewComponent/theme constants |
+| Go | template/static asset trees; Fyne/Gio/Wails theme definitions when present |
+| Node backend | `views/`/template and public-style trees, SSR/admin theme objects |
+| Python | Django/Jinja template + static-style trees; desktop toolkit theme definitions |
+| Rust | egui/iced/slint/dioxus theme/style modules; template/static asset trees |
+| Serverless | project-owned web/static assets, CSS custom properties, token/theme files |
+| VS Code extension | webview/custom-editor HTML/CSS/components; VS Code theme variables used by project styles |
 
 ## Mode G design interview
 

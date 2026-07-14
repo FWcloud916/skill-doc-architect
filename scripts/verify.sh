@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Consistency gate for the doc-architect skill repo. Pure bash, no dependencies.
+# Consistency gate for the doc-architect skill repo. Requires Bash + Python 3.
 # Every check prints PASS/FAIL; any failure exits 1.
 set -u
 cd "$(dirname "$0")/.."
@@ -19,16 +19,18 @@ report() { # $1=status(0 ok) $2=label $3=detail-on-fail
 }
 
 # 1. Bidirectional stack index
+signal_table=$(awk '/^## Signal table/{inside=1; next} /^Notes:/{inside=0} inside' \
+  "$REFS/stacks/README.md")
 missing=""
 for f in "$REFS"/stacks/*.md; do
   base=$(basename "$f")
   [ "$base" = "README.md" ] && continue
-  grep -q "$base" "$REFS/stacks/README.md" || missing="$missing $base"
+  printf '%s\n' "$signal_table" | grep -q "$base" || missing="$missing $base"
 done
 report "$([ -z "$missing" ]; echo $?)" "stack index lists every stack file" "not indexed:$missing"
 
 dead=""
-for name in $(grep -o '`[a-z-]*\.md`' "$REFS/stacks/README.md" | tr -d '\`' | sort -u); do
+for name in $(printf '%s\n' "$signal_table" | grep -o '`[a-z-]*\.md`' | tr -d '\`' | sort -u); do
   [ -f "$REFS/stacks/$name" ] || dead="$dead $name"
 done
 report "$([ -z "$dead" ]; echo $?)" "every indexed stack file exists" "missing:$dead"
@@ -43,11 +45,13 @@ for f in "$REFS"/stacks/*.md; do
 done
 report "$([ -z "$broken" ]; echo $?)" "stack files have the 5-section skeleton" "$broken"
 
-# 3. Canonical tokens — no bare iOS rows, no Apple-token spelling variants
+# 3. Canonical stack-label spellings in current user-facing enumerations
 hits=$(grep -rn "| iOS " "$SKILL_MD" "$REFS/" 2>/dev/null)
 report "$([ -z "$hits" ]; echo $?)" "no bare '| iOS ' stack rows" "$hits"
 variants=$(grep -rn "Apple(iOS\|iOS/MacOS\|IOS/macOS" "$SKILL_MD" "$REFS/" 2>/dev/null)
 report "$([ -z "$variants" ]; echo $?)" "no 'Apple (iOS/macOS)' spelling variants" "$variants"
+label_drift=$(grep -nE 'Windows \.NET|Electron/Tauri/macOS|mobile — iOS' "$SKILL_MD" README.md 2>/dev/null)
+report "$([ -z "$label_drift" ]; echo $?)" "README/SKILL use canonical stack labels" "$label_drift"
 
 # 4. Safety annotation: stack files mentioning build tools must point back to §5
 unref=""
@@ -63,19 +67,36 @@ report "$([ -z "$unref" ]; echo $?)" "build-tool mentions point back to audit-ch
 residue=$(grep -nE 'flutter\.md|electron\.md|node-backend\.md|Zustand|WorkManager|go_router' "$SKILL_MD")
 report "$([ -z "$residue" ]; echo $?)" "SKILL.md has no per-stack residue" "$residue"
 
-# 5b. UI-surface marker: any stack file mentioning it must spell it exactly
-bad_ui=""
+# 5b. Every stack declares one tri-state design surface and its evidence row
+bad_design=""
 for f in "$REFS"/stacks/*.md; do
   [ "$(basename "$f")" = "README.md" ] && continue
-  if grep -q "UI surface" "$f" && ! grep -q '^> \*\*UI surface:\*\* yes' "$f"; then
-    bad_ui="$bad_ui $(basename "$f")"
+  count=$(grep -cE '^> \*\*Design surface:\*\* (inherent|conditional|none)( |$)' "$f")
+  [ "$count" -eq 1 ] || bad_design="$bad_design $(basename "$f"):marker=$count"
+  grep -q '^| Design-surface evidence |' "$f" || bad_design="$bad_design $(basename "$f"):evidence"
+  if ! grep -q '^> \*\*Design surface:\*\* none' "$f"; then
+    grep -q '| DESIGN.md tokens + matching prose' "$f" || bad_design="$bad_design $(basename "$f"):diff-map"
   fi
 done
-report "$([ -z "$bad_ui" ]; echo $?)" "UI-surface markers spelled canonically" "malformed:$bad_ui"
+report "$([ -z "$bad_design" ]; echo $?)" "stack design-surface metadata and evidence are complete" "$bad_design"
 
-# 6. project-overview-template keeps sections ## 1. through ## 10.
-n=$(grep -c '^## [0-9]*\.' "$REFS/project-overview-template.md")
-report "$([ "$n" -eq 10 ]; echo $?)" "project-overview-template has exactly 10 numbered sections" "found $n"
+legacy_ui=$(grep -rn 'UI surface' "$SKILL_MD" "$REFS/" 2>/dev/null)
+report "$([ -z "$legacy_ui" ]; echo $?)" "legacy UI-surface marker removed" "$legacy_ui"
+
+stack_npx=$(grep -rnE '\bnpx\b|npm exec|pnpm dlx|yarn dlx|bunx' "$REFS"/stacks/*.md 2>/dev/null)
+report "$([ -z "$stack_npx" ]; echo $?)" "stack probes avoid on-demand package runners" "$stack_npx"
+
+safe_block=$(awk '/^\*\*SAFE —/{inside=1} /^\*\*NOT SAFE —/{inside=0} inside' "$REFS/audit-checklist.md")
+safe_runner=$(printf '%s\n' "$safe_block" | grep -E '\bnpx\b|npm exec|pnpm dlx|yarn dlx|bunx')
+report "$([ -z "$safe_runner" ]; echo $?)" "audit SAFE block avoids on-demand package runners" "$safe_runner"
+
+# 6. Cross-referenced numbered sections stay exact and ordered
+project_sections=$(grep '^## [0-9]*\.' "$REFS/project-overview-template.md" | sed -E 's/^## ([0-9]+)\..*/\1/' | tr '\n' ' ')
+report "$([ "$project_sections" = '1 2 3 4 5 6 7 8 9 10 ' ]; echo $?)" \
+  "project-overview-template keeps sections 1 through 10 in order" "$project_sections"
+audit_sections=$(grep '^## [0-9]*\.' "$REFS/audit-checklist.md" | sed -E 's/^## ([0-9]+)\..*/\1/' | tr '\n' ' ')
+report "$([ "$audit_sections" = '1 2 3 4 5 6 ' ]; echo $?)" \
+  "audit-checklist keeps sections 1 through 6 in order" "$audit_sections"
 
 # 7. Line budgets
 skill_lines=$(wc -l < "$SKILL_MD")
@@ -110,6 +131,16 @@ for d in evals/fixtures/*/; do
 done
 report "$([ -z "$no_expected" ]; echo $?)" "every eval fixture has expected.json" "missing:$no_expected"
 
+fixture_count=$(find evals/fixtures -mindepth 1 -maxdepth 1 -type d | wc -l | tr -d ' ')
+basic_count=$(find evals/fixtures -mindepth 1 -maxdepth 1 -type d -name 'basic-*' | wc -l | tr -d ' ')
+trap_count=$(find evals/fixtures -mindepth 1 -maxdepth 1 -type d -name 'trap-*' | wc -l | tr -d ' ')
+count_docs_ok=0
+grep -q "# $fixture_count minimal repos" evals/README.md || count_docs_ok=1
+grep -q "# $basic_count: one per stack file" evals/README.md || count_docs_ok=1
+grep -q "# $trap_count: hybrid/ordering/fallback traps" evals/README.md || count_docs_ok=1
+report "$count_docs_ok" "eval README fixture counts match the filesystem" \
+  "actual total/basic/trap=$fixture_count/$basic_count/$trap_count"
+
 bad_stacks=""
 stacks_refd=$( { grep -hoE '"stack": *"[a-z-]+"' evals/fixtures/*/expected.json | grep -oE '[a-z-]+"$' | tr -d '"'; \
   awk '/"forbidden_stacks"/,/\]/' evals/fixtures/*/expected.json | grep -oE '"[a-z-]+"' | tr -d '"'; } | sort -u)
@@ -117,6 +148,53 @@ for name in $stacks_refd; do
   [ -f "$REFS/stacks/$name.md" ] || bad_stacks="$bad_stacks $name"
 done
 report "$([ -z "$bad_stacks" ]; echo $?)" "eval fixtures reference only existing stack files" "unknown stacks:$bad_stacks"
+
+fixture_schema_ok=1
+python3 - <<'PY' && fixture_schema_ok=0
+import json
+from pathlib import Path
+
+roles = {"primary", "surface", "candidate"}
+resolutions = {"single", "hybrid", "ambiguous", "monorepo", "unknown"}
+package_roles = {"server", "ui-framework", "build-tooling", "desktop", "extension",
+                 "workspace", "plain-node", "frontend-entrypoint"}
+package_role_order = ["server", "ui-framework", "build-tooling", "desktop", "extension",
+                      "workspace", "plain-node", "frontend-entrypoint"]
+for expected_path in Path("evals/fixtures").glob("*/expected.json"):
+    fixture = expected_path.parent
+    data = json.loads(expected_path.read_text())
+    assert data["resolution"] in resolutions, expected_path
+    assert isinstance(data["surfaces"], list), expected_path
+    assert "package_json_role" not in data, expected_path
+    for surface in data["surfaces"]:
+        assert set(surface) == {"stack", "role"}, (expected_path, surface)
+        assert surface["role"] in roles, (expected_path, surface)
+    for package in data.get("package_json", []):
+        assert set(package) == {"path", "roles"}, (expected_path, package)
+        assert (fixture / package["path"]).is_file(), (expected_path, package["path"])
+        assert Path(package["path"]).name == "package.json", (expected_path, package["path"])
+        assert package["roles"] and len(package["roles"]) == len(set(package["roles"])), package
+        assert set(package["roles"]) <= package_roles, (expected_path, package)
+        assert package["roles"] == sorted(package["roles"], key=package_role_order.index), package
+for name in ("trap-ruby-gem", "trap-swift-package-library"):
+    data = json.loads((Path("evals/fixtures") / name / "expected.json").read_text())
+    assert data.get("regression_for"), name
+
+schema = json.loads(Path("evals/detection-report.schema.json").read_text())
+schema_stacks = set(schema["properties"]["surfaces"]["items"]["properties"]["stack"]["enum"])
+stack_files = {path.stem for path in Path("skills/doc-architect/references/stacks").glob("*.md")
+               if path.name != "README.md"}
+assert schema_stacks == stack_files, (schema_stacks, stack_files)
+PY
+report "$fixture_schema_ok" "eval expected.json files satisfy the v2 schema" "schema validation failed"
+
+grade_tests_ok=1
+python3 evals/scripts/test_grade.py >/dev/null 2>&1 && grade_tests_ok=0
+report "$grade_tests_ok" "detection grader false-green regression tests pass" "test_grade.py failed"
+
+legacy_contract=$(grep -rn 'package_json_role\|unsafe_commands_flagged' \
+  "$REFS/stacks/README.md" evals/scripts evals/README.md evals/fixtures/*/expected.json 2>/dev/null)
+report "$([ -z "$legacy_contract" ]; echo $?)" "legacy detection-report fields removed" "$legacy_contract"
 
 # 10. Plugin manifests: parseable, names consistent with the skill layout
 plugin_ok=1
@@ -127,7 +205,8 @@ p = json.load(open(".claude-plugin/plugin.json"))
 m = json.load(open(".claude-plugin/marketplace.json"))
 assert p["name"] == "doc-architect", "plugin.json name"
 assert any(e["name"] == "doc-architect" for e in m["plugins"]), "marketplace entry"
-assert "version" in p, "plugin.json version"
+parts = p["version"].split(".")
+assert len(parts) == 3 and all(part.isdigit() for part in parts), "plugin.json semver"
 PY
 else
   plugin_ok=0  # python3 unavailable — skip rather than fail

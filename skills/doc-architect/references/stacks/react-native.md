@@ -3,7 +3,7 @@
 > **Detection:** `package.json` with `react-native` or `expo` in dependencies +
 > devDependencies — the FIRST `package.json` check, before Electron/Tauri and the
 > server/frontend framework checks.
-> **UI surface:** yes — offer the `DESIGN.md` module (see `design-template.md`).
+> **Design surface:** inherent — offer the `DESIGN.md` module (see `design-template.md`).
 
 ## Discovery map
 
@@ -13,6 +13,7 @@
 | §5/§9 models & data | store shapes + local persistence (AsyncStorage, SQLite, WatermelonDB) |
 | §6 interface | navigation graph: `@react-navigation` navigators, expo-router `app/` |
 | §7 background work | background tasks (expo-task-manager, headless JS), push config |
+| Design-surface evidence | screens/components plus theme modules, StyleSheet constants, NativeWind config |
 
 Facet notes: §3 — state-management approach + native-module boundary;
 §8 — consumed backend APIs + third-party SDKs (analytics, push, payments);
@@ -32,7 +33,8 @@ Facet notes: §3 — state-management approach + native-module boundary;
 ## Linter signals
 
 Config: `eslint.config.js` / `.eslintrc*`, `.prettierrc*`, `biome.json`.
-Pre-merge: `npx eslint .`, `npx prettier --check .`.
+Prefer a real package script; otherwise use a confirmed local binary such as
+`./node_modules/.bin/eslint .` or `./node_modules/.bin/prettier --check .`.
 
 ## Minimal test gate
 
@@ -40,6 +42,7 @@ jest (`jest-expo`/`react-native` preset), one component test.
 
 ## Command safety notes
 
-SAFE probes (audit-checklist §5): `node --version`, `npx jest --listTests`.
-NOT SAFE — static check only: `npm install`, native builds (`pod install`, any
+SAFE probes (audit-checklist §5): `node --version`; after confirming it exists,
+`./node_modules/.bin/jest --listTests`. NOT SAFE — static check only: on-demand
+package runners, installs, native builds (`pod install`, any
 `./gradlew` invocation), EAS builds.

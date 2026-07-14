@@ -6,7 +6,7 @@
       "role": "primary"
     }
   ],
-  "package_json_role": "build-tooling",
+  "package_json": [{"path": "package.json", "roles": ["build-tooling"]}],
   "forbidden_stacks": [
     "frontend-web"
   ],

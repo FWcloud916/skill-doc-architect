@@ -28,6 +28,8 @@ Claude Code plugin (`.claude-plugin/`) and marketplace for it.
   change — never loosen the grader to make a red suite pass (source: evals/README.md)
 - MUST annotate `./gradlew` / `cargo build|test|clippy` / `dotnet build|test|format`
   as static-check-only (per §5) wherever they appear (source: scripts/verify.sh)
+- MUST NOT label on-demand package runners (`npx`, `npm exec`, `pnpm dlx`, `yarn dlx`,
+  `bunx`) SAFE; only confirmed local binaries may execute (source: audit-checklist §5)
 - MUST NOT extract modes (G/B/U) out of SKILL.md into an index — they are fixed,
   tightly coupled control flow (source: docs/design-decisions.md, 2026-07-07)
 - MUST edit `AGENTS.md`, never `CLAUDE.md` (symlink) (source: agents-md-template)

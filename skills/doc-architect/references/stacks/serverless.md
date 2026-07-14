@@ -1,6 +1,7 @@
 # Stack: Serverless
 
 > **Detection:** `serverless.yml` or `template.yaml` at the repo root.
+> **Design surface:** conditional — offer `DESIGN.md` only when the evidence row matches.
 
 ## Discovery map
 
@@ -10,6 +11,7 @@
 | §5/§9 models & schema | handler payload types |
 | §6 interface | **function → trigger (event source) table** from the manifest |
 | §7 background work | `schedule:` events in the manifest |
+| Design-surface evidence | project-owned static site/app assets, templates, styles, theme/token sources |
 
 Facet notes: §8 — SDK clients in handler code, resources/permissions in the manifest;
 §10 — stages in the manifest, deploy pipeline, IaC files.
@@ -22,6 +24,7 @@ Facet notes: §8 — SDK clients in handler code, resources/permissions in the m
 | `schedule:` events | project-overview §7 |
 | handler payload types | project-overview §5 |
 | manifest + runtime deps | project-overview §2 |
+| project-owned web/static theme, style, or token sources | DESIGN.md tokens + matching prose — when the design module was selected |
 
 ## Linter signals
 

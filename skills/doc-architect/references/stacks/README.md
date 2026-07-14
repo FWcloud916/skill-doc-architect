@@ -14,7 +14,7 @@ Scan the repo root for every signal in the table below, plus monorepo markers:
 
 - **Exactly one signal** → its stack file. Within `package.json`, apply the dep checks
   in table order — first hit wins there (fast path, unchanged).
-- **A dedicated backend manifest (`Gemfile`/`go.mod`/`pyproject.toml`/`Cargo.toml`/
+- **A dedicated backend manifest (Rails-qualified `Gemfile`/`go.mod`/`pyproject.toml`/`Cargo.toml`/
   serverless manifest) + `package.json`** → the backend stack is primary; classify the
   package.json's **role**:
   - `engines.vscode` field → hybrid with a VS Code extension surface.
@@ -50,21 +50,31 @@ against this exact contract — vocabulary changes here require updating
   "resolution": "single | hybrid | ambiguous | monorepo | unknown",
   "surfaces": [{"stack": "<stack file basename, no .md>",
                 "role": "primary | surface | candidate",
-                "evidence": ["<file or signal that triggered this>"]}],
-  "package_json_role": "ui-framework | build-tooling | desktop | extension | server | absent",
-  "unsafe_commands_flagged": ["<commands to mark NOT SAFE per audit-checklist §5>"],
+                "evidence": ["<repo-relative path that triggered this>"]}],
+  "package_json": [{"path": "<repo-relative package.json path>",
+                    "roles": ["server | ui-framework | build-tooling | desktop | extension | workspace | plain-node | frontend-entrypoint"]}],
   "notes": ""
 }
 ```
 
 - `surfaces` is empty iff `resolution` is `unknown`; every surface carries ≥1
-  evidence entry naming a real file.
+  evidence entry naming a real repo-relative file. Dependency/key detail belongs in
+  `notes`; evidence entries themselves are paths so the report is mechanically
+  verifiable.
 - `role`: `primary` for the main stack of a single-rooted repo (`single`/`hybrid`
   — in a hybrid the backend is the one primary); `surface` for additional hybrid
   surfaces and for **every** monorepo sub-project (a monorepo report has no
   primary — sub-projects are coequal; "backend facets first" orders
   documentation, it does not confer primacy); `candidate` for ambiguous
   alternatives.
+- `package_json` has one entry per discovered `package.json` (empty when none).
+  `roles` records every matching role, sorted in the report vocabulary order above;
+  multiple roles are valid (for example a full-stack package may be both `server`
+  and `ui-framework`). A workspace-only root is `workspace`; a package that reaches
+  the plain-Node fallback is `plain-node`; `vite` + root `index.html` adds
+  `frontend-entrypoint`.
+- Command-safety findings do not belong in this routing contract; they are classified
+  and reported by `audit-checklist.md` §5 during command verification.
 
 ## Signal table
 
@@ -78,10 +88,10 @@ against this exact contract — vocabulary changes here require updating
 | `package.json`: `express`/`fastify`/`@nestjs/core`/`koa` | Node backend → `node-backend.md` |
 | `package.json`: `next`/`nuxt`/`react`/`vue`/`svelte`, or `vite` + root `index.html` | Frontend web → `frontend-web.md` |
 | `package.json`: none of the above | plain Node → `node-backend.md` |
-| `Gemfile` / `go.mod` / `pyproject.toml` | Rails → `rails.md` / Go → `go.md` / Python → `python.md` |
+| `Gemfile` containing `rails`/`railties`, or Rails entrypoints / `go.mod` / `pyproject.toml` | Rails → `rails.md` / Go → `go.md` / Python → `python.md` |
 | `Cargo.toml` (no `src-tauri/`) | Rust → `rust.md` |
 | `serverless.yml`/`template.yaml` | Serverless → `serverless.md` |
-| `*.xcodeproj`/`Package.swift`/`Podfile` | Apple (iOS/macOS) → `apple.md` |
+| `*.xcodeproj`/`*.xcworkspace`/`Podfile`, or `Package.swift` declaring an Apple platform | Apple (iOS/macOS) → `apple.md` |
 | `build.gradle*` **plus** `AndroidManifest.xml` | Android → `android.md` |
 | `*.sln`/`*.csproj` with desktop markers (`<UseWPF>`/`<UseWindowsForms>`/`net*-windows`/WinUI/MAUI) | Windows desktop (.NET) → `windows-dotnet.md` |
 
@@ -91,6 +101,8 @@ Notes:
   MUST precede the frontend check (Electron/Tauri renderers depend on react/vue too).
 - `.csproj` with `Microsoft.NET.Sdk.Web` or no desktop marker, Qt/C++ (CMake), anything
   else → unknown stack: fall back to README + entrypoint reading; say so in the output.
-- UI-bearing stacks carry a `> **UI surface:** yes` marker in their header blockquote;
-  the Mode B step-3 gate offers the `DESIGN.md` module iff a documented surface's stack
-  file carries it. Backend/CLI/extension stacks carry no marker.
+- Every stack file declares `> **Design surface:** inherent | conditional | none`.
+  `inherent` means the stack owns project-styled UI by definition; `conditional` means
+  Mode B MUST inspect that stack file's `Design-surface evidence` discovery row. The
+  step-3 gate offers `DESIGN.md` when any documented surface is inherent or when
+  conditional evidence exists. Unknown stacks get the same generic evidence scan.

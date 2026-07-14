@@ -3,7 +3,7 @@
 > **Detection:** `package.json` with `@tauri-apps/api`/`@tauri-apps/cli` in
 > dependencies + devDependencies, or a `src-tauri/` directory — checked BEFORE the
 > frontend-framework signal (the frontend depends on react/vue too).
-> **UI surface:** yes — offer the `DESIGN.md` module (see `design-template.md`).
+> **Design surface:** inherent — offer the `DESIGN.md` module (see `design-template.md`).
 
 ## Discovery map
 
@@ -13,6 +13,7 @@
 | §5/§9 models & data | frontend stores; tauri-plugin-store/-sql, app-data dirs |
 | §6 interface | windows in `tauri.conf.json` + frontend routes; **`#[tauri::command]` fns are a §6 surface** |
 | §7 background work | Rust-side threads/async tasks, updater config |
+| Design-surface evidence | frontend routes/components plus CSS/theme/token sources |
 
 Facet notes: §3 — frontend + Rust command-layer architecture (the IPC boundary);
 §8 — consumed backend APIs + third-party SDKs + the update server;
@@ -30,7 +31,8 @@ Facet notes: §3 — frontend + Rust command-layer architecture (the IPC boundar
 
 ## Linter signals
 
-Frontend: `eslint.config.js` / `.eslintrc*`, `.prettierrc*` — `npx eslint .`.
+Frontend: `eslint.config.js` / `.eslintrc*`, `.prettierrc*`; prefer a real package
+script, otherwise a confirmed local binary such as `./node_modules/.bin/eslint .`.
 Rust side: `rustfmt.toml`, `clippy.toml` — `cargo fmt --check` (safe, read-only);
 `cargo clippy` (static check only, audit-checklist §5).
 
@@ -42,6 +44,7 @@ on the frontend.
 ## Command safety notes
 
 SAFE probes (audit-checklist §5): `cargo --version`, `rustc --version`,
-`cargo fmt --check`, `npx vitest list`. NOT SAFE — static check only:
+`cargo fmt --check`; after confirming it exists, `./node_modules/.bin/vitest list`.
+NOT SAFE — static check only: on-demand package runners,
 `cargo build`/`cargo test`/`cargo clippy` (download and compile crates),
 `tauri build`, signing/updater steps.

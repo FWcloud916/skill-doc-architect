@@ -10,5 +10,10 @@
       "role": "surface"
     }
   ],
+  "package_json": [
+    {"path": "package.json", "roles": ["workspace"]},
+    {"path": "apps/api/package.json", "roles": ["server"]},
+    {"path": "apps/web/package.json", "roles": ["ui-framework", "build-tooling"]}
+  ],
   "notes": "Monorepo markers -> enumerate sub-projects and detect per sub-project. Root package.json alone must not decide."
 }

@@ -8,9 +8,9 @@ An agent skill that plans, bootstraps, and maintains a project's core documentat
 - **Greenfield** — interviews you about a new project's purpose, scale, and team, advises
   on undecided choices (language, architecture, datastore), and records decisions with
   rationale into a full docs skeleton.
-- **Brownfield** — reads an existing codebase (Rails, Go, Node, Python, serverless,
-  frontend web, mobile — iOS/Android/Flutter/React Native — desktop —
-  Electron/Tauri/macOS/Windows .NET — or other), presents its
+- **Brownfield** — reads an existing codebase (Rails, Go, Node backend, Python, Rust,
+  Serverless, Frontend web, React Native, Apple (iOS/macOS), Android, Flutter,
+  Electron, Tauri, Windows desktop (.NET), VS Code extension, or other), presents its
   plan (stack, doc set, skip reasons) for confirmation, then
   writes the documentation from the code one doc at a time with per-doc self-checks
   (WIP = 1); resumable across sessions on large repos; merge mode fills gaps when some
@@ -151,4 +151,4 @@ doc-architect/
 | [harness-template.md](skills/doc-architect/references/harness-template.md) | PROGRESS.md state conventions + Mode-B resume state file |
 | [design-template.md](skills/doc-architect/references/design-template.md) | DESIGN.md UI design system: YAML design tokens + prose, per-stack extraction map |
 | [audit-checklist.md](skills/doc-architect/references/audit-checklist.md) | Diff→section mapping, invariants, executable command verification, Fresh Session Test |
-| skills/doc-architect/references/stacks/ | Per-stack reference (13 stacks): detection signal, discovery map, diff→section map, linter signals, minimal test gate |
+| skills/doc-architect/references/stacks/ | Per-stack references: detection signal, discovery map, diff→section map, linter signals, minimal test gate |

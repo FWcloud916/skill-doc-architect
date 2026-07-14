@@ -10,6 +10,6 @@
       "role": "surface"
     }
   ],
-  "package_json_role": "ui-framework",
+  "package_json": [{"path": "package.json", "roles": ["ui-framework", "build-tooling"]}],
   "notes": "Backend manifest + UI framework -> hybrid, backend primary."
 }

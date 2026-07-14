@@ -1,9 +1,11 @@
 # Stack: Apple (iOS/macOS)
 
-> **Detection:** `*.xcodeproj`/`*.xcworkspace`, `Package.swift`, or `Podfile`.
+> **Detection:** `*.xcodeproj`/`*.xcworkspace` or `Podfile`; `Package.swift` only
+> when its `platforms` declares iOS/macOS/tvOS/watchOS/visionOS. A generic Swift
+> package without Apple-platform evidence is unknown, not an Apple app.
 > Read the platform (iOS vs macOS vs both) from the deployment target/SDK in the
 > project settings — the facets below differ per platform.
-> **UI surface:** yes — offer the `DESIGN.md` module (see `design-template.md`).
+> **Design surface:** inherent — offer the `DESIGN.md` module (see `design-template.md`).
 
 ## Discovery map
 
@@ -13,6 +15,7 @@
 | §5/§9 models & data | model types; Core Data `.xcdatamodeld`/SwiftData/Realm |
 | §6 interface | screens/windows + navigation: SwiftUI `App`/`Scene`, storyboards, coordinators; `NSWindow`/menu bar (macOS) |
 | §7 background work | `BGTaskScheduler` + `Info.plist` background modes, push (iOS); login items, `launchd` agents (macOS) |
+| Design-surface evidence | asset-catalog colors, SwiftUI/UIKit/AppKit views and theme extensions |
 
 Facet notes: §8 — consumed backend APIs + third-party SDKs; §10 — signing +
 App Store/TestFlight (iOS); notarization + DMG + Sparkle updates (macOS).

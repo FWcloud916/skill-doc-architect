@@ -1,6 +1,8 @@
 # Stack: Rails
 
-> **Detection:** `Gemfile` at the repo root.
+> **Detection:** a root `Gemfile` containing the `rails` or `railties` gem, or Rails
+> entrypoints such as `config/application.rb`. A generic Ruby Gemfile is unknown.
+> **Design surface:** conditional — offer `DESIGN.md` only when the evidence row matches.
 
 ## Discovery map
 
@@ -10,6 +12,7 @@
 | §5/§9 models & schema | `app/models/`, `db/schema.rb` |
 | §6 interface | `config/routes.rb` |
 | §7 background work | `app/workers/`, `app/jobs/`, `config/schedule.rb`, `config/sidekiq.yml` |
+| Design-surface evidence | `app/views`, ViewComponent, asset styles, Tailwind/theme/token sources |
 
 Facet notes: §8 — API-client wrappers (`app/services/`, `lib/`), SDK gems in the
 Gemfile; §10 — `config/environments/`, credentials/settings files, Dockerfile, CI/CD.
@@ -24,6 +27,7 @@ Gemfile; §10 — `config/environments/`, credentials/settings files, Dockerfile
 | `app/workers/`, `app/jobs/`, schedule/cron config | project-overview §7 |
 | `app/services/` (business logic) | domain-models mechanism/flow sections naming those classes |
 | `app/controllers/` | project-overview §6; domain-models flow sections if behavior changed |
+| `app/views`, component styles, Tailwind/theme/token sources | DESIGN.md tokens + matching prose — when the design module was selected |
 
 ## Linter signals
 

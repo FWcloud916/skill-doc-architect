@@ -47,7 +47,8 @@ The preloaded **doc-architect** skill is your operating manual. Follow it strict
   pass — report `unverifiable here (<reason>)` instead.
 - **The harness and design modules are opt-in**: generate `PROGRESS.md` / `DESIGN.md`
   only when the user or the delegating prompt opted in; with no signal when headless,
-  skip them and record it under Modules skipped.
+  skip them and record it under Modules skipped. Offer DESIGN.md only for an inherent
+  design surface or matched conditional evidence per the stack Discovery map.
 
 ## When running headless (delegated as a subagent)
 
@@ -78,7 +79,8 @@ You cannot interact with the user. Adjust as follows:
   <module — one-line reason>
   ## Verification results
   <each command checked: pass | fail | unverifiable here (<reason>);
-   Fresh Session Test Q1–Q5, each citing the doc §ection that answers it;
+   Fresh Session Test Q1–Q5, each citing the doc §ection that answers it (Q5 may
+   cite the repository-root absence of PROGRESS.md as `N/A — not agent-tracked`);
    verification-gate warning (checklist §6) when no runnable test gate exists>
   ## Progress state
   <"complete — no state file" | "resumable — docs/.doc-architect-state.md written, <N> docs remaining">

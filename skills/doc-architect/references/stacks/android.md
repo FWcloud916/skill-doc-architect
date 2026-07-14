@@ -3,7 +3,7 @@
 > **Detection:** `build.gradle`/`build.gradle.kts` **plus** `AndroidManifest.xml`
 > (or the `com.android.application` plugin) — the manifest requirement keeps
 > JVM-backend gradle repos in the unknown-stack fallback.
-> **UI surface:** yes — offer the `DESIGN.md` module (see `design-template.md`).
+> **Design surface:** inherent — offer the `DESIGN.md` module (see `design-template.md`).
 
 ## Discovery map
 
@@ -13,6 +13,7 @@
 | §5/§9 models & data | data classes; Room entities/DAOs, DataStore |
 | §6 interface | Activities/Fragments in the manifest; Compose `NavHost`/navigation XML |
 | §7 background work | WorkManager workers, manifest services, FCM |
+| Design-surface evidence | Compose/XML themes, `res/values/colors.xml`, screens/layouts |
 
 Facet notes: §8 — consumed backend APIs + third-party SDKs (analytics, push, payments);
 §10 — build variants/flavors, signing config, Play release.

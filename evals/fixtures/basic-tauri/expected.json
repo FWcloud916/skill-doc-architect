@@ -6,6 +6,7 @@
       "role": "primary"
     }
   ],
+  "package_json": [{"path": "package.json", "roles": ["build-tooling", "desktop"]}],
   "forbidden_stacks": [
     "rust",
     "frontend-web"

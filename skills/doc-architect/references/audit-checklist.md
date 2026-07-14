@@ -37,7 +37,11 @@ even if you don't edit them.
 
 Run per file; each check is a grep/ls-level comparison, not a judgment call.
 
-**Every canonical doc file (`docs/*.md`, `docs/domain/*.md`)**
+**Every canonical doc file** — the fixed set is `docs/project-overview.md` plus
+selected modules that exist (`docs/domain-models.md`, `docs/coding-style.md`,
+`docs/db-observation.md`). Under `docs/domain/`, apply these invariants only to files
+listed by `domain-models.md`'s Document Map. Other ADRs, memos, scratch docs, and
+pre-existing files are source material, not doc-architect-owned audit targets.
 - [ ] Frontmatter present and complete: `# <Project> — <Doc>` title, `> **Type:**`,
       `> **Audience:**`, `> **Last updated:** YYYY-MM-DD`
 - [ ] `Last updated` is a valid date, not in the future
@@ -142,7 +146,8 @@ Use the `[command]` tag for §5 failures, e.g.
 End every U-2 report (and every Mode B/G result presentation) with a **Verification
 results** block: each command checked, with `pass | fail | unverifiable here (<reason>)`,
 plus the Fresh Session Test answers (§6) — Q1–Q5, each citing the doc + section that
-answers it.
+answers it; Q5 may cite `PROGRESS.md absent at repository root` for the valid
+`N/A — not agent-tracked` answer.
 
 Fix only after the user confirms — unless they asked for fix-directly up front. Bump each
 file's `Last updated` only if its content actually changed.
@@ -159,11 +164,13 @@ finishes in seconds:
 
 - tool existence + version: `command -v <tool>`, `<tool> --version`
 - test-runner discovery / dry-run: `bundle exec rspec --dry-run`,
-  `pytest --collect-only -q`, `npx jest --listTests`, `go test -list '.*' ./...`
+  `pytest --collect-only -q`, a confirmed local binary such as
+  `./node_modules/.bin/jest --listTests`, `go test -list '.*' ./...`
 - linter presence: `<linter> --version`; a check-only mode on a single file MAY be run
 - `make -n <target>` (dry-run)
 - script existence: the named script/target appears in package scripts / Makefile / CI config
-- frontend/mobile probes: `npx vitest list`, `flutter --version`, `dart --version`,
+- frontend/mobile probes: a confirmed local binary such as
+  `./node_modules/.bin/vitest list`, `flutter --version`, `dart --version`,
   `xcodebuild -list` (reads project metadata only)
 - desktop probes: `dotnet --version`, `cargo --version`, `rustc --version`;
   `cargo fmt --check` MAY be run (read-only, seconds; rustfmt missing → `unverifiable here`)
@@ -173,8 +180,10 @@ deploys, `docker compose up`, DB consoles, anything that writes files, mutates n
 state, or needs credentials — including any `./gradlew` invocation (the wrapper may
 download distributions and dependencies on first run), `dotnet build`/`dotnet test`/
 `dotnet format` (implicit restore touches the network), and `cargo build`/`cargo test`/
-`cargo clippy` (download and compile crates). For these the check stays "exists in
-real config".
+`cargo clippy` (download and compile crates). On-demand package runners (`npx`,
+`npm exec`, `pnpm dlx`, `yarn dlx`, `bunx`) are also NOT SAFE as probes because a
+missing local package may trigger a download. For these the check stays "exists in
+real config"; a JavaScript tool may execute only after its local binary is confirmed.
 
 Rules:
 
@@ -198,11 +207,12 @@ repo files**, citing the doc + section that answers it.
 | 2 | How is it organized? | project-overview §3–4 |
 | 3 | How do I run it? | README Quickstart Run / AGENTS.md Commands |
 | 4 | How do I verify my work? | test + lint commands — §5-verified, or honest greenfield `TBD` |
-| 5 | What is the current progress? | PROGRESS.md (harness module); else Mode G's TBD hand-off list; else state `N/A — not agent-tracked` in the report |
+| 5 | What work state, if any, does this repository track? | PROGRESS.md (harness module); when absent, `N/A — not agent-tracked (PROGRESS.md absent)` is a valid repository-derived answer |
 
 A question unanswerable from the repo alone is a **blocking gap** in Modes G/B (fix
 before presenting) and a **drift finding** in Mode U-2. An honest `TBD` answer passes
-for greenfield; a wrong or absent answer never does.
+for greenfield; a wrong or absent answer never does. Q5 is not a gap when PROGRESS.md
+is absent: its absence proves that this repository does not track agent work state.
 
 ### Running it independently (preferred)
 

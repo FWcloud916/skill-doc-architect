@@ -5,5 +5,6 @@
       "stack": "frontend-web",
       "role": "primary"
     }
-  ]
+  ],
+  "package_json": [{"path": "package.json", "roles": ["ui-framework", "build-tooling"]}]
 }

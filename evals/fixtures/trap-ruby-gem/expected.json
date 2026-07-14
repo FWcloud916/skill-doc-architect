@@ -1,0 +1,7 @@
+{
+  "resolution": "unknown",
+  "surfaces": [],
+  "forbidden_stacks": ["rails"],
+  "regression_for": "design-decisions 2026-07-14: broad manifest signals and evidence-based design surfaces",
+  "notes": "A generic Ruby Gemfile without rails/railties or Rails entrypoints is unknown."
+}

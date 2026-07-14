@@ -42,7 +42,9 @@ so plainly instead of guessing.
 2. How is it organized?
 3. How do I run it?
 4. How do I verify my work?
-5. What is the current progress?
+5. What work state, if any, does this repository track? If PROGRESS.md is absent,
+   answer "N/A — not agent-tracked (PROGRESS.md absent)"; that absence is valid
+   repository evidence, not an unanswerable gap.
 
 Output ONLY a JSON object (no prose, no markdown fences) with this shape:
 {"answers": [
@@ -50,7 +52,7 @@ Output ONLY a JSON object (no prose, no markdown fences) with this shape:
   {"q": 2, "question": "How is it organized?", "answer": "...", "citation": "..."},
   {"q": 3, "question": "How do I run it?", "answer": "...", "citation": "..."},
   {"q": 4, "question": "How do I verify my work?", "answer": "...", "citation": "..."},
-  {"q": 5, "question": "What is the current progress?", "answer": "...", "citation": "..."}
+  {"q": 5, "question": "What work state, if any, does this repository track?", "answer": "...", "citation": "..."}
 ]}'
 
 # --output-format json wraps the answer in a result envelope; plain-text -p
@@ -82,7 +84,18 @@ if not m:
     print(json.dumps({"_parse_error": "no JSON object in output", "_raw": text[:2000]}))
     sys.exit(1)
 try:
-    print(json.dumps(json.loads(m.group(0)), indent=2))
+    result = json.loads(m.group(0))
+    answers = result.get("answers") if isinstance(result, dict) else None
+    valid = isinstance(answers, list) and len(answers) == 5
+    valid = valid and [item.get("q") for item in answers if isinstance(item, dict)] == [1, 2, 3, 4, 5]
+    valid = valid and all(
+        set(item) == {"q", "question", "answer", "citation"}
+        and all(isinstance(item[key], str) for key in ("question", "answer", "citation"))
+        for item in answers
+    )
+    if not valid:
+        raise ValueError("answers must contain exactly q=1..5 with string question/answer/citation fields")
+    print(json.dumps(result, indent=2))
 except Exception as e:
     print(json.dumps({"_parse_error": str(e), "_raw": m.group(0)[:2000]}))
     sys.exit(1)

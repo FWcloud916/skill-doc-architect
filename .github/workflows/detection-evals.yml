@@ -2,7 +2,7 @@
 #
 # Manual-trigger ONLY (workflow_dispatch). Deliberately no push/pull_request/
 # schedule trigger: each run drives the doc-architect skill live via the
-# claude CLI against 32 fixtures, which costs real API spend (~$16 for a
+# claude CLI against 34 fixtures, which costs real API spend (~$17 for a
 # default N=3 run — see the cost note in evals/README.md). A human must click
 # "Run workflow" for that to happen.
 #

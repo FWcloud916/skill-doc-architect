@@ -1,7 +1,7 @@
 # Stack: Flutter
 
 > **Detection:** `pubspec.yaml` at the repo root — checked BEFORE `package.json`.
-> **UI surface:** yes — offer the `DESIGN.md` module (see `design-template.md`).
+> **Design surface:** inherent — offer the `DESIGN.md` module (see `design-template.md`).
 
 ## Discovery map
 
@@ -11,6 +11,7 @@
 | §5/§9 models & data | model classes; drift/sqflite/hive/isar |
 | §6 interface | `MaterialApp` routes / `go_router` config, `Navigator` calls |
 | §7 background work | `workmanager`/`background_fetch`, `firebase_messaging` |
+| Design-surface evidence | `ThemeData`/`ColorScheme`/`TextTheme`, widgets and asset themes |
 
 Facet notes: §3 — state-management approach (bloc/riverpod/provider) + platform-channel
 boundary; §8 — consumed backend APIs + third-party SDKs; §10 — build flavors, signing

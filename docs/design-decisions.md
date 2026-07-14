@@ -2,7 +2,7 @@
 
 > **Type:** Explanation
 > **Audience:** Maintainers (human and AI) of this skill
-> **Last updated:** 2026-07-11
+> **Last updated:** 2026-07-14
 >
 > Decision log for this skill's architecture, newest first. Portable source of truth —
 > everything a fresh clone needs to modify the skill without prior session context.
@@ -10,6 +10,42 @@
 > at repo root); those now live under `skills/doc-architect/`.
 
 ---
+
+## 2026-07-14 — Detection contract v2, evidence-based design surfaces, and false-green gates
+
+Review found four correctness gaps that the existing green `verify.sh` did not expose:
+the detection grader accepted empty/incomplete suites and ignored non-primary roles and
+evidence; SAFE probes used on-demand `npx`; Fresh Session Q5 depended on a report outside
+the fresh agent's repository context; and `docs/*.md` invariants accidentally covered
+non-canonical ADRs/memos despite the scope guard. Two broad detection signals also
+misrouted generic Ruby Gemfiles as Rails and generic Swift packages as Apple apps.
+
+Decisions:
+
+- **Detection report v2 is routing-only.** The lossy singular `package_json_role`
+  became one `{path, roles[]}` entry per package manifest, supporting monorepos and
+  multi-role packages. Evidence is now a repo-relative path that the grader proves
+  exists. The unrelated `unsafe_commands_flagged` field was removed; command safety
+  remains centralized in `audit-checklist.md` §5. Because the machine contract is an
+  advertised interface, this is a major plugin release (`2.0.0`).
+- **Completeness is graded before correctness.** The runner writes a manifest naming
+  selected fixtures and N; zero matches, missing fixtures, or missing runs hard-fail.
+  The grader checks the exact schema, complete `(stack, role)` pairs, resolution/role
+  invariants, package roles, and evidence paths. Free unit tests permanently cover the
+  false-green cases.
+- **Broad manifests require qualifying evidence.** A Gemfile is Rails only when it
+  names `rails`/`railties` or Rails entrypoints exist; Package.swift is Apple only
+  when it declares an Apple platform (or an Xcode/Podfile signal exists). Regression
+  fixtures: `trap-ruby-gem` and `trap-swift-package-library`.
+- **Design applicability is a discovery facet, not a routing field.** Every stack now
+  declares `Design surface: inherent | conditional | none` and a discovery evidence
+  row. Conditional server-rendered UIs and VS Code webviews can offer DESIGN.md without
+  contaminating the manifest-only detection contract; native host UI alone does not.
+- **Safety and audit ownership are explicit.** On-demand package runners are NOT SAFE;
+  only confirmed local binaries execute. Canonical invariants apply to the fixed docs
+  set and Document-Map-owned domain files, never arbitrary `docs/` content. When
+  PROGRESS.md is absent, Fresh Session Q5 validly answers `N/A — not agent-tracked`,
+  preserving the harness module's opt-in status.
 
 ## 2026-07-11 — DESIGN.md UI design-system module (opt-in)
 
