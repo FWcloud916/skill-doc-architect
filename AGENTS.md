@@ -26,6 +26,9 @@ Claude Code plugin (`.claude-plugin/`) and marketplace for it.
 - Changing a resolve rule or the report contract MUST update the affected
   `evals/fixtures/*/expected.json` (+ `grade.py` for vocabulary) in the same
   change — never loosen the grader to make a red suite pass (source: evals/README.md)
+- Changing a mode's file scope, output contract, or merge/update behavior MUST update
+  the affected `evals/scenarios/*/scenario.json` and grader tests in the same change
+  (source: evals/README.md)
 - MUST annotate `./gradlew` / `cargo build|test|clippy` / `dotnet build|test|format`
   as static-check-only (per §5) wherever they appear (source: scripts/verify.sh)
 - MUST NOT label on-demand package runners (`npx`, `npm exec`, `pnpm dlx`, `yarn dlx`,
@@ -54,7 +57,8 @@ edits) can skip; do not pre-load all docs.
 
 ```bash
 bash scripts/verify.sh              # consistency gate — the verification gate for "done"
-./evals/scripts/run_detection.sh    # live detection sweep (headless claude -p; costs runs)
+./evals/scripts/run_detection.sh    # live detection sweep (Claude/Codex; costs runs)
+./evals/scripts/run_scenarios.sh    # live end-to-end scenario sweep (costs runs)
 skills/doc-architect/scripts/fresh_session_test.sh <repo> # independent Fresh Session Test (paid; checklist §6)
 ```
 

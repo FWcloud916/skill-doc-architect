@@ -19,7 +19,8 @@ An agent skill that plans, bootstraps, and maintains a project's core documentat
   confirmed before editing), or audits the whole doc set for drift against the current
   code (report-first).
 - **Verification, not vibes** — every mode proves documented commands by executing
-  safe read-only checks and ends with a 5-question Fresh Session Test. A project with
+  safe read-only checks and ends with a cross-provider 5-question Fresh Session Test.
+  Claude Code and Codex CLI can supply the independent context. A project with
   no runnable test gate gets an explicit warning (missing feedback loop) plus a
   stack-appropriate suggestion — and, when `PROGRESS.md` is selected, the gate is
   seeded as the feature list's first work item, so agents iterating on the project
@@ -115,6 +116,7 @@ Working on the skill itself? Read [AGENTS.md](AGENTS.md) first, then verify any 
 
 ```bash
 bash scripts/verify.sh   # consistency gate — must pass before a change is done
+python3 evals/scripts/test_grade_scenarios.py # free end-to-end grader tests
 ```
 
 ## Project structure
@@ -125,14 +127,15 @@ doc-architect/
 ├── skills/
 │   └── doc-architect/
 │       ├── SKILL.md      # entry point: modes, doc-set selection, shared conventions
+│       ├── agents/       # Codex UI metadata (openai.yaml)
 │       ├── references/   # one template per generated file + the audit checklist
 │       │   └── stacks/   # detection index (README.md) + one file per stack
-│       └── scripts/      # fresh_session_test.sh — independent Fresh Session Test
+│       └── scripts/      # cross-provider Fresh Session runner + validator
 ├── agents/           # dedicated agent definition (preloads the skill)
 ├── AGENTS.md         # maintainer guide for this repo (CLAUDE.md is a symlink to it)
 ├── docs/             # design-decisions.md — why the skill is built this way
 ├── scripts/          # verify.sh — consistency gate for changes to this repo
-└── evals/            # detection eval fixtures + graders
+└── evals/            # detection fixtures + end-to-end scenarios + trigger matrix
 ```
 
 ## Documentation

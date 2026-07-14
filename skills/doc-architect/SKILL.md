@@ -1,24 +1,17 @@
 ---
 name: doc-architect
 description: >-
-  Plans, bootstraps, and maintains a project's core documentation set — README.md,
-  AGENTS.md, a modular docs/ set (project-overview.md, domain-models.md,
-  coding-style.md, db-observation.md), an opt-in PROGRESS.md agent-harness state
-  file, and an opt-in DESIGN.md UI design-system doc (design tokens + visual
-  conventions for AI-generated UI) — for any stack: Rails, Go, Node backend, Python, Rust,
-  Serverless, Frontend web (React/Vue/Next.js/Nuxt/Svelte), mobile (Apple
-  (iOS/macOS), Android, Flutter, React Native), desktop (Electron, Tauri, Windows
-  desktop (.NET)), VS Code extension, or other.
-  Trigger this skill when: (1) the user is starting a NEW project and wants its
-  documentation architecture planned — "新專案要建文件", "幫我規劃專案文件
-  架構", "set up docs for a new project", "greenfield docs"; (2) an EXISTING codebase
-  lacks docs and needs them written from the code — "這個專案沒有文件", "幫 X 建 docs",
-  "generate project docs", "create documentation for this repo", "寫 AGENTS.md",
-  "補 README"; (3) code changed and docs need a diff-driven sync — "更新 docs",
-  "把這次改動同步到文件", "update docs for this branch"; (4) the user wants a drift
-  audit of existing docs against the code — "檢查文件有沒有過時", "audit the docs";
-  (5) the user invokes /doc-architect explicitly. Do NOT trigger for client-facing
-  integration guides, API reference generation (OpenAPI/Postman), or changelogs.
+  Plans, bootstraps, audits, and maintains a project's complete documentation
+  architecture: README.md, AGENTS.md, canonical docs/, optional PROGRESS.md, and
+  optional DESIGN.md. Use for greenfield documentation planning; brownfield repos
+  that lack core docs; requests to write README or AGENTS; full-set diff-driven sync;
+  full documentation drift audits; or /doc-architect (e.g. "新專案要建文件",
+  "這個專案沒有文件", "更新 docs", "檢查文件有沒有過時"). This broader skill owns
+  doc-set selection, stack discovery, merge preservation, and Fresh Session validation
+  across stacks. If an established repo only needs its existing canonical docs/ files
+  generated, synchronized, or audited, prefer project-docs when available. Do not use
+  for client-facing integration guides, API/OpenAPI/Postman reference generation,
+  endpoint descriptions, or changelogs.
 ---
 
 # Doc Architect
@@ -201,9 +194,9 @@ Either way, restate the selection when presenting results.
 ## Definition of Done (per mode)
 
 "Docs written" is not done. A mode completes only when its checklist passes (executable
-checks: checklist §5; Fresh Session Test: §6). Fresh Session Test: prefer the
-independent runner (`scripts/fresh_session_test.sh`, checklist §6) over
-self-simulation when the `claude` CLI is available.
+checks: checklist §5; Fresh Session Test: §6). Prefer the independent cross-provider
+runner (`scripts/fresh_session_test.sh`, checklist §6). Self-simulation is a degraded
+fallback and MUST NOT be reported as an independent pass.
 
 - **G** — core files + selected modules exist · every undecided section reads
   `TBD — not yet designed` · TBD list handed off with return triggers · Fresh Session

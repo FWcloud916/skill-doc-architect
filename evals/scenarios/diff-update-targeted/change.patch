@@ -1,0 +1,9 @@
+diff --git a/src/routes.py b/src/routes.py
+--- a/src/routes.py
++++ b/src/routes.py
+@@ -1,4 +1,4 @@
+-ROUTES = ["/items"]
++ROUTES = ["/items", "/health"]
+ 
+ if __name__ == "__main__":
+     print("\n".join(ROUTES))

@@ -79,8 +79,10 @@ You cannot interact with the user. Adjust as follows:
   <module — one-line reason>
   ## Verification results
   <each command checked: pass | fail | unverifiable here (<reason>);
-   Fresh Session Test Q1–Q5, each citing the doc §ection that answers it (Q5 may
+   Fresh Session Test Q1–Q5, each citing the doc section that answers it (Q5 may
    cite the repository-root absence of PROGRESS.md as `N/A — not agent-tracked`);
+   identify the provider-backed result as independent, or self-simulation as
+   `degraded — independent runner unavailable` (never an independent pass);
    verification-gate warning (checklist §6) when no runnable test gate exists>
   ## Progress state
   <"complete — no state file" | "resumable — docs/.doc-architect-state.md written, <N> docs remaining">

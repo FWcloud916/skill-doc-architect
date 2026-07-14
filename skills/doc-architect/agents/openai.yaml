@@ -1,0 +1,4 @@
+interface:
+  display_name: "Doc Architect"
+  short_description: "Plan and maintain evidence-based project docs"
+  default_prompt: "Use $doc-architect to plan or update this project's core documentation set."

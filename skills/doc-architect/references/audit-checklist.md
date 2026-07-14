@@ -221,18 +221,21 @@ wrote the docs isn't actually a fresh context — it remembers every decision it
 made, which systematically overestimates doc quality. Prefer a genuinely independent
 context instead:
 
-- If the `claude` CLI is available, run `scripts/fresh_session_test.sh <repo root>`.
-  It spawns a headless subprocess with zero conversation history, asks it the 5
-  questions above, and returns its answers with citations as JSON.
-- Only fall back to self-simulation (the method above) when the script fails or the
-  CLI isn't available — a transient failure (e.g. an API overload) is a reason to
-  retry or fall back, not a reason to block the mode's completion.
+- If either supported CLI is available, run `scripts/fresh_session_test.sh <repo root>`
+  (`EVAL_CLI=claude|codex`, default Claude). It spawns a headless subprocess with zero
+  conversation history and returns the 5 answers as validated JSON. Citations for
+  Q1–Q4 (and Q5 when PROGRESS.md exists) MUST name a real repository Markdown file.
+- Only fall back to self-simulation when the selected CLI or script is unavailable.
+  Label it `degraded — independent runner unavailable`; it MAY support a best-effort
+  handoff but MUST NOT be reported as an independent pass or an unqualified `complete`.
+  A transient provider failure is a reason to retry or record degradation, not to
+  fabricate a green independent result.
 - **Grading is unchanged and stays this session's job.** The script only supplies
   answers; judging blocking-gap vs pass vs honest `TBD` is still the rules above,
   applied by the session that has full context of what the project actually needs.
-- Cost note: one extra headless call per Fresh Session Test — modest compared to doc
-  generation itself, paid for context purity, the same trade-off already made for the
-  detection report's per-run cost (`evals/README.md`).
+- Cost note: one extra headless call per independent Fresh Session Test — modest
+  compared to doc generation itself, paid for context purity. End-to-end eval scenarios
+  deliberately self-simulate and label degradation to avoid nested provider calls.
 - The 5 questions are hard-coded in the script's prompt from this table. If this
   table's wording changes, update the script's prompt in the same change.
 

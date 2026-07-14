@@ -1,0 +1,20 @@
+{
+  "mode": "G",
+  "request": "Plan and generate the core documentation for the new Lantern project from project-brief.md. The user does not opt into PROGRESS.md or DESIGN.md. Preserve every undecided choice as `TBD — not yet designed`; do not invent a verification command.",
+  "allowed_changes": ["README.md", "AGENTS.md", "CLAUDE.md", "docs/project-overview.md"],
+  "required_changes": ["README.md", "AGENTS.md", "docs/project-overview.md"],
+  "required_paths": ["README.md", "AGENTS.md", "docs/project-overview.md"],
+  "forbidden_paths": ["PROGRESS.md", "DESIGN.md", "docs/domain-models.md", "docs/coding-style.md", "docs/db-observation.md", "docs/.doc-architect-state.md"],
+  "unchanged_paths": ["project-brief.md"],
+  "required_contains": {
+    "README.md": ["Lantern"],
+    "docs/project-overview.md": ["TBD — not yet designed"]
+  },
+  "forbidden_contains": {
+    "README.md": ["npm test", "pytest"],
+    "AGENTS.md": ["npm test", "pytest"]
+  },
+  "canonical_docs": ["docs/project-overview.md"],
+  "validate_relative_links": true,
+  "final_required_contains": ["Verification results", "TBD"]
+}

@@ -11,6 +11,37 @@
 
 ---
 
+## 2026-07-14 — End-to-end invariant evals and cross-provider Fresh Session validation
+
+The 2.0 review made stack routing strict but left the larger promise — safe, targeted,
+evidence-based documentation changes — protected only by instructions and manual
+review. Version 2.1 adds deterministic coverage without pretending prose has one golden
+answer:
+
+- **Grade invariants, not wording.** Six disposable-repository scenarios cover honest
+  greenfield TBDs, brownfield bootstrap, merge preservation, targeted Mode U-1 edits,
+  report-only U-2, and unknown-stack honesty. Their grader checks filesystem scope,
+  required/forbidden paths and content, sentinel preservation, canonical frontmatter,
+  relative links, and final-report fields. Full-text golden files and LLM judges remain
+  rejected because both would reward phrasing rather than correctness. Snapshot scope
+  excludes only Git internals and a named set of tool caches that audit §5 already
+  permits safe verification commands to create; arbitrary hidden paths remain graded.
+- **Provider calls never touch fixture sources.** The scenario runner copies each repo,
+  initializes Git in the copy, applies an optional feature patch, snapshots it, and
+  grants write access only to the disposable repo. Scenarios suppress nested Fresh
+  Session provider calls so one scenario is one billed call; independent Fresh Session
+  behavior has its own runner and tests.
+- **Fresh Session is cross-provider and citation-checked.** The shipped runner accepts
+  `EVAL_CLI=claude|codex`; Codex uses a checked-in output schema. A deterministic
+  validator enforces Q1–Q5 ordering and real repo-local Markdown citations. When no CLI
+  is available, self-simulation is explicitly degraded and cannot be called an
+  independent pass.
+- **Trigger scope is a checked contract.** Frontmatter is shortened to reduce always-on
+  context, `agents/openai.yaml` supplies Codex UI metadata, and a 16-case matrix records
+  the boundary between broad doc architecture, canonical-doc-only `project-docs`, and
+  excluded API/changelog work. These are additive capabilities, so the plugin advances
+  to `2.1.0` rather than another major contract version.
+
 ## 2026-07-14 — Detection contract v2, evidence-based design surfaces, and false-green gates
 
 Review found four correctness gaps that the existing green `verify.sh` did not expose:

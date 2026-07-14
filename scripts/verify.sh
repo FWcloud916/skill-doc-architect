@@ -101,6 +101,9 @@ report "$([ "$audit_sections" = '1 2 3 4 5 6 ' ]; echo $?)" \
 # 7. Line budgets
 skill_lines=$(wc -l < "$SKILL_MD")
 report "$([ "$skill_lines" -le 225 ]; echo $?)" "SKILL.md within 225-line budget" "$skill_lines lines"
+description_words=$(awk 'NR >= 4 { if ($0 == "---") exit; print }' "$SKILL_MD" | wc -w | tr -d ' ')
+report "$([ "$description_words" -ge 60 ] && [ "$description_words" -le 140 ]; echo $?)" \
+  "SKILL.md trigger description stays concise" "$description_words words (expected 60..140)"
 agents_lines=$(wc -l < AGENTS.md)
 report "$([ "$agents_lines" -le 100 ]; echo $?)" "AGENTS.md within 100-line budget" "$agents_lines lines"
 
@@ -122,6 +125,23 @@ script_hits=$(grep -rl "fresh_session_test\.sh" "$SKILL_MD" AGENTS.md "$REFS/" 2
 report "$([ -n "$script_hits" ] && [ -f "$SKILL_DIR/scripts/fresh_session_test.sh" ]; echo $?)" \
   "fresh_session_test.sh is referenced and exists" \
   "referenced: ${script_hits:-none}; exists: $([ -f "$SKILL_DIR/scripts/fresh_session_test.sh" ] && echo yes || echo no)"
+
+fresh_tests_ok=1
+python3 "$SKILL_DIR/scripts/test_fresh_session.py" >/dev/null 2>&1 && fresh_tests_ok=0
+report "$fresh_tests_ok" "Fresh Session parser and citation tests pass" "test_fresh_session.py failed"
+
+fresh_schema_ok=1
+python3 - <<'PY' && fresh_schema_ok=0
+import json
+from pathlib import Path
+
+schema = json.loads(Path("skills/doc-architect/references/fresh-session-report.schema.json").read_text())
+assert schema["required"] == ["answers"]
+answers = schema["properties"]["answers"]
+assert answers["minItems"] == answers["maxItems"] == 5
+assert set(answers["items"]["required"]) == {"q", "question", "answer", "citation"}
+PY
+report "$fresh_schema_ok" "Fresh Session report schema is valid" "schema validation failed"
 
 # 9. Eval fixture lint: every fixture has expected.json; every stack name
 #    referenced in any expected.json resolves to $REFS/stacks/<name>.md
@@ -192,6 +212,65 @@ grade_tests_ok=1
 python3 evals/scripts/test_grade.py >/dev/null 2>&1 && grade_tests_ok=0
 report "$grade_tests_ok" "detection grader false-green regression tests pass" "test_grade.py failed"
 
+# 9b. End-to-end scenarios and trigger boundary contract
+scenario_count=$(find evals/scenarios -mindepth 1 -maxdepth 1 -type d | wc -l | tr -d ' ')
+scenario_layout_ok=1
+python3 - <<'PY' && scenario_layout_ok=0
+import json
+from pathlib import Path
+
+expected_keys = {
+    "mode", "request", "allowed_changes", "required_changes", "required_paths",
+    "forbidden_paths", "unchanged_paths", "required_contains", "forbidden_contains",
+    "canonical_docs", "validate_relative_links", "final_required_contains",
+}
+root = Path("evals/scenarios")
+scenarios = sorted(path for path in root.iterdir() if path.is_dir())
+assert len(scenarios) == 6, len(scenarios)
+for scenario in scenarios:
+    assert (scenario / "repo").is_dir(), scenario
+    data = json.loads((scenario / "scenario.json").read_text())
+    assert set(data) == expected_keys, (scenario, set(data))
+    assert data["mode"] in {"G", "B", "U-1", "U-2"}, scenario
+    assert isinstance(data["request"], str) and data["request"].strip(), scenario
+    assert isinstance(data["validate_relative_links"], bool), scenario
+PY
+report "$scenario_layout_ok" "six end-to-end scenario contracts are valid" \
+  "actual scenario count=$scenario_count"
+
+bad_patches=""
+for patch in evals/scenarios/*/change.patch; do
+  [ -f "$patch" ] || continue
+  scenario_dir=$(dirname "$patch")
+  (cd "$scenario_dir/repo" && git apply --check ../change.patch) >/dev/null 2>&1 || \
+    bad_patches="$bad_patches $(basename "$scenario_dir")"
+done
+report "$([ -z "$bad_patches" ]; echo $?)" "scenario feature patches apply cleanly" "$bad_patches"
+
+scenario_tests_ok=1
+python3 evals/scripts/test_grade_scenarios.py >/dev/null 2>&1 && scenario_tests_ok=0
+report "$scenario_tests_ok" "scenario grader false-green regression tests pass" \
+  "test_grade_scenarios.py failed"
+
+trigger_matrix_ok=1
+python3 - <<'PY' && trigger_matrix_ok=0
+import json
+from collections import Counter
+
+cases = json.load(open("evals/trigger-matrix.json"))
+assert len(cases) == 16
+assert all(set(case) == {"id", "prompt", "expected", "reason"} for case in cases)
+assert len({case["id"] for case in cases}) == len(cases)
+assert all(case["prompt"].strip() and case["reason"].strip() for case in cases)
+assert Counter(case["expected"] for case in cases) == {
+    "doc-architect": 8,
+    "prefer-project-docs": 4,
+    "not-doc-architect": 4,
+}
+PY
+report "$trigger_matrix_ok" "trigger boundary matrix has the 8/4/4 contract" \
+  "trigger-matrix.json validation failed"
+
 legacy_contract=$(grep -rn 'package_json_role\|unsafe_commands_flagged' \
   "$REFS/stacks/README.md" evals/scripts evals/README.md evals/fixtures/*/expected.json 2>/dev/null)
 report "$([ -z "$legacy_contract" ]; echo $?)" "legacy detection-report fields removed" "$legacy_contract"
@@ -212,6 +291,30 @@ else
   plugin_ok=0  # python3 unavailable — skip rather than fail
 fi
 report "$plugin_ok" "plugin manifests parse and name doc-architect" ""
+
+openai_yaml_ok=1
+python3 - <<'PY' && openai_yaml_ok=0
+from pathlib import Path
+
+lines = Path("skills/doc-architect/agents/openai.yaml").read_text().splitlines()
+assert lines[0] == "interface:"
+values = {}
+for line in lines[1:]:
+    key, value = line.strip().split(": ", 1)
+    assert value.startswith('"') and value.endswith('"')
+    values[key] = value[1:-1]
+assert set(values) == {"display_name", "short_description", "default_prompt"}
+assert values["display_name"] == "Doc Architect"
+assert 25 <= len(values["short_description"]) <= 64
+assert "$doc-architect" in values["default_prompt"]
+PY
+report "$openai_yaml_ok" "Codex agents/openai.yaml metadata is complete" \
+  "openai.yaml validation failed"
+
+shell_syntax_ok=0
+bash -n evals/scripts/run_detection.sh evals/scripts/run_scenarios.sh \
+  "$SKILL_DIR/scripts/fresh_session_test.sh" || shell_syntax_ok=1
+report "$shell_syntax_ok" "eval and Fresh Session shell syntax is valid" "bash -n failed"
 
 # CLAUDE.md symlink sanity
 link=$(readlink CLAUDE.md 2>/dev/null || true)

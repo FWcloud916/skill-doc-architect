@@ -1,0 +1,98 @@
+[
+  {
+    "id": "greenfield-zh",
+    "prompt": "新專案要建文件，先幫我規劃 README、AGENTS 和 docs 架構",
+    "expected": "doc-architect",
+    "reason": "Greenfield doc-set planning is a primary trigger."
+  },
+  {
+    "id": "brownfield-en",
+    "prompt": "This repository has no documentation. Build the complete core doc set from the code.",
+    "expected": "doc-architect",
+    "reason": "Brownfield bootstrap includes discovery and doc-set selection."
+  },
+  {
+    "id": "write-agents",
+    "prompt": "幫這個 repo 寫 README 和 AGENTS.md，並補架構文件",
+    "expected": "doc-architect",
+    "reason": "README and AGENTS ownership selects the broader skill."
+  },
+  {
+    "id": "full-diff-sync",
+    "prompt": "Update every affected README, AGENTS, and architecture doc for this branch diff.",
+    "expected": "doc-architect",
+    "reason": "Full-set diff synchronization is Mode U-1."
+  },
+  {
+    "id": "full-audit",
+    "prompt": "Audit the entire project documentation architecture, including README and AGENTS.",
+    "expected": "doc-architect",
+    "reason": "The audit spans files outside canonical docs/."
+  },
+  {
+    "id": "harness-module",
+    "prompt": "Set up project docs and add a PROGRESS.md harness for future agents.",
+    "expected": "doc-architect",
+    "reason": "PROGRESS.md is a doc-architect module."
+  },
+  {
+    "id": "design-module",
+    "prompt": "Document this app and extract its design system into DESIGN.md.",
+    "expected": "doc-architect",
+    "reason": "DESIGN.md selection and extraction belong to doc-architect."
+  },
+  {
+    "id": "explicit",
+    "prompt": "/doc-architect audit this repository",
+    "expected": "doc-architect",
+    "reason": "Explicit invocation always selects this skill."
+  },
+  {
+    "id": "canonical-create-only",
+    "prompt": "Create only docs/project-overview.md, domain-models.md, coding-style.md, and db-observation.md.",
+    "expected": "prefer-project-docs",
+    "reason": "The request is limited to the narrower canonical docs/ set."
+  },
+  {
+    "id": "canonical-sync-only",
+    "prompt": "把這次改動同步到既有的四份 canonical docs，不要動 README 或 AGENTS",
+    "expected": "prefer-project-docs",
+    "reason": "Existing canonical docs-only synchronization is the narrower workflow."
+  },
+  {
+    "id": "canonical-audit-only",
+    "prompt": "Audit only the existing canonical docs/ files for drift.",
+    "expected": "prefer-project-docs",
+    "reason": "The audit explicitly excludes doc-architect's broader file set."
+  },
+  {
+    "id": "explicit-project-docs",
+    "prompt": "/project-docs update this branch",
+    "expected": "prefer-project-docs",
+    "reason": "Explicit invocation of the narrower skill wins."
+  },
+  {
+    "id": "integration-guide",
+    "prompt": "Write a client-facing integration guide for our SDK.",
+    "expected": "not-doc-architect",
+    "reason": "Client integration guides are excluded."
+  },
+  {
+    "id": "openapi",
+    "prompt": "Generate an OpenAPI reference for every endpoint.",
+    "expected": "not-doc-architect",
+    "reason": "API reference generation is excluded."
+  },
+  {
+    "id": "endpoint-description",
+    "prompt": "補這支 endpoint 的 Postman description",
+    "expected": "not-doc-architect",
+    "reason": "Endpoint descriptions belong to an API-doc workflow."
+  },
+  {
+    "id": "changelog",
+    "prompt": "Generate the changelog for version 3.2.0.",
+    "expected": "not-doc-architect",
+    "reason": "Changelogs are excluded."
+  }
+]

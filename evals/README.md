@@ -1,11 +1,18 @@
-# Detection eval suite
+# Evaluation suite
 
-Automated regression tests for Mode B step 1 (stack detection), runnable through
-Claude Code or Codex CLI. The rest of the
-skill's quality is guarded by `scripts/verify.sh` (repo self-consistency) and the
-Fresh Session Test (doc quality); this suite guards the one behavior that has
-objectively right answers and has already produced real bugs twice: **routing a
-repo's manifest signals to stack files**.
+Three complementary layers protect doc-architect without grading model prose by taste:
+
+1. **Detection fixtures** give Mode B stack routing objective ground truth.
+2. **End-to-end scenarios** run a full mode in a disposable repo and grade stable
+   invariants: change scope, required files/content, merge preservation, frontmatter,
+   relative links, and report fields.
+3. **Trigger matrix** records the intended boundary between this broad skill,
+   `project-docs`, and excluded API/changelog work.
+
+All model-driven runners support Claude Code or Codex CLI. Fast deterministic grader
+tests and `scripts/verify.sh` run without provider cost.
+
+## Detection routing
 
 ## Why this exists
 
@@ -30,10 +37,15 @@ evals/
 │   ├── basic-*/               # 16: one per stack file, single unambiguous signal
 │   │   └── expected.json      # ground truth
 │   └── trap-*/                # 18: hybrid/ordering/fallback traps
+├── scenarios/                 # 6 disposable end-to-end repository scenarios
+│   └── */scenario.json        # deterministic output/change invariants
+├── trigger-matrix.json        # 8 positive + 4 boundary + 4 negative prompts
 └── scripts/
     ├── run_detection.sh       # headless Claude/Codex runner, N runs per fixture
     ├── grade.py               # deterministic grader, exit 1 on any failure
-    └── test_grade.py          # free false-green regression tests
+    ├── run_scenarios.sh       # full-mode runner in disposable repo copies
+    ├── grade_scenarios.py     # invariant grader, no prose matching
+    └── test_*.py              # free false-green regression tests
 ```
 
 ## The detection report contract
@@ -122,6 +134,14 @@ Schema. The runner
 is resumable (skips existing `run-*.json`), keeps per-fixture `stderr.log`, and
 calls the grader at the end.
 
+Codex validation note (2026-07-14, Codex CLI 0.144.1, `gpt-5.6-sol`): the complete
+detection N=1 sweep passed **34/34**, the end-to-end N=1 sweep passed **6/6**, and an
+independent Fresh Session canary passed its citation validator. The first scenario
+grade exposed one eval-contract bug: Mode U-1 promises a verification report but not
+U-2's exact `Verification results` heading. The scenario expectation was corrected to
+the mode's real contract, the stored raw run passed, and a fresh U-1 Codex rerun also
+passed. Full N=3 remains the release-candidate stability gate.
+
 Claude cost note (measured 2026-07-08, claude CLI 2.1.204, full N=3 sweep validated —
 32/32 fixtures passed, zero flaky runs). The current 34-fixture totals below are
 extrapolated from those measured per-run values; remeasure after the first v2 sweep:
@@ -161,11 +181,63 @@ that's what the verify.sh fixture lint is for.
   a full sweep. Results (including `stderr.log` per fixture) upload as a
   workflow artifact whether the run passes or fails.
 
+## End-to-end mode scenarios
+
+The six scenarios cover the skill's highest-risk behavioral promises:
+
+| Scenario | Contract under test |
+|---|---|
+| `greenfield-honest-tbd` | undecided facts stay `TBD`; no invented test gate |
+| `brownfield-bootstrap` | applicable core/modules generated from real evidence |
+| `merge-preserves-existing` | complete README and non-canonical memo remain byte-identical |
+| `diff-update-targeted` | Mode U-1 changes only the mapped canonical doc |
+| `audit-report-only` | Mode U-2 reports drift and changes no file |
+| `unknown-stack-honesty` | unsupported CMake/C++ stays explicit unknown, never guessed |
+
+Each run copies `scenarios/<name>/repo/` into its results directory, initializes a
+disposable Git repository, applies `change.patch` when present, records a pre-agent
+hash snapshot, then invokes the selected CLI with write access only to that copy.
+The grader compares filesystem state and final report to `scenario.json`; final-report
+terms are case-insensitive, and it does not require a particular prose style. Scenario
+prompts suppress nested provider-backed
+Fresh Session calls and require an explicitly degraded self-simulation, keeping one
+scenario equal to one billed model call.
+
+Filesystem snapshots ignore only a narrow set of verification-tool caches permitted by
+`audit-checklist.md` §5 (`__pycache__`, `.pytest_cache`, `.ruff_cache`, `.mypy_cache`),
+plus `.git`; application files and arbitrary hidden paths remain inside the hard scope
+check.
+
+```bash
+# all six scenarios, one run each
+EVAL_CLI=codex ./evals/scripts/run_scenarios.sh /tmp/doc-scenarios 1
+
+# one targeted scenario
+EVAL_CLI=codex ./evals/scripts/run_scenarios.sh /tmp/doc-merge 1 merge-preserves
+
+# free grader regression tests
+python3 evals/scripts/test_grade_scenarios.py
+```
+
+Changing a mode's allowed file scope, output contract, merge behavior, or targeted
+update rules requires updating the affected scenario and grader tests in the same
+change. Never broaden `allowed_changes` merely to make a model mistake pass.
+
+## Trigger boundary matrix
+
+`trigger-matrix.json` has 16 representative requests with outcomes
+`doc-architect`, `prefer-project-docs`, or `not-doc-architect`. The repository gate
+checks its shape, unique IDs, and 8/4/4 category balance. It is a review and future
+live-eval contract; it does not pretend metadata-only trigger selection can be proven
+without running the surrounding skill catalog.
+
 ## Known limits
 
-- This suite tests routing only. It does not test doc generation quality,
-  command verification honesty, or the Fresh Session Test — those stay
-  human-in-the-loop by design.
+- Scenario grading covers deterministic behavior, not writing quality or whether a
+  nuanced architectural explanation is insightful. Fresh Session answers still need
+  human/model judgment for semantic correctness after citation validation.
+- Live scenario and detection sweeps cost provider calls. Per-PR gates validate their
+  contracts and graders but do not claim the model executed successfully.
 - Fixtures pin today's resolve rules. When rules legitimately change, update
   `expected.json` in the same PR — a red suite after a spec change is the
   suite working, not the suite being wrong.

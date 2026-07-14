@@ -2,8 +2,8 @@
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "doc-architect",
   "displayName": "Doc Architect",
-  "version": "2.0.0",
-  "description": "Plans, bootstraps, audits, and maintains a project's core documentation set with evidence-based stack and design-surface discovery.",
+  "version": "2.1.0",
+  "description": "Plans, bootstraps, audits, and maintains evidence-based project docs with cross-provider validation and end-to-end evaluation gates.",
   "author": {
     "name": "FWcloud916",
     "url": "https://github.com/FWcloud916"

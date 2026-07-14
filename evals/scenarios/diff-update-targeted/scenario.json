@@ -1,0 +1,16 @@
+{
+  "mode": "U-1",
+  "request": "Update the documentation for the current uncommitted feature diff. Apply Mode U-1 headlessly and edit only the mapped documentation section. The new `/health` route must be documented.",
+  "allowed_changes": ["docs/project-overview.md"],
+  "required_changes": ["docs/project-overview.md"],
+  "required_paths": ["README.md", "AGENTS.md", "docs/project-overview.md"],
+  "forbidden_paths": ["PROGRESS.md", "DESIGN.md", "docs/.doc-architect-state.md"],
+  "unchanged_paths": ["README.md", "AGENTS.md", "src/routes.py"],
+  "required_contains": {
+    "docs/project-overview.md": ["/health"]
+  },
+  "forbidden_contains": {},
+  "canonical_docs": ["docs/project-overview.md"],
+  "validate_relative_links": true,
+  "final_required_contains": ["Plan", "Verification"]
+}
