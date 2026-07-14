@@ -77,6 +77,11 @@ Either way, restate the selection when presenting results.
 - **Verify, don't guess:** every claim written must be traceable to a file read in this
   session or a decision the user explicitly stated. Missing or contradictory source →
   ask the user; never fill gaps from memory of similar projects.
+- **Headless report headings:** give each canonical label its own Markdown heading;
+  descriptive prefixes or suffixes MAY clarify it, but the label itself stays intact:
+  G — `Plan`, `Verification`, `Fresh Session Test`, `Hand-off`; B —
+  `Plan`, `Verification`, `Fresh Session Test`; U-1 — `Mapping`, `Verification`;
+  U-2 — `Verification results`.
 
 ## Mode selection
 
@@ -113,7 +118,8 @@ Either way, restate the selection when presenting results.
 5. Modules: `domain-models.md` only if a data-model draft exists (marked
    `planned — no schema yet`); skip `coding-style.md` until a linter is chosen; skip
    `db-observation.md` until a schema exists.
-6. **Hand off**: list every TBD section, tell the user when to return for Mode U
+6. **Hand off and report** under headings containing the canonical G labels above:
+   list every TBD section, tell the user when to return for Mode U
    (e.g. "after the first models land, after CI is set up"), and run the Mode-G
    Definition of Done (below), including the Fresh Session Test (checklist §6). No
    runnable test gate yet → the hand-off MUST carry the verification-gate warning
@@ -163,7 +169,8 @@ Either way, restate the selection when presenting results.
 7. **Self-check** with checklist §2 + §5, then run the Fresh Session Test (§6) as the
    final gate before presenting the result. No runnable test gate found → the report
    MUST carry the verification-gate warning (§6), and a selected `PROGRESS.md` MUST
-   have the gate work item seeded as row 1 (`references/harness-template.md`).
+   have the gate work item seeded as row 1 (`references/harness-template.md`). Present
+   the result under headings containing the canonical B labels above.
 
 ## Mode U-1 — Diff-driven update
 
@@ -175,8 +182,9 @@ Either way, restate the selection when presenting results.
    mapping in the final report and proceed.
 4. Read the changed source files, then rewrite **only the affected sections**. Bump
    `Last updated` only on files actually edited.
-5. Report sections the diff didn't touch but that look semantically related (renamed
-   classes, moved flows) — flag, don't silently rewrite.
+5. Finish under headings containing the canonical U-1 labels `Mapping` and
+   `Verification`: restate the map and checks, then report semantically related untouched sections (renamed classes,
+   moved flows) — flag, don't silently rewrite.
 
 ## Mode U-2 — Full audit
 

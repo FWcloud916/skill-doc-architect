@@ -10,5 +10,6 @@
   "forbidden_contains": {},
   "canonical_docs": ["docs/project-overview.md", "docs/domain-models.md"],
   "validate_relative_links": true,
-  "final_required_contains": ["Verification results", "Invoice", "[missing]"]
+  "final_required_sections": ["Verification results"],
+  "final_required_contains": ["Invoice", "[missing]"]
 }

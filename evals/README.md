@@ -33,10 +33,10 @@ regression tests.
 ```
 evals/
 ├── README.md                  # this file
-├── fixtures/                  # 34 minimal repos (manifests only, no real code)
+├── fixtures/                  # 35 minimal repos (manifests only, no real code)
 │   ├── basic-*/               # 16: one per stack file, single unambiguous signal
 │   │   └── expected.json      # ground truth
-│   └── trap-*/                # 18: hybrid/ordering/fallback traps
+│   └── trap-*/                # 19: hybrid/ordering/fallback traps
 ├── scenarios/                 # 6 disposable end-to-end repository scenarios
 │   └── */scenario.json        # deterministic output/change invariants
 ├── trigger-matrix.json        # 8 positive + 4 boundary + 4 negative prompts
@@ -65,9 +65,11 @@ shape — see `run_detection.sh`):
 `stack` values are stack-file basenames (`rails`, `frontend-web`, ...), so the
 contract stays in lockstep with `skills/doc-architect/references/stacks/`. The `evidence` field is
 what makes failures debuggable: when a run misroutes, the report says which
-file it blamed. Evidence values are repo-relative paths and the grader proves they
-exist. `package_json` records every package manifest independently, so monorepos and
-multi-role full-stack packages are representable without a lossy singular field.
+file it blamed. Evidence values are relative to the target fixture root (never the
+skill checkout or caller directory), and the grader proves they exist. `package_json`
+records every package manifest independently, so monorepos and multi-role full-stack
+packages are representable without a lossy singular field. The stack index's Package
+role table defines the additive role signals.
 
 This contract IS the skill's interface: it lives in the "Machine-readable
 detection report" subsection of `skills/doc-architect/references/stacks/README.md`, and headless Mode B
@@ -142,14 +144,28 @@ U-2's exact `Verification results` heading. The scenario expectation was correct
 the mode's real contract, the stored raw run passed, and a fresh U-1 Codex rerun also
 passed. Full N=3 remains the release-candidate stability gate.
 
+Claude validation baseline (2026-07-14, Claude Code 2.1.209,
+`claude-sonnet-5`): v2.1.0's full N=3 sweep passed **30/34 fixtures** and **4/6
+scenarios**; an independent Fresh Session canary failed only Q5's absence citation.
+Every detection run still selected the correct stack and every scenario respected its
+filesystem/content invariants. Version 2.1.1 anchors detection at the fixture root,
+defines additive package roles, grades canonical labels within report headings instead of prose
+coincidences, and pins the Q5 citation in the prompt.
+
+Post-fix targeted rerun (2026-07-14): Claude passed all **15/15** runs across the five
+affected detection fixtures, all **6/6** runs across the two affected scenarios, and
+all **3/3** independent Fresh Session checks. Codex CLI 0.144.2 also passed the new
+React Native role trap **1/1**. These are targeted regression results, not a replacement
+claim for a complete 35-fixture / 6-scenario release sweep.
+
 Claude cost note (measured 2026-07-08, claude CLI 2.1.204, full N=3 sweep validated —
-32/32 fixtures passed, zero flaky runs). The current 34-fixture totals below are
+32/32 fixtures passed, zero flaky runs). The current 35-fixture totals below are
 extrapolated from those measured per-run values; remeasure after the first v2 sweep:
 
-| Model | Wall-clock/run | $/run | Full N=1 sweep (34 runs) | Full N=3 sweep (102 runs) |
+| Model | Wall-clock/run | $/run | Full N=1 sweep (35 runs) | Full N=3 sweep (105 runs) |
 |---|---|---|---|---|
-| no `--model` flag (session default) | ~62s | ~$0.23 | ~35 min / ~$7.80 | ~105 min / ~$23.50 |
-| `--model claude-sonnet-5` | ~29s | ~$0.17 | ~17 min / ~$5.80 | ~50 min / ~$17.30 |
+| no `--model` flag (session default) | ~62s | ~$0.23 | ~36 min / ~$8.05 | ~109 min / ~$24.15 |
+| `--model claude-sonnet-5` | ~29s | ~$0.17 | ~17 min / ~$5.95 | ~51 min / ~$17.85 |
 
 Dollar cost sampled via instrumented `--output-format json` calls (`total_cost_usd`
 field) with a warm prompt cache (SKILL.md + `skills/doc-architect/references/stacks/` shared across
@@ -197,9 +213,12 @@ The six scenarios cover the skill's highest-risk behavioral promises:
 Each run copies `scenarios/<name>/repo/` into its results directory, initializes a
 disposable Git repository, applies `change.patch` when present, records a pre-agent
 hash snapshot, then invokes the selected CLI with write access only to that copy.
-The grader compares filesystem state and final report to `scenario.json`; final-report
-terms are case-insensitive, and it does not require a particular prose style. Scenario
-prompts suppress nested provider-backed
+The grader compares filesystem state and final report to `scenario.json`. Canonical
+mode sections are case-insensitive canonical phrases within Markdown headings;
+descriptive wording may surround the intact label. Semantic markers such as `TBD`,
+`unknown`, and `[missing]` remain prose checks. A heading label appearing only in prose,
+or embedded inside another word, cannot false-green the report.
+Scenario prompts suppress nested provider-backed
 Fresh Session calls and require an explicitly degraded self-simulation, keeping one
 scenario equal to one billed model call.
 

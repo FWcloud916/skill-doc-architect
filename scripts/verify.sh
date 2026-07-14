@@ -130,6 +130,13 @@ fresh_tests_ok=1
 python3 "$SKILL_DIR/scripts/test_fresh_session.py" >/dev/null 2>&1 && fresh_tests_ok=0
 report "$fresh_tests_ok" "Fresh Session parser and citation tests pass" "test_fresh_session.py failed"
 
+fresh_prompt_ok=1
+grep -q 'citation exactly' "$SKILL_DIR/scripts/fresh_session_test.sh" && \
+  grep -q 'PROGRESS.md absent at repository root' "$SKILL_DIR/scripts/fresh_session_test.sh" && \
+  fresh_prompt_ok=0
+report "$fresh_prompt_ok" "Fresh Session prompt pins the Q5 absence citation" \
+  "fresh_session_test.sh prompt drifted from the validator contract"
+
 fresh_schema_ok=1
 python3 - <<'PY' && fresh_schema_ok=0
 import json
@@ -196,7 +203,7 @@ for expected_path in Path("evals/fixtures").glob("*/expected.json"):
         assert package["roles"] and len(package["roles"]) == len(set(package["roles"])), package
         assert set(package["roles"]) <= package_roles, (expected_path, package)
         assert package["roles"] == sorted(package["roles"], key=package_role_order.index), package
-for name in ("trap-ruby-gem", "trap-swift-package-library"):
+for name in ("trap-react-native-role", "trap-ruby-gem", "trap-swift-package-library"):
     data = json.loads((Path("evals/fixtures") / name / "expected.json").read_text())
     assert data.get("regression_for"), name
 
@@ -222,7 +229,8 @@ from pathlib import Path
 expected_keys = {
     "mode", "request", "allowed_changes", "required_changes", "required_paths",
     "forbidden_paths", "unchanged_paths", "required_contains", "forbidden_contains",
-    "canonical_docs", "validate_relative_links", "final_required_contains",
+    "canonical_docs", "validate_relative_links", "final_required_sections",
+    "final_required_contains",
 }
 root = Path("evals/scenarios")
 scenarios = sorted(path for path in root.iterdir() if path.is_dir())
@@ -234,6 +242,7 @@ for scenario in scenarios:
     assert data["mode"] in {"G", "B", "U-1", "U-2"}, scenario
     assert isinstance(data["request"], str) and data["request"].strip(), scenario
     assert isinstance(data["validate_relative_links"], bool), scenario
+    assert data["final_required_sections"], scenario
 PY
 report "$scenario_layout_ok" "six end-to-end scenario contracts are valid" \
   "actual scenario count=$scenario_count"

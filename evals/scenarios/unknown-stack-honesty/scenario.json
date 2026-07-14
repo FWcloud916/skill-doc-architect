@@ -15,5 +15,6 @@
   },
   "canonical_docs": ["docs/project-overview.md"],
   "validate_relative_links": true,
-  "final_required_contains": ["Verification results", "unknown"]
+  "final_required_sections": ["Plan", "Verification", "Fresh Session Test"],
+  "final_required_contains": ["unknown"]
 }

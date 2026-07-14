@@ -143,11 +143,11 @@ Group findings by file, ordered most-stale first:
 Use the `[command]` tag for §5 failures, e.g.
 ``- **[command]** AGENTS.md test command `npm test` — script not defined in package.json``.
 
-End every U-2 report (and every Mode B/G result presentation) with a **Verification
-results** block: each command checked, with `pass | fail | unverifiable here (<reason>)`,
-plus the Fresh Session Test answers (§6) — Q1–Q5, each citing the doc + section that
-answers it; Q5 may cite `PROGRESS.md absent at repository root` for the valid
-`N/A — not agent-tracked` answer.
+End every U-2 report with a **Verification results** block. Mode B/G result
+presentations preserve the canonical **Verification** and **Fresh Session Test** labels
+in headings, per SKILL.md. Report each command checked with `pass | fail | unverifiable here (<reason>)`,
+then Q1–Q5 with the doc + section that answers each; Q5 may cite
+`PROGRESS.md absent at repository root` for the valid `N/A — not agent-tracked` answer.
 
 Fix only after the user confirms — unless they asked for fix-directly up front. Bump each
 file's `Last updated` only if its content actually changed.
@@ -224,7 +224,8 @@ context instead:
 - If either supported CLI is available, run `scripts/fresh_session_test.sh <repo root>`
   (`EVAL_CLI=claude|codex`, default Claude). It spawns a headless subprocess with zero
   conversation history and returns the 5 answers as validated JSON. Citations for
-  Q1–Q4 (and Q5 when PROGRESS.md exists) MUST name a real repository Markdown file.
+  Q1–Q4 (and Q5 when PROGRESS.md exists) MUST name a real repository Markdown file;
+  absent Q5 uses the exact citation `PROGRESS.md absent at repository root`.
 - Only fall back to self-simulation when the selected CLI or script is unavailable.
   Label it `degraded — independent runner unavailable`; it MAY support a best-effort
   handoff but MUST NOT be reported as an independent pass or an unqualified `complete`.

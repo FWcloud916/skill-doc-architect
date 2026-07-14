@@ -25,6 +25,8 @@ An agent skill that plans, bootstraps, and maintains a project's core documentat
   stack-appropriate suggestion — and, when `PROGRESS.md` is selected, the gate is
   seeded as the feature list's first work item, so agents iterating on the project
   actually build the test boundary and every later "done" is verified against it.
+  Headless reports preserve mode-specific canonical labels in headings so automated
+  evals can verify structure without grading the surrounding prose by taste.
 
 The generated doc set is modular:
 

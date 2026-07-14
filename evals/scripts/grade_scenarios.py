@@ -23,6 +23,7 @@ EXPECTED_KEYS = {
     "forbidden_contains",
     "canonical_docs",
     "validate_relative_links",
+    "final_required_sections",
     "final_required_contains",
 }
 MODES = {"G", "B", "U-1", "U-2"}
@@ -80,6 +81,25 @@ def canonical_frontmatter_ok(path):
     return updated <= date.today()
 
 
+def markdown_headings(text):
+    """Return case-folded ATX headings, excluding prose keyword matches."""
+    headings = set()
+    for line in text.splitlines():
+        match = re.match(r"^ {0,3}#{1,6}[ \t]+(.+?)[ \t]*$", line)
+        if not match:
+            continue
+        heading = re.sub(r"[ \t]+#+[ \t]*$", "", match.group(1)).strip()
+        if heading:
+            headings.add(heading.casefold())
+    return headings
+
+
+def heading_has_section(headings, section):
+    """Match a canonical section label as a phrase within an ATX heading."""
+    pattern = re.compile(rf"(?<!\w){re.escape(section.casefold())}(?!\w)")
+    return any(pattern.search(heading) for heading in headings)
+
+
 def validate_scenario_definition(scenario_dir, expected):
     errors = []
     if not isinstance(expected, dict) or set(expected) != EXPECTED_KEYS:
@@ -90,7 +110,8 @@ def validate_scenario_definition(scenario_dir, expected):
         errors.append("request must be a non-empty string")
     for key in (
         "allowed_changes", "required_changes", "required_paths", "forbidden_paths",
-        "unchanged_paths", "canonical_docs", "final_required_contains",
+        "unchanged_paths", "canonical_docs", "final_required_sections",
+        "final_required_contains",
     ):
         value = expected[key]
         if not isinstance(value, list) or not all(isinstance(item, str) for item in value):
@@ -166,8 +187,11 @@ def grade_run(run_dir, scenario_dir, expected):
     final_path = run_dir / "final.txt"
     final = final_path.read_text(errors="replace") if final_path.is_file() else ""
     check("final_report_present", bool(final.strip()))
+    headings = markdown_headings(final)
+    for section in expected["final_required_sections"]:
+        check(f"final_section:{section}", heading_has_section(headings, section))
     for needle in expected["final_required_contains"]:
-        # Final-report wording is prose; require the concept without grading heading case.
+        # Semantic markers remain prose checks; structure is graded separately above.
         check(f"final_contains:{needle}", needle.casefold() in final.casefold())
     return checks
 

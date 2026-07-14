@@ -70,10 +70,13 @@ the disposable repository at $run_dir/repo. Execute this request headlessly:
 
 $request
 
-Follow the skill exactly. Do not pause for plan confirmation; record the plan in the
-final report and proceed. Do not modify application source files. For this scenario
-run, do not start a nested Claude/Codex Fresh Session call; self-simulate Q1-Q5 and
-label that result degraded. Return the normal doc-architect final report."
+Follow the skill exactly. Do not pause for confirmation; record the mode's plan or
+mapping in the final report and proceed. Give every canonical mode-specific headless
+report label from SKILL.md its own Markdown heading; descriptive wording may surround
+the intact label. Do not
+modify application source files. For this scenario run, do not start a nested
+Claude/Codex Fresh Session call; self-simulate Q1-Q5 and label that result degraded.
+Return the normal doc-architect final report."
 
     if [[ "$EVAL_CLI" = "claude" ]]; then
       if [[ -n "$MODEL_NAME" ]]; then

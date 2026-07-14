@@ -16,5 +16,6 @@
   },
   "canonical_docs": ["docs/project-overview.md"],
   "validate_relative_links": true,
-  "final_required_contains": ["Verification results", "TBD"]
+  "final_required_sections": ["Plan", "Verification", "Fresh Session Test", "Hand-off"],
+  "final_required_contains": ["TBD"]
 }

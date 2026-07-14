@@ -1,0 +1,13 @@
+{
+  "resolution": "single",
+  "surfaces": [
+    {
+      "stack": "react-native",
+      "role": "primary"
+    }
+  ],
+  "package_json": [{"path": "package.json", "roles": ["ui-framework"]}],
+  "forbidden_stacks": ["electron", "frontend-web", "tauri"],
+  "regression_for": "design-decisions 2026-07-14: Claude N=3 contract stabilization",
+  "notes": "React Native/Expo is ui-framework, never the Electron/Tauri desktop role."
+}

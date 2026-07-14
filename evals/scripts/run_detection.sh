@@ -23,7 +23,9 @@ MODEL_NAME="${MODEL:-}"
 PROMPT_TEMPLATE='Use the doc-architect skill, but perform ONLY Mode B step 1
 (stack detection) on the repository at __FIXTURE_PATH__. Read the current checkout
 skill at __SKILL_PATH__ and follow its references/stacks/README.md two-phase
-collect-then-resolve procedure in references/stacks/README.md exactly. Do NOT
+collect-then-resolve procedure and Package role table exactly. Treat
+__FIXTURE_PATH__ as the repository root: every evidence/package path is relative to
+that directory, so its root package manifest is exactly "package.json". Do NOT
 generate or modify any documentation.
 
 Output ONLY a JSON object (no prose, no markdown fences) with this shape:
@@ -108,12 +110,12 @@ for fixture in "$FIXTURES_DIR"/*/; do
       # --output-format json wraps the answer in a result envelope; plain-text -p
       # output proved prone to truncated stdout on some runs.
       if [[ -n "$MODEL_NAME" ]]; then
-        raw="$(claude -p "$prompt" \
+        raw="$(cd "$fixture" && claude -p "$prompt" \
           --allowedTools "Read,Glob,Grep,Skill" \
           --output-format json --model "$MODEL_NAME" \
           2>>"$RESULTS_DIR/$name/stderr.log" || true)"
       else
-        raw="$(claude -p "$prompt" \
+        raw="$(cd "$fixture" && claude -p "$prompt" \
           --allowedTools "Read,Glob,Grep,Skill" \
           --output-format json \
           2>>"$RESULTS_DIR/$name/stderr.log" || true)"
@@ -121,12 +123,12 @@ for fixture in "$FIXTURES_DIR"/*/; do
     else
       raw_file="$RESULTS_DIR/$name/run-$i.raw.txt"
       if [[ -n "$MODEL_NAME" ]]; then
-        codex exec --ephemeral --sandbox read-only --cd "$REPO_ROOT" \
+        codex exec --ephemeral --sandbox read-only --cd "$fixture" \
           --output-schema "$EVALS_DIR/detection-report.schema.json" \
           --output-last-message "$raw_file" --model "$MODEL_NAME" \
           "$prompt" >>"$RESULTS_DIR/$name/stderr.log" 2>&1 || true
       else
-        codex exec --ephemeral --sandbox read-only --cd "$REPO_ROOT" \
+        codex exec --ephemeral --sandbox read-only --cd "$fixture" \
           --output-schema "$EVALS_DIR/detection-report.schema.json" \
           --output-last-message "$raw_file" \
           "$prompt" >>"$RESULTS_DIR/$name/stderr.log" 2>&1 || true

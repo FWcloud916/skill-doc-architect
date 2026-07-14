@@ -22,7 +22,7 @@ class ScenarioRunTests(unittest.TestCase):
         self.repo.mkdir(parents=True)
         (self.repo / "source.txt").write_text("source\n")
         (self.run / "before.json").write_text(json.dumps(grade.snapshot(self.repo)))
-        (self.run / "final.txt").write_text("Verification results\n")
+        (self.run / "final.txt").write_text("## Verification\n\nTBD\n")
         self.expected = {
             "mode": "B",
             "request": "Write docs.",
@@ -35,7 +35,8 @@ class ScenarioRunTests(unittest.TestCase):
             "forbidden_contains": {"README.md": ["npm test"]},
             "canonical_docs": [],
             "validate_relative_links": True,
-            "final_required_contains": ["Verification results"],
+            "final_required_sections": ["Verification"],
+            "final_required_contains": ["TBD"],
         }
 
     def tearDown(self):
@@ -81,10 +82,31 @@ class ScenarioRunTests(unittest.TestCase):
         (self.run / "final.txt").write_text("")
         self.assertIn("final_report_present", self.failures())
 
-    def test_final_required_terms_are_case_insensitive(self):
+    def test_final_required_sections_are_case_insensitive(self):
         self.write_valid_readme()
-        self.expected["final_required_contains"] = ["VERIFICATION RESULTS"]
+        self.expected["final_required_sections"] = ["VERIFICATION"]
         self.assertEqual([], self.failures())
+
+    def test_descriptive_heading_preserves_canonical_section(self):
+        self.write_valid_readme()
+        (self.run / "final.txt").write_text("## Verification results\n\nTBD\n")
+        self.assertEqual([], self.failures())
+
+    def test_section_word_in_prose_does_not_pass(self):
+        self.write_valid_readme()
+        (self.run / "final.txt").write_text("Verification completed.\n\nTBD\n")
+        self.assertIn("final_section:Verification", self.failures())
+
+    def test_section_substring_inside_another_heading_word_does_not_pass(self):
+        self.write_valid_readme()
+        self.expected["final_required_sections"] = ["Plan"]
+        (self.run / "final.txt").write_text("## Explanation\n\nTBD\n")
+        self.assertIn("final_section:Plan", self.failures())
+
+    def test_missing_final_required_content_fails(self):
+        self.write_valid_readme()
+        (self.run / "final.txt").write_text("## Verification\n")
+        self.assertIn("final_contains:TBD", self.failures())
 
 
 class FrontmatterTests(unittest.TestCase):

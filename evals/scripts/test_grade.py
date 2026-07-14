@@ -49,6 +49,26 @@ class GradeRunTests(unittest.TestCase):
         report["surfaces"][0]["evidence"] = ["../basic-go/go.mod"]
         self.assertIn("surface_0_evidence_paths", self.failures(report))
 
+    def test_checkout_relative_evidence_fails(self):
+        fixture = grade.FIXTURES / "basic-plain-node"
+        expected = {
+            "resolution": "single",
+            "surfaces": [{"stack": "node-backend", "role": "primary"}],
+            "package_json": [{"path": "package.json", "roles": ["plain-node"]}],
+        }
+        report = {
+            "resolution": "single",
+            "surfaces": [{"stack": "node-backend", "role": "primary",
+                          "evidence": ["evals/fixtures/basic-plain-node/package.json"]}],
+            "package_json": [{"path": "evals/fixtures/basic-plain-node/package.json",
+                              "roles": ["plain-node"]}],
+            "notes": "",
+        }
+        failures = [name for name, passed, _ in grade.grade_run(
+            report, expected, fixture) if not passed]
+        self.assertIn("surface_0_evidence_paths", failures)
+        self.assertIn("package_0_path", failures)
+
     def test_extra_report_field_fails(self):
         report = json.loads(json.dumps(self.valid))
         report["unexpected"] = True
@@ -77,6 +97,27 @@ class GradeRunTests(unittest.TestCase):
             report, expected, fixture) if not passed]
         self.assertIn("package_json_entries", failures)
         self.assertIn("package_0_roles", failures)
+
+    def test_missing_additive_package_role_fails(self):
+        fixture = grade.FIXTURES / "basic-frontend-web"
+        expected = {
+            "resolution": "single",
+            "surfaces": [{"stack": "frontend-web", "role": "primary"}],
+            "package_json": [
+                {"path": "package.json", "roles": ["ui-framework", "build-tooling"]}
+            ],
+        }
+        report = {
+            "resolution": "single",
+            "surfaces": [
+                {"stack": "frontend-web", "role": "primary", "evidence": ["package.json"]}
+            ],
+            "package_json": [{"path": "package.json", "roles": ["ui-framework"]}],
+            "notes": "",
+        }
+        failures = [name for name, passed, _ in grade.grade_run(
+            report, expected, fixture) if not passed]
+        self.assertIn("package_json_entries", failures)
 
     def test_wrong_ambiguous_roles_fail(self):
         expected = {

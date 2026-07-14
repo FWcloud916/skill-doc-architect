@@ -16,5 +16,6 @@
   },
   "canonical_docs": ["docs/project-overview.md", "docs/coding-style.md"],
   "validate_relative_links": true,
-  "final_required_contains": ["Plan", "Verification results"]
+  "final_required_sections": ["Plan", "Verification", "Fresh Session Test"],
+  "final_required_contains": []
 }

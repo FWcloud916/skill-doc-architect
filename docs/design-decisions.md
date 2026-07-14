@@ -11,6 +11,34 @@
 
 ---
 
+## 2026-07-14 — Claude N=3 contract stabilization
+
+The first Claude 2.1 N=3 release sweep selected the correct stack in every detection
+run and produced correct scenario file changes, but exposed three machine-contract
+flakes: package-role semantics were implicit, fixture paths sometimes anchored at the
+skill checkout, and scenario reports were graded by prose substrings. An independent
+Fresh Session run also answered Q5 correctly while omitting its required absence
+citation.
+
+Decisions:
+
+- **Package roles are an explicit additive table.** The stack index now owns exact
+  signals for every role; `desktop` means Electron/Tauri while React Native is
+  `ui-framework`, and tooling can coexist with `plain-node`. Detection runners execute
+  at the fixture root, so `package.json` can no longer drift to a checkout-relative
+  path. `trap-react-native-role` permanently covers the observed role confusion and
+  names this decision via `regression_for`.
+- **Report structure is graded as structure.** SKILL.md defines canonical per-mode labels
+  that must remain intact inside Markdown headings while allowing descriptive wording.
+  Scenario contracts separate `final_required_sections` from semantic prose markers,
+  and the grader parses phrase-bounded headings rather than accepting a word anywhere
+  in the response. This remains stricter than the previous prose substring check.
+- **Q5 absence is prompt-pinned.** The independent runner's JSON example now supplies
+  both the canonical answer and `PROGRESS.md absent at repository root` citation. The
+  validator remains unchanged and strict; a vague root-listing citation still fails.
+- These are backward-compatible stability fixes to the 2.1 feature set, so the plugin
+  advances to `2.1.1`.
+
 ## 2026-07-14 — End-to-end invariant evals and cross-provider Fresh Session validation
 
 The 2.0 review made stack routing strict but left the larger promise — safe, targeted,

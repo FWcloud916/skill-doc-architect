@@ -12,5 +12,6 @@
   "forbidden_contains": {},
   "canonical_docs": ["docs/project-overview.md"],
   "validate_relative_links": true,
-  "final_required_contains": ["Plan", "Verification"]
+  "final_required_sections": ["Mapping", "Verification"],
+  "final_required_contains": []
 }

@@ -48,7 +48,8 @@ so plainly instead of guessing.
 4. How do I verify my work?
 5. What work state, if any, does this repository track? If PROGRESS.md is absent,
    answer "N/A — not agent-tracked (PROGRESS.md absent)"; that absence is valid
-   repository evidence, not an unanswerable gap.
+   repository evidence, not an unanswerable gap, and set citation exactly
+   "PROGRESS.md absent at repository root".
 
 Output ONLY a JSON object (no prose, no markdown fences) with this shape:
 {"answers": [
@@ -56,7 +57,7 @@ Output ONLY a JSON object (no prose, no markdown fences) with this shape:
   {"q": 2, "question": "How is it organized?", "answer": "...", "citation": "..."},
   {"q": 3, "question": "How do I run it?", "answer": "...", "citation": "..."},
   {"q": 4, "question": "How do I verify my work?", "answer": "...", "citation": "..."},
-  {"q": 5, "question": "What work state, if any, does this repository track?", "answer": "...", "citation": "..."}
+  {"q": 5, "question": "What work state, if any, does this repository track?", "answer": "N/A — not agent-tracked (PROGRESS.md absent)", "citation": "PROGRESS.md absent at repository root"}
 ]}'
 
 temp_dir="$(mktemp -d)"

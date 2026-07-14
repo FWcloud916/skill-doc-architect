@@ -9,5 +9,6 @@
   "package_json": [{"path": "package.json", "roles": ["ui-framework"]}],
   "forbidden_stacks": [
     "frontend-web"
-  ]
+  ],
+  "notes": "react-native is ui-framework; desktop is reserved for Electron/Tauri signals."
 }

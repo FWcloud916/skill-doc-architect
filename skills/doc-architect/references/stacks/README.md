@@ -73,8 +73,26 @@ against this exact contract — vocabulary changes here require updating
   and `ui-framework`). A workspace-only root is `workspace`; a package that reaches
   the plain-Node fallback is `plain-node`; `vite` + root `index.html` adds
   `frontend-entrypoint`.
+- Every reported path is relative to the **target repository root**, never the skill
+  checkout or caller working directory. A root manifest is exactly `package.json`.
 - Command-safety findings do not belong in this routing contract; they are classified
   and reported by `audit-checklist.md` §5 during command verification.
+
+### Package role table
+
+Roles are additive; scan dependencies + devDependencies and emit every match in the
+JSON vocabulary order.
+
+| Role | Exact signal |
+|---|---|
+| `server` | `express`, `fastify`, `@nestjs/core`, or `koa` |
+| `ui-framework` | `react-native`, `expo`, `next`, `nuxt`, `react`, `vue`, or `svelte` |
+| `build-tooling` | `typescript`, `esbuild`, `webpack`, `vite`, `vitest`, `postcss`, or `tailwindcss` |
+| `desktop` | `electron` or `@tauri-apps/*` (React Native remains `ui-framework`) |
+| `extension` | top-level `engines.vscode` |
+| `workspace` | a workspace-only root (`workspaces`, `pnpm-workspace.yaml`, or `lerna.json`) |
+| `plain-node` | package reaches the plain-Node fallback; may coexist with `build-tooling` |
+| `frontend-entrypoint` | `vite` plus root `index.html` |
 
 ## Signal table
 

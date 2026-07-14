@@ -62,6 +62,11 @@ class FreshSessionValidationTests(unittest.TestCase):
         self.report["answers"][4]["answer"] = "Nothing tracked."
         self.assertTrue(fresh.validate_report(self.report, self.repo))
 
+    def test_q5_absence_contract_fails_when_citation_is_vague(self):
+        self.report["answers"][4]["citation"] = "repository root listing"
+        errors = fresh.validate_report(self.report, self.repo)
+        self.assertTrue(any("absence citation" in error for error in errors))
+
     def test_q5_requires_real_progress_file_when_present(self):
         (self.repo / "PROGRESS.md").write_text("# Progress\n")
         self.report["answers"][4]["answer"] = "Work is active."

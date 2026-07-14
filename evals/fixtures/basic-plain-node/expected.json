@@ -7,5 +7,5 @@
     }
   ],
   "package_json": [{"path": "package.json", "roles": ["plain-node"]}],
-  "notes": "No framework signal: plain Node routes to node-backend.md"
+  "notes": "No role signal except the plain-Node fallback; root paths are exactly package.json."
 }
