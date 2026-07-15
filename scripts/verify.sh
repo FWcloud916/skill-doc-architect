@@ -239,7 +239,7 @@ expected_keys = {
 }
 root = Path("evals/scenarios")
 scenarios = sorted(path for path in root.iterdir() if path.is_dir())
-assert len(scenarios) == 6, len(scenarios)
+assert len(scenarios) == 7, len(scenarios)
 for scenario in scenarios:
     assert (scenario / "repo").is_dir(), scenario
     data = json.loads((scenario / "scenario.json").read_text())
@@ -249,7 +249,7 @@ for scenario in scenarios:
     assert isinstance(data["validate_relative_links"], bool), scenario
     assert data["final_required_sections"], scenario
 PY
-report "$scenario_layout_ok" "six end-to-end scenario contracts are valid" \
+report "$scenario_layout_ok" "seven end-to-end scenario contracts are valid" \
   "actual scenario count=$scenario_count"
 
 bad_patches=""
