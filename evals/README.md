@@ -37,7 +37,7 @@ evals/
 │   ├── basic-*/               # 16: one per stack file, single unambiguous signal
 │   │   └── expected.json      # ground truth
 │   └── trap-*/                # 19: hybrid/ordering/fallback traps
-├── scenarios/                 # 6 disposable end-to-end repository scenarios
+├── scenarios/                 # 7 disposable end-to-end repository scenarios
 │   └── */scenario.json        # deterministic output/change invariants
 ├── trigger-matrix.json        # 8 positive + 4 boundary + 4 negative prompts
 └── scripts/
@@ -140,7 +140,8 @@ local Codex run). The runner is resumable (skips existing `run-*.json`), keeps
 per-fixture `stderr.log`, and calls the grader at the end.
 
 Codex validation note (2026-07-14, Codex CLI 0.144.1, `gpt-5.6-sol`): the complete
-detection N=1 sweep passed **34/34**, the end-to-end N=1 sweep passed **6/6**, and an
+detection N=1 sweep passed **34/34**, the then-current end-to-end N=1 sweep passed
+**6/6**, and an
 independent Fresh Session canary passed its citation validator. The first scenario
 grade exposed one eval-contract bug: Mode U-1 promises a verification report but not
 U-2's exact `Verification results` heading. The scenario expectation was corrected to
@@ -215,7 +216,7 @@ that's what the verify.sh fixture lint is for.
 
 ## End-to-end mode scenarios
 
-The six scenarios cover the skill's highest-risk behavioral promises:
+The seven scenarios cover the skill's highest-risk behavioral promises:
 
 | Scenario | Contract under test |
 |---|---|
@@ -225,6 +226,7 @@ The six scenarios cover the skill's highest-risk behavioral promises:
 | `diff-update-targeted` | Mode U-1 changes only the mapped canonical doc |
 | `audit-report-only` | Mode U-2 reports drift and changes no file |
 | `unknown-stack-honesty` | unsupported CMake/C++ stays explicit unknown, never guessed |
+| `delivery-policy-no-pr` | sourced task branches integrate with `--no-ff`, without inventing PR/MR |
 
 Each run copies `scenarios/<name>/repo/` into its results directory, initializes a
 disposable Git repository, applies `change.patch` when present, records a pre-agent
@@ -244,7 +246,7 @@ plus `.git`; application files and arbitrary hidden paths remain inside the hard
 check.
 
 ```bash
-# all six scenarios, one run each
+# all seven scenarios, one run each
 EVAL_CLI=codex ./evals/scripts/run_scenarios.sh /tmp/doc-scenarios 1
 
 # one targeted scenario

@@ -77,6 +77,9 @@ Either way, restate the selection when presenting results.
 - **Verify, don't guess:** every claim written must be traceable to a file read in this
   session or a decision the user explicitly stated. Missing or contradictory source →
   ask the user; never fill gaps from memory of similar projects.
+- **Delivery policy:** when generating `AGENTS.md`, prefer existing policy evidence,
+  then explicit user choice; headless with neither leaves it unselected. Read the
+  template's §Delivery policy variants; never guess.
 - **Headless report headings:** give each canonical label its own Markdown heading;
   descriptive prefixes or suffixes MAY clarify it, but the label itself stays intact:
   G — `Plan`, `Verification`, `Fresh Session Test`, `Hand-off`; B —
@@ -97,10 +100,9 @@ Either way, restate the selection when presenting results.
 
 ## Mode G — Greenfield (plan docs for a new project)
 
-1. **Interview** (AskUserQuestion or conversational): purpose and the problem being
-   solved; target users/callers; expected scale and team size; interface shape
-   (API / CLI / web / worker); data characteristics; deployment preferences; the team's
-   existing skills.
+1. **Interview** (AskUserQuestion or conversational): purpose/problem; target users;
+   scale/team size; interface (API / CLI / web / worker); data; deployment; team skills;
+   delivery policy (PR/MR, no-PR merge commit, or trunk).
 2. **Advise** on what the user has NOT yet decided: language/framework (2–3 candidates
    with trade-offs, recommendation marked), architecture shape (layered / modular
    monolith / serverless / …), datastore, initial directory layout, linter. Decisions
@@ -143,11 +145,12 @@ Either way, restate the selection when presenting results.
    routes; or pages/screens/windows + navigation + IPC) → data (schema + models; or
    stores + client-side persistence) → background work (workers/jobs + schedule; or
    tasks/push/tray/auto-update) → external-integration clients + settings → env
-   configs, Dockerfile, CI/CD, packaging/signing/release config; design-surface evidence.
+   configs, Dockerfile, CI/CD, policy docs + branch-protection evidence,
+   packaging/signing/release config; design-surface evidence.
 3. **Present the plan** (sprint contract): the stack judgment **with its detection
    evidence** (which manifest, which deps matched) so the user can correct it, the
-   selected doc set with a one-line skip reason per module, merge-mode handling if docs
-   partially exist, whether `PROGRESS.md` is being offered — and `DESIGN.md` when a
+   selected doc set with a one-line skip reason per module, merge-mode handling and
+   delivery-policy judgment, whether `PROGRESS.md` is offered — and `DESIGN.md` when a
    documented surface is `inherent` or `conditional` evidence matched (selected → read
    its theme/token sources: `design-template.md` §Extraction map) —
    and the file scope still to be read. Hybrid/ambiguous (multiple surfaces, several manifests, monorepo,

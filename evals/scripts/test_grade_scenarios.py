@@ -129,6 +129,53 @@ class FrontmatterTests(unittest.TestCase):
             self.assertFalse(grade.canonical_frontmatter_ok(path))
 
 
+class DeliveryPolicyScenarioTests(unittest.TestCase):
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.root = Path(self.temp.name)
+        self.run = self.root / "run-1"
+        self.repo = self.run / "repo"
+        (self.repo / "src").mkdir(parents=True)
+        (self.repo / "README.md").write_text("# Relay service\n")
+        (self.repo / "CONTRIBUTING.md").write_text("No-PR policy\n")
+        (self.repo / "package.json").write_text("{}\n")
+        (self.repo / "src/server.js").write_text("// source\n")
+        (self.run / "before.json").write_text(json.dumps(grade.snapshot(self.repo)))
+        (self.repo / "docs").mkdir()
+        (self.repo / "docs/project-overview.md").write_text(
+            "# Relay — Project Overview\n\n> **Type:** Explanation\n"
+            "> **Audience:** Developers\n> **Last updated:** 2026-07-15\n\n---\n"
+        )
+        self.valid_policy = (
+            "# Relay — Agent Guide\n\n"
+            "task/<short-name>\n"
+            "git merge --no-ff <branch>\n"
+            "MUST NOT squash\n"
+            "source branch\n"
+            "verification result\n"
+        )
+        (self.repo / "AGENTS.md").write_text(self.valid_policy)
+        (self.run / "final.txt").write_text(
+            "## Plan\n\n## Verification\n\n## Fresh Session Test\n"
+        )
+        scenario = HERE.parent / "scenarios/delivery-policy-no-pr/scenario.json"
+        self.expected = json.loads(scenario.read_text())
+
+    def tearDown(self):
+        self.temp.cleanup()
+
+    def failures(self):
+        return [name for name, ok, _ in grade.grade_run(self.run, self.root, self.expected)
+                if not ok]
+
+    def test_valid_no_pr_policy_passes(self):
+        self.assertEqual([], self.failures())
+
+    def test_invented_pr_requirement_fails(self):
+        (self.repo / "AGENTS.md").write_text(self.valid_policy + "MUST open a PR\n")
+        self.assertIn("forbidden_contains:AGENTS.md:MUST open a PR", self.failures())
+
+
 class SuiteCompletenessTests(unittest.TestCase):
     def make_run(self, root, done=True):
         run = root / "merge-preserves-existing" / "run-1"

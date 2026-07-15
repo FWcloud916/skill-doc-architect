@@ -18,6 +18,9 @@ An agent skill that plans, bootstraps, and maintains a project's core documentat
 - **Update** — syncs docs to a feature-branch diff (the diff→section mapping is
   confirmed before editing), or audits the whole doc set for drift against the current
   code (report-first).
+- **Delivery policy** — records an evidence-backed PR/MR, no-PR merge-commit, or trunk
+  workflow in `AGENTS.md`; no-PR teams can require `git merge --no-ff` and retain merge
+  topology without keeping branch refs forever. Headless runs never guess a policy.
 - **Verification, not vibes** — every mode proves documented commands by executing
   safe read-only checks and ends with a cross-provider 5-question Fresh Session Test.
   Claude Code and Codex CLI can supply the independent context. A project with

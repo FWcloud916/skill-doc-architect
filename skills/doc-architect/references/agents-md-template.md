@@ -101,3 +101,33 @@ frontmatter to today's date. Requirement keywords (MUST, SHOULD, MAY) follow RFC
 - **Merge mode**: an existing AGENTS.md (or CLAUDE.md acting as one) is repaired, not
   replaced — add the missing routing table or maintenance block, keep the project's own
   wording, and confirm any restructure with the user.
+
+## Delivery policy variants
+
+Delivery rules describe how future development work reaches the default branch; merely
+generating docs does not authorize the current agent to create, merge, or delete a
+branch. Resolve the policy from existing `AGENTS.md`, `CONTRIBUTING.md`, repository
+settings/branch protection, or equivalent evidence first; an explicit user choice is
+second. If sources conflict, ask. In headless mode with no evidence, omit delivery
+rules and report the policy as unselected — never invent one. A source-approved trivial
+change exception MAY be recorded; never add that exception as generic advice.
+
+Adapt exactly one evidence-backed variant into the generated Hard constraints and
+Conventions while staying within their budgets:
+
+- **PR/MR workflow:** non-trivial work MUST use a task branch and MUST NOT commit
+  directly to the protected default branch. Verification MUST pass before merge. Open
+  the required PR/MR and preserve the repository's configured merge method and review
+  rules; do not invent approval counts or a squash/rebase policy.
+- **No-PR merge-commit workflow:** non-trivial work MUST use the project's task-branch
+  naming convention and MUST NOT commit directly to the default branch. Verification
+  MUST pass before integration. Integrate with `git merge --no-ff <branch>`; MUST NOT
+  squash. The merge commit message MUST record the source branch, change summary, and
+  verification result. If the task does not authorize integration, hand off the
+  verified branch and exact merge command instead of merging. The branch ref MAY be
+  deleted afterward; the merge commit preserves branch topology.
+- **Trunk workflow:** state direct-commit permission only when project evidence or the
+  user explicitly selects it. Preserve its real verification and commit rules.
+
+Do not combine PR/MR and no-PR requirements. “Keep branch history” means preserving
+topology with a merge commit; it does not require retaining the branch ref forever.

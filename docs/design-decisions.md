@@ -2,7 +2,7 @@
 
 > **Type:** Explanation
 > **Audience:** Maintainers (human and AI) of this skill
-> **Last updated:** 2026-07-14
+> **Last updated:** 2026-07-15
 >
 > Decision log for this skill's architecture, newest first. Portable source of truth —
 > everything a fresh clone needs to modify the skill without prior session context.
@@ -10,6 +10,30 @@
 > at repo root); those now live under `skills/doc-architect/`.
 
 ---
+
+## 2026-07-15 — Evidence-backed delivery policies and no-PR merge topology
+
+Projects need different delivery contracts: some require review through PR/MR, some
+integrate reviewed local work without a hosting artifact, and some intentionally use
+trunk development. Treating one workflow as universal would make generated AGENTS.md
+contradict repository settings or team decisions.
+
+Decisions:
+
+- **Policy is selected, not assumed.** Existing AGENTS/CONTRIBUTING rules and branch
+  protection win, followed by an explicit user choice. Conflicts require clarification;
+  headless runs with no evidence leave the policy unselected instead of guessing.
+- **No-PR still preserves topology.** Non-trivial work uses a task branch, passes the
+  real verification gate, and integrates with `git merge --no-ff`. Squashing is
+  forbidden; the merge message records the source branch, summary, and verification.
+  The branch ref may be deleted because the merge commit retains its ancestry.
+- **Documentation is not delivery authorization.** Generating AGENTS.md records future
+  agent behavior. If a development task does not authorize integration, its agent hands
+  off the verified branch and exact merge command rather than merging on its own.
+- **One dedicated scenario protects the boundary.** `delivery-policy-no-pr` requires
+  the sourced merge-commit rules, rejects invented PR/MR requirements, and proves the
+  source policy file remains unchanged. This additive user-visible capability advances
+  the plugin to `2.2.0`.
 
 ## 2026-07-14 — Provider-selectable detection CI with protected OpenAI execution
 
