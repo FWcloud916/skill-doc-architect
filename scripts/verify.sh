@@ -293,18 +293,26 @@ report "$([ -z "$legacy_contract" ]; echo $?)" "legacy detection-report fields r
 plugin_ok=1
 if command -v python3 >/dev/null 2>&1; then
   python3 - <<'PY' && plugin_ok=0
-import json, sys
+import json, os, sys
 p = json.load(open(".claude-plugin/plugin.json"))
 m = json.load(open(".claude-plugin/marketplace.json"))
+c = json.load(open(".codex-plugin/plugin.json"))
+cm = json.load(open(".agents/plugins/marketplace.json"))
 assert p["name"] == "doc-architect", "plugin.json name"
 assert any(e["name"] == "doc-architect" for e in m["plugins"]), "marketplace entry"
 parts = p["version"].split(".")
 assert len(parts) == 3 and all(part.isdigit() for part in parts), "plugin.json semver"
+assert c["name"] == "doc-architect", "codex plugin.json name"
+assert c["version"] == p["version"], "claude/codex plugin versions differ"
+assert c["skills"].startswith("./"), "codex skills path must be ./-prefixed"
+assert os.path.isfile(os.path.join(c["skills"], "doc-architect", "SKILL.md")), "SKILL.md under codex skills path"
+entry = next(e for e in cm["plugins"] if e["name"] == "doc-architect")
+assert entry["source"]["source"] == "local", "codex marketplace source type"
 PY
 else
   plugin_ok=0  # python3 unavailable — skip rather than fail
 fi
-report "$plugin_ok" "plugin manifests parse and name doc-architect" ""
+report "$plugin_ok" "Claude + Codex plugin manifests parse, agree on version, and name doc-architect" ""
 
 openai_yaml_ok=1
 python3 - <<'PY' && openai_yaml_ok=0

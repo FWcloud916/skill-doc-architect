@@ -3,7 +3,8 @@
 An agent skill that plans, bootstraps, and maintains a project's core documentation set
 (README.md, AGENTS.md, modular docs/) for any stack. The skill itself lives in
 `skills/doc-architect/` (SKILL.md + references/ + scripts/); the repo doubles as a
-Claude Code plugin (`.claude-plugin/`) and marketplace for it.
+Claude Code plugin (`.claude-plugin/`) and marketplace for it, and as a native
+Codex CLI plugin (`.codex-plugin/` + `.agents/plugins/` marketplace).
 
 ## Hard constraints
 
@@ -36,8 +37,9 @@ Claude Code plugin (`.claude-plugin/`) and marketplace for it.
 - MUST NOT extract modes (G/B/U) out of SKILL.md into an index — they are fixed,
   tightly coupled control flow (source: docs/design-decisions.md, 2026-07-07)
 - MUST edit `AGENTS.md`, never `CLAUDE.md` (symlink) (source: agents-md-template)
-- User-visible skill changes MUST bump `version` in `.claude-plugin/plugin.json` —
-  plugin users only receive updates on a version bump (source: plugins reference)
+- User-visible skill changes MUST bump `version` in BOTH `.claude-plugin/plugin.json`
+  and `.codex-plugin/plugin.json`, kept equal (verify.sh enforces) — plugin users on
+  either runtime only receive updates on a version bump (source: plugins reference)
 
 ## Read before you work
 
