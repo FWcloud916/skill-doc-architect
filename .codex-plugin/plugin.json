@@ -1,0 +1,19 @@
+{
+  "name": "doc-architect",
+  "version": "2.3.0",
+  "description": "Plans, bootstraps, audits, and maintains evidence-based project docs with cross-provider validation and end-to-end evaluation gates.",
+  "author": {
+    "name": "FWcloud916",
+    "url": "https://github.com/FWcloud916"
+  },
+  "homepage": "https://github.com/FWcloud916/skill-doc-architect",
+  "repository": "https://github.com/FWcloud916/skill-doc-architect",
+  "keywords": ["documentation", "docs", "readme", "agents-md", "bootstrap", "audit", "design-system"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Doc Architect",
+    "shortDescription": "Plan and maintain evidence-based project docs",
+    "developerName": "FWcloud916",
+    "defaultPrompt": "Use $doc-architect to plan or update this project's core documentation set."
+  }
+}

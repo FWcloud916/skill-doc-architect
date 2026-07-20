@@ -55,7 +55,20 @@ updates:
 /plugin install doc-architect@doc-architect
 ```
 
-### Option 2 — skills CLI (any of 70+ agents)
+### Option 2 — Codex CLI plugin
+
+The repo also ships a native Codex CLI plugin (`.codex-plugin/`) with a repo-scoped
+marketplace:
+
+```bash
+codex plugin marketplace add FWcloud916/skill-doc-architect
+codex plugin add doc-architect@doc-architect
+```
+
+(Or browse with `/plugins` inside Codex CLI.) Installed copies are version-pinned
+under `~/.codex/plugins/cache/`.
+
+### Option 3 — skills CLI (any of 70+ agents)
 
 [vercel-labs/skills](https://github.com/vercel-labs/skills) installs the skill for
 the agent(s) you pick (Claude Code, Cursor, Codex, and more), creating any missing
@@ -67,9 +80,9 @@ npx skills add FWcloud916/skill-doc-architect -g -a claude-code -y # non-interac
 ```
 
 This route installs the skill only. To also use the dedicated Claude Code agent, add
-the agent symlink from Option 3's last step.
+the agent symlink from Option 4's last step.
 
-### Option 3 — manual clone + symlink
+### Option 4 — manual clone + symlink
 
 Pick the layout your runtime reads — `~/.claude/skills` for Claude Code, or the
 universal `~/.agents/skills` for runtimes that share it. `mkdir -p` covers the case
@@ -129,6 +142,8 @@ python3 evals/scripts/test_grade_scenarios.py # free end-to-end grader tests
 ```
 doc-architect/
 ├── .claude-plugin/   # plugin.json + marketplace.json — Claude Code plugin packaging
+├── .codex-plugin/    # plugin.json — Codex CLI plugin packaging
+├── .agents/plugins/  # marketplace.json — repo-scoped Codex marketplace
 ├── skills/
 │   └── doc-architect/
 │       ├── SKILL.md      # entry point: modes, doc-set selection, shared conventions

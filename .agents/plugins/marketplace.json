@@ -1,0 +1,19 @@
+{
+  "name": "doc-architect",
+  "interface": {
+    "displayName": "Doc Architect Marketplace"
+  },
+  "plugins": [
+    {
+      "name": "doc-architect",
+      "source": {
+        "source": "local",
+        "path": "./"
+      },
+      "policy": {
+        "installation": "AVAILABLE"
+      },
+      "category": "documentation"
+    }
+  ]
+}

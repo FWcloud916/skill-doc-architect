@@ -2,7 +2,7 @@
 
 > **Type:** Explanation
 > **Audience:** Maintainers (human and AI) of this skill
-> **Last updated:** 2026-07-15
+> **Last updated:** 2026-07-20
 >
 > Decision log for this skill's architecture, newest first. Portable source of truth —
 > everything a fresh clone needs to modify the skill without prior session context.
@@ -10,6 +10,29 @@
 > at repo root); those now live under `skills/doc-architect/`.
 
 ---
+
+## 2026-07-20 — Native Codex CLI plugin packaging
+
+Codex users could only install the skill through the generic skills CLI or manual
+symlinks — no version pinning, no `/plugins` flow. Codex CLI supports native plugins
+(`.codex-plugin/plugin.json` + a repo-scoped `.agents/plugins/marketplace.json`), and
+the skill's SKILL.md format is already Codex-compatible, so packaging is additive.
+
+Decisions:
+
+- **Mirror identity, lockstep versions.** `.codex-plugin/plugin.json` mirrors the
+  Claude manifest's name/description/author and its `interface` block reuses the
+  `agents/openai.yaml` wording. verify.sh check 10 now parses both manifests and the
+  Codex marketplace, and requires the two `version` fields to be equal.
+- **Marketplace paths resolve from the repo root.** `codex plugin marketplace add`
+  reports the repo root as the installed marketplace root, so the local source entry
+  uses `"path": "./"` — a `"../.."` path relative to the marketplace file fails to
+  resolve (verified against codex-cli 0.144.6; install cached the plugin under
+  `~/.codex/plugins/cache/doc-architect/doc-architect/2.3.0`).
+- **Distribution packaging is user-visible.** Unlike the eval-only Codex work
+  (2026-07-14, no bump), native install capability changes what plugin users receive,
+  so both manifests advance to `2.3.0` — consistent with the 2.1.0 `openai.yaml`
+  precedent.
 
 ## 2026-07-15 — Evidence-backed delivery policies and no-PR merge topology
 
