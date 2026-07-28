@@ -189,8 +189,9 @@ fallback and MUST NOT be reported as an independent pass.
   `TBD — not yet designed` · TBD list handed off with return triggers · Fresh Session
   Test passes (Q5 via PROGRESS.md, or its absence proves `N/A — not agent-tracked`) · no test
   gate → warning attached + gate item seeded (§6).
-- **B** — plan confirmed (interactive) or recorded in the report (headless) · every
-  selected doc generated AND self-checked in WIP = 1 order · all stated commands
+- **B** — the sprint contract was honored: plan confirmed (interactive) or recorded in
+  the report (headless) · every selected doc generated AND self-checked in WIP = 1
+  order · all stated commands
   §5-verified or flagged `unverifiable here` · Fresh Session Test passes on the new doc
   set · no test gate → warning attached + gate item seeded (§6) ·
   `docs/.doc-architect-state.md` deleted.
