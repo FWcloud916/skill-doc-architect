@@ -50,6 +50,14 @@
   `is_file()` grader — evidence is now explicitly file-only. Scenarios 7 → 10
   (`context-term-drift`, `context-no-terms-skip`, `context-avoid-drift-audit`);
   trigger matrix 16 → 18 (10/4/4).
+- **Context-engineering experiments (Claude-5 blog follow-up).** Two unhobbling probes,
+  each validated by a live 10-scenario sweep (7 first-pass green + 3 reruns after
+  provider connection drops — no behavioral failures): (1) agents-md-template's three
+  worked hard-constraint examples replaced by an interface-style definition (examples
+  steered generation toward copying those exact shapes); (2) SKILL.md shared
+  conventions deduped — frontmatter shape, RFC 2119, ASCII-ER, and relative-link rules
+  now live only in the templates (generation time) + checklist §2 (verification time),
+  behind a one-line pointer bullet. Budget ratcheted again 220 → 216.
 - **Version 2.3.0 → 2.4.0** (minor: new opt-in module + description rewrite), both
   plugin manifests in lockstep.
 
