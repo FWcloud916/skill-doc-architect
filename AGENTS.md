@@ -54,6 +54,7 @@ edits) can skip; do not pre-load all docs.
 | Changing detection rules or eval fixtures | [evals/README.md](evals/README.md) |
 | Changing a generated doc's shape | the matching `skills/doc-architect/references/*-template.md` |
 | Understanding why it's built this way | [docs/design-decisions.md](docs/design-decisions.md) |
+| Unsure what a project-specific term means | [CONTEXT.md](CONTEXT.md) |
 
 ## Commands
 
