@@ -69,6 +69,8 @@ skills/doc-architect/scripts/fresh_session_test.sh <repo> # independent Fresh Se
 - Enhance over rewrite: extend existing tables/sections; restructure only when scale
   justifies it (precedent: the stacks/ index, docs/design-decisions.md).
 - Requirement keywords (MUST/SHOULD/MAY) follow RFC 2119, uppercase.
+- Changing SKILL.md or references → walk the six failure modes first
+  (docs/design-decisions.md §Appendix, "SKILL.md change checklist").
 
 ## Docs maintenance
 

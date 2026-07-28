@@ -2,7 +2,7 @@
 
 > **Type:** Explanation
 > **Audience:** Maintainers (human and AI) of this skill
-> **Last updated:** 2026-07-20
+> **Last updated:** 2026-07-28
 >
 > Decision log for this skill's architecture, newest first. Portable source of truth —
 > everything a fresh clone needs to modify the skill without prior session context.
@@ -404,6 +404,18 @@ stacks/ index above — but the mode organization itself stands.)
 `Node backend`, `Python`, `Rust`, `Serverless`, `Frontend web`, `React Native`,
 `Apple (iOS/macOS)`, `Android`, `Flutter`, `Electron`, `Tauri`,
 `Windows desktop (.NET)`, `VS Code extension`.
+
+**SKILL.md change checklist (failure modes):** before merging any SKILL.md (or
+reference) change, walk the six skill-authoring failure modes:
+
+1. *Premature completion* — does every mode still end at a checkable Definition of Done?
+2. *Duplication* — does the change restate anything the stacks index, templates, or
+   audit checklist already owns? Point, don't restate.
+3. *Sediment* — single-occurrence terms, dead references, patched-in clauses nothing uses.
+4. *Sprawl* — does new content belong in a reference file instead of the always-loaded body?
+5. *No-op* — does each new sentence change behavior relative to the model default?
+   Delete it if not.
+6. *Negation* — prefer positive instructions; a bare "don't" needs a paired "do".
 
 **Adding a stack (standard procedure):**
 1. Create `skills/doc-architect/references/stacks/<stack>.md` using the 5-section skeleton (copy an existing
