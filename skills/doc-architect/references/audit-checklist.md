@@ -19,6 +19,7 @@ table's shape.
 | Data layer (see stack file: schema/migrations, models, stores, client persistence) | project-overview §5, §9; domain-models §1 + ER |
 | Background work (see stack file: workers/jobs, tasks, schedules) | project-overview §7 |
 | Business-logic layer (services, mechanisms) | domain-models mechanism/flow sections naming those classes |
+| Renamed domain concepts / new recurring project terms | CONTEXT.md §Language as candidates — rulings stay with the user (only when `CONTEXT.md` exists) |
 | API-client wrappers / external-integration layer | project-overview §8; domain-models integration sections |
 | Dependency manifest/lockfile (major bumps or new key deps only) | project-overview §2 |
 | Settings/env config | project-overview §8, §10 |
@@ -112,13 +113,23 @@ pre-existing files are source material, not doc-architect-owned audit targets.
       MAY read `N/A — <reason>`)
 - [ ] AGENTS.md task→doc table has the DESIGN.md row iff `DESIGN.md` exists
 
+**CONTEXT.md (only when the context module was selected)**
+- [ ] Under ~80 lines
+- [ ] Every `_Avoid_:` term has zero occurrences in the generated doc set (README.md,
+      AGENTS.md, `docs/`, DESIGN.md prose) — each hit is a drift finding
+- [ ] No orphan terms: every bold §Language term occurs at least once in code or docs
+      outside CONTEXT.md — zero occurrences → flag stale
+- [ ] Entries not ruled by the user carry `proposed — pending ruling` (headless never
+      silently rules)
+- [ ] AGENTS.md task→doc table has the CONTEXT.md row iff `CONTEXT.md` exists
+
 **Scope guard & clean state**
 - [ ] No edits outside the generated file set (README.md, AGENTS.md + its symlinks, the
       canonical `docs/` files, `docs/domain/`, `PROGRESS.md` when the harness module was
-      selected, `DESIGN.md` when the design module was selected,
-      `docs/.doc-architect-state.md` while Mode B is in flight). Pre-existing
-      scratch/memo/pending directories and any other non-canonical files under `docs/`
-      are untouched.
+      selected, `DESIGN.md` when the design module was selected, `CONTEXT.md` when the
+      context module was selected, `docs/.doc-architect-state.md` while Mode B is in
+      flight). Pre-existing scratch/memo/pending directories and any other
+      non-canonical files under `docs/` are untouched.
 - [ ] No leftover `docs/.doc-architect-state.md` after a completed Mode B run
 
 ## 3. Semantic checks (judgment required — report, don't silently rewrite)
@@ -208,6 +219,7 @@ repo files**, citing the doc + section that answers it.
 | 3 | How do I run it? | README Quickstart Run / AGENTS.md Commands |
 | 4 | How do I verify my work? | test + lint commands — §5-verified, or honest greenfield `TBD` |
 | 5 | What work state, if any, does this repository track? | PROGRESS.md (harness module); when absent, `N/A — not agent-tracked (PROGRESS.md absent)` is a valid repository-derived answer |
+| 6 | What does the core project terminology mean, and which synonyms are avoided? *(asked only when `CONTEXT.md` exists — answer from its first §Language term)* | CONTEXT.md §Language |
 
 A question unanswerable from the repo alone is a **blocking gap** in Modes G/B (fix
 before presenting) and a **drift finding** in Mode U-2. An honest `TBD` answer passes
@@ -223,9 +235,10 @@ context instead:
 
 - If either supported CLI is available, run `scripts/fresh_session_test.sh <repo root>`
   (`EVAL_CLI=claude|codex`, default Claude). It spawns a headless subprocess with zero
-  conversation history and returns the 5 answers as validated JSON. Citations for
-  Q1–Q4 (and Q5 when PROGRESS.md exists) MUST name a real repository Markdown file;
-  absent Q5 uses the exact citation `PROGRESS.md absent at repository root`.
+  conversation history and returns the answers (5; 6 when `CONTEXT.md` exists) as
+  validated JSON. Citations for Q1–Q4 (and Q5 when PROGRESS.md exists) MUST name a
+  real repository Markdown file; absent Q5 uses the exact citation
+  `PROGRESS.md absent at repository root`; Q6's citation MUST name `CONTEXT.md`.
 - Only fall back to self-simulation when the selected CLI or script is unavailable.
   Label it `degraded — independent runner unavailable`; it MAY support a best-effort
   handoff but MUST NOT be reported as an independent pass or an unqualified `complete`.
@@ -237,8 +250,9 @@ context instead:
 - Cost note: one extra headless call per independent Fresh Session Test — modest
   compared to doc generation itself, paid for context purity. End-to-end eval scenarios
   deliberately self-simulate and label degradation to avoid nested provider calls.
-- The 5 questions are hard-coded in the script's prompt from this table. If this
-  table's wording changes, update the script's prompt in the same change.
+- The questions are hard-coded in the script's prompt from this table (Q6 is appended
+  only when `CONTEXT.md` exists). If this table's wording changes, update the
+  script's prompt in the same change.
 
 ### Verification-gate warning
 

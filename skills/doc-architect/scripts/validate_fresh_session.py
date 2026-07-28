@@ -12,6 +12,7 @@ QUESTIONS = [
     "How do I run it?",
     "How do I verify my work?",
     "What work state, if any, does this repository track?",
+    "What does the core project terminology mean, and which synonyms are avoided?",
 ]
 ANSWER_KEYS = {"q", "question", "answer", "citation"}
 MARKDOWN_PATH = re.compile(r"(?:^|[\s(`])((?:[A-Za-z0-9_.-]+/)*[A-Za-z0-9_.-]+\.md)")
@@ -48,10 +49,13 @@ def validate_report(report, target):
     if not isinstance(report, dict) or set(report) != {"answers"}:
         return ["report must contain only the answers field"]
     answers = report.get("answers")
-    if not isinstance(answers, list) or len(answers) != 5:
-        return ["answers must contain exactly five items"]
-    if [item.get("q") for item in answers if isinstance(item, dict)] != [1, 2, 3, 4, 5]:
-        errors.append("answers must be ordered q=1..5")
+    expected_n = 6 if (target / "CONTEXT.md").exists() else 5
+    if not isinstance(answers, list) or len(answers) != expected_n:
+        return [f"answers must contain exactly {expected_n} items"
+                " (6 requires CONTEXT.md at the repository root)"]
+    expected_qs = list(range(1, expected_n + 1))
+    if [item.get("q") for item in answers if isinstance(item, dict)] != expected_qs:
+        errors.append(f"answers must be ordered q=1..{expected_n}")
 
     for index, item in enumerate(answers, start=1):
         if not isinstance(item, dict) or set(item) != ANSWER_KEYS:
@@ -64,6 +68,9 @@ def validate_report(report, target):
             errors.append(f"q{index}: question/answer/citation must be non-empty strings")
             continue
 
+        if index == 6 and "CONTEXT.md" not in item["citation"]:
+            errors.append("q6: citation must name CONTEXT.md")
+            continue
         if index == 5 and not (target / "PROGRESS.md").exists():
             answer = item["answer"]
             citation = item["citation"]

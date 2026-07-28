@@ -77,6 +77,31 @@ class FreshSessionValidationTests(unittest.TestCase):
         self.report["answers"][0]["citation"] = "../README.md"
         self.assertTrue(fresh.validate_report(self.report, self.repo))
 
+    def _q6_row(self):
+        return {"q": 6, "question": fresh.QUESTIONS[5],
+                "answer": "A Widget is the billable unit; avoid 'Gadget'.",
+                "citation": "CONTEXT.md — Language"}
+
+    def test_q6_required_when_context_present(self):
+        (self.repo / "CONTEXT.md").write_text("# Sample — Context\n")
+        errors = fresh.validate_report(self.report, self.repo)
+        self.assertTrue(any("exactly 6" in error for error in errors))
+        self.report["answers"].append(self._q6_row())
+        self.assertEqual([], fresh.validate_report(self.report, self.repo))
+
+    def test_q6_forbidden_when_context_absent(self):
+        self.report["answers"].append(self._q6_row())
+        errors = fresh.validate_report(self.report, self.repo)
+        self.assertTrue(any("exactly 5" in error for error in errors))
+
+    def test_q6_citation_must_name_context(self):
+        (self.repo / "CONTEXT.md").write_text("# Sample — Context\n")
+        row = self._q6_row()
+        row["citation"] = "README.md — first paragraph"
+        self.report["answers"].append(row)
+        errors = fresh.validate_report(self.report, self.repo)
+        self.assertTrue(any("q6" in error for error in errors))
+
 
 if __name__ == "__main__":
     unittest.main()

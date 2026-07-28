@@ -101,8 +101,9 @@ restate the selection when presenting results.
    (existing files, git state, prior docs) — spend questions only on decisions. Cover:
    purpose/problem; target users; scale/team size; interface (API / CLI / web /
    worker); data; deployment; team skills; delivery policy (PR/MR, no-PR merge
-   commit, or trunk). Headless: skip the interview — take decisions from the request,
-   everything else stays honestly TBD.
+   commit, or trunk). Capture project-specific terms the user coins along the way as
+   `CONTEXT.md` candidates (context module). Headless: skip the interview — take
+   decisions from the request, everything else stays honestly TBD.
 2. **Advise inside each question**: every open decision (language/framework,
    architecture shape, datastore, initial directory layout, linter) is asked with 2–3
    candidate options, a marked recommendation, and a one-line reason. Decisions the
@@ -117,7 +118,9 @@ restate the selection when presenting results.
    direction (`references/design-template.md` §Mode G design interview).
 5. Modules: `domain-models.md` only if a data-model draft exists (marked
    `planned — no schema yet`); skip `coding-style.md` until a linter is chosen; skip
-   `db-observation.md` until a schema exists.
+   `db-observation.md` until a schema exists. `CONTEXT.md` when selected: the
+   interview's naming choices are the rulings — settle each term one at a time with a
+   proposed `_Avoid_` list (`context-template.md`).
 6. **Hand off and report** under headings containing the canonical G labels above:
    list every TBD section with its Mode-U return trigger (e.g. "after the first
    models land"), then run the Mode-G Definition of Done (below), including the Fresh
@@ -135,10 +138,16 @@ restate the selection when presenting results.
    §Discovery map): README → dependency manifest + lockfile → interface surface →
    data → background work → external-integration clients + settings → env configs,
    Dockerfile, CI/CD, policy docs + branch-protection evidence,
-   packaging/signing/release config; design-surface evidence.
+   packaging/signing/release config; design-surface evidence. Context module in
+   play → **extract terms** while reading: high-frequency project-specific names
+   (model/class names, directories, existing docs) — generic stack vocabulary never
+   qualifies — and flag **synonym drift**: one concept named differently in code vs
+   docs (`context-template.md` §Writing rules).
 3. **Present the plan** (sprint contract): the stack judgment **with its detection
    evidence** (which manifest, which deps matched) so the user can correct it; the
-   selected doc set with a one-line skip reason per module; merge-mode handling and
+   selected doc set with a one-line skip reason per module; term candidates + drift
+   signals (context module — interactive rules them term by term, headless keeps
+   `proposed — pending ruling`); merge-mode handling and
    delivery-policy judgment; whether `PROGRESS.md` and `DESIGN.md` are offered
    (design-surface rule: detection index notes; selected → `design-template.md`
    §Extraction map); and the file scope still to be read. Hybrid / ambiguous /
@@ -163,7 +172,9 @@ restate the selection when presenting results.
 
 1. Determine the diff range: user-specified branch/range/PR, else
    `git diff <default-branch>...HEAD --name-only` (detect master vs main).
-2. Map changed paths → affected doc sections via `references/audit-checklist.md` §1.
+2. Map changed paths → affected doc sections via `references/audit-checklist.md` §1
+   (an existing `CONTEXT.md` maps diff-introduced terms as candidates only — rulings
+   stay with the user).
 3. **Present the mapping**: the changed-paths → doc-sections table about to be
    rewritten, per **Plan before you write** (above).
 4. Read the changed source files, then rewrite **only the affected sections**. Bump

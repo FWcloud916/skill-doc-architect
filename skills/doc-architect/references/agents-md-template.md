@@ -41,6 +41,7 @@ edits, running tests) can skip; do not pre-load all docs.
 | Touching domain behavior, data models, state machines | [docs/domain-models.md](docs/domain-models.md) |
 | Style, lint rules, error handling, layering conventions | [docs/coding-style.md](docs/coding-style.md) |
 | Changing query shape (`WHERE`/`JOIN`/`ORDER BY`/pagination) on a hot table | [docs/db-observation.md](docs/db-observation.md) |
+| Unsure what a project-specific term means | [CONTEXT.md](CONTEXT.md) |
 
 ## Commands
 

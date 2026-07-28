@@ -145,7 +145,7 @@ from pathlib import Path
 schema = json.loads(Path("skills/doc-architect/references/fresh-session-report.schema.json").read_text())
 assert schema["required"] == ["answers"]
 answers = schema["properties"]["answers"]
-assert answers["minItems"] == answers["maxItems"] == 5
+assert answers["minItems"] == 5 and answers["maxItems"] == 6
 assert set(answers["items"]["required"]) == {"q", "question", "answer", "citation"}
 PY
 report "$fresh_schema_ok" "Fresh Session report schema is valid" "schema validation failed"
