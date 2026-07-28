@@ -55,13 +55,9 @@ restate the selection when presenting results.
 
 ## Shared conventions (all modes)
 
-- **Frontmatter** on every `docs/` file: `# <Project> — <Doc Name>` title, then a
-  blockquote with `> **Type:**`, `> **Audience:**`, `> **Last updated:** YYYY-MM-DD`,
-  then `---`. (README and AGENTS.md use their own templates' shapes.)
+- **Follow each doc's template** (frontmatter shape, ER style, link style live there;
+  checklist §2 verifies them). README and AGENTS.md use their own templates' shapes.
 - **Bump `Last updated` only on real content change** — a no-op audit pass bumps nothing.
-- Requirement keywords (**MUST/SHOULD/MAY**) follow RFC 2119, uppercase.
-- Entity-relationship diagrams are ASCII in fenced code blocks — not mermaid.
-- Links to code and sibling docs are relative paths.
 - **Scope guard:** this skill touches ONLY the files it generates (README.md, AGENTS.md
   + symlinks, the canonical `docs/` files, `docs/domain/`, `PROGRESS.md` when the
   harness module was selected, `DESIGN.md` when the design module was selected,
