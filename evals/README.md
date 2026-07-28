@@ -37,7 +37,7 @@ evals/
 │   ├── basic-*/               # 16: one per stack file, single unambiguous signal
 │   │   └── expected.json      # ground truth
 │   └── trap-*/                # 19: hybrid/ordering/fallback traps
-├── scenarios/                 # 7 disposable end-to-end repository scenarios
+├── scenarios/                 # 10 disposable end-to-end repository scenarios
 │   └── */scenario.json        # deterministic output/change invariants
 ├── trigger-matrix.json        # 8 positive + 4 boundary + 4 negative prompts
 └── scripts/
@@ -216,7 +216,7 @@ that's what the verify.sh fixture lint is for.
 
 ## End-to-end mode scenarios
 
-The seven scenarios cover the skill's highest-risk behavioral promises:
+The ten scenarios cover the skill's highest-risk behavioral promises:
 
 | Scenario | Contract under test |
 |---|---|
@@ -227,6 +227,9 @@ The seven scenarios cover the skill's highest-risk behavioral promises:
 | `audit-report-only` | Mode U-2 reports drift and changes no file |
 | `unknown-stack-honesty` | unsupported CMake/C++ stays explicit unknown, never guessed |
 | `delivery-policy-no-pr` | sourced task branches integrate with `--no-ff`, without inventing PR/MR |
+| `context-term-drift` | Mode B detects code-vs-docs synonym drift; headless rulings stay `proposed — pending ruling`; no generic-word definitions |
+| `context-no-terms-skip` | a repo with only generic vocabulary skips CONTEXT.md with a stated reason |
+| `context-avoid-drift-audit` | Mode U-2 reports `_Avoid_`-term drift against CONTEXT.md and changes no file |
 
 Each run copies `scenarios/<name>/repo/` into its results directory, initializes a
 disposable Git repository, applies `change.patch` when present, records a pre-agent
@@ -246,7 +249,7 @@ plus `.git`; application files and arbitrary hidden paths remain inside the hard
 check.
 
 ```bash
-# all seven scenarios, one run each
+# all ten scenarios, one run each
 EVAL_CLI=codex ./evals/scripts/run_scenarios.sh /tmp/doc-scenarios 1
 
 # one targeted scenario

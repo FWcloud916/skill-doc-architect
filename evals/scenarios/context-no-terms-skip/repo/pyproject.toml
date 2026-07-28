@@ -1,0 +1,5 @@
+[project]
+name = "textutils"
+version = "1.1.0"
+description = "Small text utility helpers: formatting and parsing"
+requires-python = ">=3.11"

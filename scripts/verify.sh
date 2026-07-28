@@ -239,7 +239,7 @@ expected_keys = {
 }
 root = Path("evals/scenarios")
 scenarios = sorted(path for path in root.iterdir() if path.is_dir())
-assert len(scenarios) == 7, len(scenarios)
+assert len(scenarios) == 10, len(scenarios)
 for scenario in scenarios:
     assert (scenario / "repo").is_dir(), scenario
     data = json.loads((scenario / "scenario.json").read_text())
@@ -249,7 +249,7 @@ for scenario in scenarios:
     assert isinstance(data["validate_relative_links"], bool), scenario
     assert data["final_required_sections"], scenario
 PY
-report "$scenario_layout_ok" "seven end-to-end scenario contracts are valid" \
+report "$scenario_layout_ok" "ten end-to-end scenario contracts are valid" \
   "actual scenario count=$scenario_count"
 
 bad_patches=""
@@ -272,17 +272,17 @@ import json
 from collections import Counter
 
 cases = json.load(open("evals/trigger-matrix.json"))
-assert len(cases) == 16
+assert len(cases) == 18
 assert all(set(case) == {"id", "prompt", "expected", "reason"} for case in cases)
 assert len({case["id"] for case in cases}) == len(cases)
 assert all(case["prompt"].strip() and case["reason"].strip() for case in cases)
 assert Counter(case["expected"] for case in cases) == {
-    "doc-architect": 8,
+    "doc-architect": 10,
     "prefer-project-docs": 4,
     "not-doc-architect": 4,
 }
 PY
-report "$trigger_matrix_ok" "trigger boundary matrix has the 8/4/4 contract" \
+report "$trigger_matrix_ok" "trigger boundary matrix has the 10/4/4 contract" \
   "trigger-matrix.json validation failed"
 
 legacy_contract=$(grep -rn 'package_json_role\|unsafe_commands_flagged' \
