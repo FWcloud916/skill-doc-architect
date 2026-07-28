@@ -24,16 +24,13 @@ References:
 - `references/readme-template.md` — human-first repo entry point
 - `references/agents-md-template.md` — agent signpost file (routing + hard constraints; ≤ ~100 lines)
 - `references/project-overview-template.md` — 10-section skeleton + per-section guidance
-- `references/stacks/` — detection index (README.md) + one file per stack: detection,
-  discovery map, diff→section map, linter signals, minimal test gate
+- `references/stacks/` — detection index (README.md) + one file per stack
 - `references/domain-models-template.md` — 3 layout variants + ASCII ER diagram style
 - `references/coding-style-template.md` — generate from the project's own linter config
 - `references/db-observation-template.md` — DB observation how-to (DB-owning projects only)
 - `references/harness-template.md` — agent-harness state: PROGRESS.md + Mode-B resume state file
-- `references/design-template.md` — UI design-system doc (opt-in, repo root):
-  Stitch-compatible YAML design tokens + prose, extraction map, Mode-G design interview
-- `references/audit-checklist.md` — diff→section mapping, verification invariants,
-  executable command checks (§5), Fresh Session Test (§6)
+- `references/design-template.md` — UI design-system doc (opt-in): tokens, extraction map, design interview
+- `references/audit-checklist.md` — diff→section mapping, invariants, command checks (§5), Fresh Session Test (§6)
 
 ---
 
@@ -53,16 +50,15 @@ References:
 **Plan before you write**: the doc-set selection (modules generated, modules skipped,
 one-line reason for each skip) is a plan, not an afterthought. Interactive: present it
 **before generating** and wait for confirmation (Mode B step 3, Mode U-1 step 3).
-Headless: do not stall — execute the plan as made and record it in the final report.
-Either way, restate the selection when presenting results.
+Headless: execute the plan as made and record it in the final report. Either way,
+restate the selection when presenting results.
 
 ## Shared conventions (all modes)
 
 - **Frontmatter** on every `docs/` file: `# <Project> — <Doc Name>` title, then a
   blockquote with `> **Type:**`, `> **Audience:**`, `> **Last updated:** YYYY-MM-DD`,
   then `---`. (README and AGENTS.md use their own templates' shapes.)
-- **Bump `Last updated` only when a file's content actually changes** — an audit pass
-  that changes nothing bumps nothing.
+- **Bump `Last updated` only on real content change** — a no-op audit pass bumps nothing.
 - Requirement keywords (**MUST/SHOULD/MAY**) follow RFC 2119, uppercase.
 - Entity-relationship diagrams are ASCII in fenced code blocks — not mermaid.
 - Links to code and sibling docs are relative paths.
@@ -79,12 +75,11 @@ Either way, restate the selection when presenting results.
   ask the user; never fill gaps from memory of similar projects.
 - **Delivery policy:** when generating `AGENTS.md`, prefer existing policy evidence,
   then explicit user choice; headless with neither leaves it unselected. Read the
-  template's §Delivery policy variants; never guess.
-- **Headless report headings:** give each canonical label its own Markdown heading;
-  descriptive prefixes or suffixes MAY clarify it, but the label itself stays intact:
-  G — `Plan`, `Verification`, `Fresh Session Test`, `Hand-off`; B —
-  `Plan`, `Verification`, `Fresh Session Test`; U-1 — `Mapping`, `Verification`;
-  U-2 — `Verification results`.
+  template's §Delivery policy variants — evidence or the user decides, never a guess.
+- **Headless report headings:** each canonical label gets its own Markdown heading
+  (prefixes/suffixes MAY clarify it; the label itself stays intact): G — `Plan`,
+  `Verification`, `Fresh Session Test`, `Hand-off`; B — `Plan`, `Verification`,
+  `Fresh Session Test`; U-1 — `Mapping`, `Verification`; U-2 — `Verification results`.
 
 ## Mode selection
 
@@ -109,23 +104,19 @@ Either way, restate the selection when presenting results.
    the user already made are respected as-is — record, don't re-litigate.
 3. **Record decisions with rationale**: chosen stack + why (and rejected alternatives,
    one line each) → `project-overview.md` §2; architecture shape + Key Principles → §3.
-   Undecided sections get `TBD — not yet designed` — an honest fact, never silently
-   filled in.
+   Undecided sections get `TBD — not yet designed` — never silently filled in.
 4. Generate `README.md` (skeleton + known info), `AGENTS.md`, `project-overview.md`
-   (full 10-section structure, partly TBD). Offer `PROGRESS.md` (harness module — see
-   doc-set table), seeding its Feature list / Next steps from the interview's task
-   breakdown. When a UI is planned, also offer `DESIGN.md` (design module): interview
-   the design direction or adapt a starter template — `references/design-template.md`
-   §Mode G design interview.
+   (full 10-section structure, partly TBD). Offer `PROGRESS.md` (harness module),
+   seeding its Feature list / Next steps from the interview's task breakdown. When a
+   UI is planned, also offer `DESIGN.md` (design module): interview the design
+   direction (`references/design-template.md` §Mode G design interview).
 5. Modules: `domain-models.md` only if a data-model draft exists (marked
    `planned — no schema yet`); skip `coding-style.md` until a linter is chosen; skip
    `db-observation.md` until a schema exists.
 6. **Hand off and report** under headings containing the canonical G labels above:
-   list every TBD section, tell the user when to return for Mode U
-   (e.g. "after the first models land, after CI is set up"), and run the Mode-G
-   Definition of Done (below), including the Fresh Session Test (checklist §6). No
-   runnable test gate yet → the hand-off MUST carry the verification-gate warning
-   (§6), and a selected `PROGRESS.md` MUST have the gate work item seeded as row 1.
+   list every TBD section with its Mode-U return trigger (e.g. "after the first
+   models land"), then run the Mode-G Definition of Done (below), including the Fresh
+   Session Test (checklist §6).
 
 ## Mode B — Brownfield bootstrap (write docs from the code)
 
@@ -136,39 +127,32 @@ Either way, restate the selection when presenting results.
    no match → unknown stack (README + entrypoint reading, say so). Read every
    documented surface's stack file before discovery reading.
 2. **Discovery reading**, in order (per-stack sources + facet notes: the stack file's
-   §Discovery map): README → dependency manifest + lockfile → interface surface (server
-   routes; or pages/screens/windows + navigation + IPC) → data (schema + models; or
-   stores + client-side persistence) → background work (workers/jobs + schedule; or
-   tasks/push/tray/auto-update) → external-integration clients + settings → env
-   configs, Dockerfile, CI/CD, policy docs + branch-protection evidence,
+   §Discovery map): README → dependency manifest + lockfile → interface surface →
+   data → background work → external-integration clients + settings → env configs,
+   Dockerfile, CI/CD, policy docs + branch-protection evidence,
    packaging/signing/release config; design-surface evidence.
 3. **Present the plan** (sprint contract): the stack judgment **with its detection
-   evidence** (which manifest, which deps matched) so the user can correct it, the
-   selected doc set with a one-line skip reason per module, merge-mode handling and
-   delivery-policy judgment, whether `PROGRESS.md` is offered — and `DESIGN.md` when a
-   documented surface is `inherent` or `conditional` evidence matched (selected → read
-   its theme/token sources: `design-template.md` §Extraction map) —
-   and the file scope still to be read. Hybrid/ambiguous (multiple surfaces, several manifests, monorepo,
-   unknown): list every detected surface with its evidence; interactive: ask which
-   surface(s) to document (default: all); headless: document all, backend facets
-   first, and record the judgment. Interactive: wait for confirmation before writing
-   anything. Headless: record the plan in the final report and proceed.
+   evidence** (which manifest, which deps matched) so the user can correct it; the
+   selected doc set with a one-line skip reason per module; merge-mode handling and
+   delivery-policy judgment; whether `PROGRESS.md` and `DESIGN.md` are offered
+   (design-surface rule: detection index notes; selected → `design-template.md`
+   §Extraction map); and the file scope still to be read. Hybrid / ambiguous /
+   monorepo resolve here per the detection index's step-3 gate rule. Then follow
+   **Plan before you write** (above).
 4. Generate **one doc at a time (WIP = 1)**, in order README → AGENTS.md →
    project-overview → selected modules: write a doc → self-verify it (checklist §2
-   invariants for that file + §5 executable checks for any commands it states) → only
-   then start the next. A doc counts as done when its self-check passes — more files
-   written is not more progress.
+   invariants + §5 checks for any commands it states) → only then start the next. A
+   doc counts as done when its self-check passes — more files written is not more
+   progress.
 5. **Merge mode** when docs partially exist: fill gaps, link to existing material,
    confirm any restructure with the user first.
-6. **Large repo / interrupted run**: when the work won't fit one session, keep
-   `docs/.doc-architect-state.md` (shape: `references/harness-template.md` §state file).
-   On session start, if it exists, offer to resume from it. Delete it when Mode B
-   completes — leaving it behind fails the clean-state check (checklist §2).
+6. **Large repo / interrupted run**: work that won't fit one session keeps
+   `docs/.doc-architect-state.md` (`references/harness-template.md` §state file);
+   offer to resume from it on session start; delete it when Mode B completes —
+   leaving it behind fails the §2 clean-state check.
 7. **Self-check** with checklist §2 + §5, then run the Fresh Session Test (§6) as the
-   final gate before presenting the result. No runnable test gate found → the report
-   MUST carry the verification-gate warning (§6), and a selected `PROGRESS.md` MUST
-   have the gate work item seeded as row 1 (`references/harness-template.md`). Present
-   the result under headings containing the canonical B labels above.
+   final gate. Present the result under headings containing the canonical B labels
+   above, then close out the Mode-B Definition of Done (below).
 
 ## Mode U-1 — Diff-driven update
 
@@ -176,23 +160,22 @@ Either way, restate the selection when presenting results.
    `git diff <default-branch>...HEAD --name-only` (detect master vs main).
 2. Map changed paths → affected doc sections via `references/audit-checklist.md` §1.
 3. **Present the mapping**: the changed-paths → doc-sections table about to be
-   rewritten. Interactive: wait for confirmation before editing. Headless: record the
-   mapping in the final report and proceed.
+   rewritten, per **Plan before you write** (above).
 4. Read the changed source files, then rewrite **only the affected sections**. Bump
    `Last updated` only on files actually edited.
 5. Finish under headings containing the canonical U-1 labels `Mapping` and
-   `Verification`: restate the map and checks, then report semantically related untouched sections (renamed classes,
-   moved flows) — flag, don't silently rewrite.
+   `Verification`: restate the map and checks, then report semantically related
+   untouched sections (renamed classes, moved flows) — flag, don't silently rewrite.
 
 ## Mode U-2 — Full audit
 
-1. Run `references/audit-checklist.md` §2 (machine-checkable invariants), §5 (executable
-   command checks — safe commands only), §3 (semantic checks), and §6 (Fresh Session
-   Test) over every file in the doc set.
+1. Run `references/audit-checklist.md` §2 (machine-checkable invariants), §5 (safe
+   executable command checks), §3 (semantic checks), and §6 (Fresh Session Test) over
+   every file in the doc set.
 2. **Default is report-first:** output the drift report (checklist §4 format, ending
-   with its Verification results block) and change nothing until the user confirms —
-   unless they asked to fix directly up front. Running §5's safe read-only commands is
-   observation, not a change.
+   with its Verification results block); change nothing until the user confirms,
+   unless they asked to fix directly up front. Running §5's safe read-only commands
+   is observation, not a change.
 3. When fixing, follow Mode U-1 rules (targeted edits, honest dates).
 
 ---
