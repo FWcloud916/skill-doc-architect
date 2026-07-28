@@ -93,13 +93,17 @@ restate the selection when presenting results.
 
 ## Mode G — Greenfield (plan docs for a new project)
 
-1. **Interview** (AskUserQuestion or conversational): purpose/problem; target users;
-   scale/team size; interface (API / CLI / web / worker); data; deployment; team skills;
-   delivery policy (PR/MR, no-PR merge commit, or trunk).
-2. **Advise** on what the user has NOT yet decided: language/framework (2–3 candidates
-   with trade-offs, recommendation marked), architecture shape (layered / modular
-   monolith / serverless / …), datastore, initial directory layout, linter. Decisions
-   the user already made are respected as-is — record, don't re-litigate.
+1. **Interview, one question at a time** (AskUserQuestion or conversational): ask one
+   question, wait for the answer, let it shape the next. Verify facts yourself first
+   (existing files, git state, prior docs) — spend questions only on decisions. Cover:
+   purpose/problem; target users; scale/team size; interface (API / CLI / web /
+   worker); data; deployment; team skills; delivery policy (PR/MR, no-PR merge
+   commit, or trunk). Headless: skip the interview — take decisions from the request,
+   everything else stays honestly TBD.
+2. **Advise inside each question**: every open decision (language/framework,
+   architecture shape, datastore, initial directory layout, linter) is asked with 2–3
+   candidate options, a marked recommendation, and a one-line reason. Decisions the
+   user already made are respected as-is — record, don't re-litigate.
 3. **Record decisions with rationale**: chosen stack + why (and rejected alternatives,
    one line each) → `project-overview.md` §2; architecture shape + Key Principles → §3.
    Undecided sections get `TBD — not yet designed` — never silently filled in.
