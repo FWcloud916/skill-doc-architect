@@ -58,9 +58,10 @@ against this exact contract — vocabulary changes here require updating
 ```
 
 - `surfaces` is empty iff `resolution` is `unknown`; every surface carries ≥1
-  evidence entry naming a real repo-relative file. Dependency/key detail belongs in
-  `notes`; evidence entries themselves are paths so the report is mechanically
-  verifiable.
+  evidence entry naming a real repo-relative **file — never a bare directory**: when
+  the signal is a directory (e.g. `src-tauri/`), cite a file inside it
+  (`src-tauri/tauri.conf.json`). Dependency/key detail belongs in `notes`; evidence
+  entries themselves are paths so the report is mechanically verifiable.
 - `role`: `primary` for the main stack of a single-rooted repo (`single`/`hybrid`
   — in a hybrid the backend is the one primary); `surface` for additional hybrid
   surfaces and for **every** monorepo sub-project (a monorepo report has no
