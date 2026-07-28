@@ -131,15 +131,10 @@ Either way, restate the selection when presenting results.
 
 1. **Detect the stack** — two-phase, per the detection index
    (`references/stacks/README.md`): **collect** every manifest signal present, then
-   **resolve**; never stop at the first manifest found. Single signal → its stack
-   file; `package.json` disambiguates in order — React Native → Electron → Tauri →
-   VS Code extension → Node backend → Frontend web → plain Node (the desktop checks
-   MUST precede the frontend check). A backend manifest + `package.json` → backend is
-   primary; the package.json's role (UI framework = frontend surface vs build tooling
-   = asset pipeline) decides hybrid or single stack. Hybrid / monorepo / ambiguous →
-   the step-3 gate; no match (incl. Qt/C++, ASP.NET) → unknown stack: README +
-   entrypoint reading, say so. Read every documented surface's stack file before
-   discovery reading.
+   **resolve** by the index's signal table and package-role rules — the desktop checks
+   MUST precede the frontend check. Hybrid / monorepo / ambiguous → the step-3 gate;
+   no match → unknown stack (README + entrypoint reading, say so). Read every
+   documented surface's stack file before discovery reading.
 2. **Discovery reading**, in order (per-stack sources + facet notes: the stack file's
    §Discovery map): README → dependency manifest + lockfile → interface surface (server
    routes; or pages/screens/windows + navigation + IPC) → data (schema + models; or
