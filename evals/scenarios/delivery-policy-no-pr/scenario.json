@@ -35,7 +35,11 @@
     "AGENTS.md": [
       "task/<short-name>",
       "git merge --no-ff <branch>",
-      "MUST NOT squash",
+      [
+        "MUST NOT squash",
+        "MUST NOT be squashed",
+        "must not be squashed"
+      ],
       "source branch",
       "verification result"
     ]

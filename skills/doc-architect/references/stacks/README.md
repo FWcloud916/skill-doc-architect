@@ -92,7 +92,7 @@ JSON vocabulary order.
 | `desktop` | `electron` or `@tauri-apps/*` (React Native remains `ui-framework`) |
 | `extension` | top-level `engines.vscode` |
 | `workspace` | a workspace-only root (`workspaces`, `pnpm-workspace.yaml`, or `lerna.json`) |
-| `plain-node` | package reaches the plain-Node fallback; may coexist with `build-tooling` |
+| `plain-node` | the package.json **itself resolves as the plain-Node stack** (no dedicated backend manifest is primary) and matched no other dep row; may coexist with `build-tooling`. A package.json demoted to an asset pipeline beside a Rails/Django/Go/… primary is `build-tooling` only — never `plain-node` |
 | `frontend-entrypoint` | `vite` plus root `index.html` |
 
 ## Signal table

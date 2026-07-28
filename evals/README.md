@@ -148,6 +148,27 @@ U-2's exact `Verification results` heading. The scenario expectation was correct
 the mode's real contract, the stored raw run passed, and a fresh U-1 Codex rerun also
 passed. Full N=3 remains the release-candidate stability gate.
 
+Codex validation note (2026-07-28, Codex CLI 0.145.0, v2.4.0 branch): detection N=1
+passed **35/35** and scenarios N=1 passed **10/10**, after two eval-contract bugs the
+cross-provider run exposed — neither was a model mistake, and neither was fixed by
+loosening a grader:
+
+- The `plain-node` package role read as "matched no dep row", so Codex added it to a
+  Rails+esbuild package.json that is an asset pipeline beside a primary backend
+  manifest. All 15 role-carrying fixtures already encoded the narrower intent; the
+  role table now states it (`plain-node` requires the package.json to resolve *as*
+  the plain-Node stack).
+- `delivery-policy-no-pr` pinned the literal `MUST NOT squash`, the phrasing
+  `agents-md-template` models. Codex wrote `MUST NOT be squashed` — a faithful
+  preservation of `CONTRIBUTING.md`'s "do not squash it". Per the 2026-07-14
+  precedent (correct the expectation to the mode's real contract), needles now accept
+  an any-of alternation; a document stating neither prohibition still fails, and
+  `test_grade_scenarios.py` proves it.
+
+An independent Fresh Session Test run through Codex against this repository returned
+six answers with Q6 citing `CONTEXT.md — Language`, validating the conditional
+question end-to-end on a second provider.
+
 Claude validation baseline (2026-07-14, Claude Code 2.1.209,
 `claude-sonnet-5`): v2.1.0's full N=3 sweep passed **30/34 fixtures** and **4/6
 scenarios**; an independent Fresh Session canary failed only Q5's absence citation.

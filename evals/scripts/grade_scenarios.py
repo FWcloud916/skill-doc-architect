@@ -44,6 +44,22 @@ def exists(path):
     return path.exists() or path.is_symlink()
 
 
+def needle_label(needle):
+    """Render a needle for the check name; a list is an any-of alternation."""
+    return " | ".join(needle) if isinstance(needle, list) else needle
+
+
+def valid_needle(needle):
+    """A needle is a string, or a non-empty list of strings (any-of alternation)."""
+    if isinstance(needle, str):
+        return True
+    return (
+        isinstance(needle, list)
+        and bool(needle)
+        and all(isinstance(item, str) for item in needle)
+    )
+
+
 def markdown_links_ok(path, repo):
     text = path.read_text(errors="replace")
     links = re.findall(r"\[[^\]]*\]\(([^)]+)\)", text)
@@ -120,10 +136,12 @@ def validate_scenario_definition(scenario_dir, expected):
         value = expected[key]
         if not isinstance(value, dict) or not all(
             isinstance(path, str) and isinstance(items, list)
-            and all(isinstance(item, str) for item in items)
+            and all(valid_needle(item) for item in items)
             for path, items in value.items()
         ):
-            errors.append(f"{key} must map paths to string lists")
+            errors.append(
+                f"{key} must map paths to lists of strings or non-empty string lists"
+            )
     if not isinstance(expected["validate_relative_links"], bool):
         errors.append("validate_relative_links must be boolean")
     if not (scenario_dir / "repo").is_dir():
@@ -166,12 +184,16 @@ def grade_run(run_dir, scenario_dir, expected):
         path = repo / relative
         text = path.read_text(errors="replace") if path.is_file() else ""
         for needle in needles:
-            check(f"required_contains:{relative}:{needle}", needle in text)
+            alternatives = needle if isinstance(needle, list) else [needle]
+            check(f"required_contains:{relative}:{needle_label(needle)}",
+                  any(alternative in text for alternative in alternatives))
     for relative, needles in expected["forbidden_contains"].items():
         path = repo / relative
         text = path.read_text(errors="replace") if path.is_file() else ""
         for needle in needles:
-            check(f"forbidden_contains:{relative}:{needle}", needle not in text)
+            alternatives = needle if isinstance(needle, list) else [needle]
+            check(f"forbidden_contains:{relative}:{needle_label(needle)}",
+                  not any(alternative in text for alternative in alternatives))
 
     for relative in expected["canonical_docs"]:
         path = repo / relative

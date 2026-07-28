@@ -58,6 +58,15 @@
   conventions deduped — frontmatter shape, RFC 2119, ASCII-ER, and relative-link rules
   now live only in the templates (generation time) + checklist §2 (verification time),
   behind a one-line pointer bullet. Budget ratcheted again 220 → 216.
+- **Cross-provider validation (Codex CLI 0.145.0).** A full Codex sweep — 35/35
+  detection, 10/10 scenarios, plus an independent Fresh Session run answering Q6 from
+  `CONTEXT.md` — surfaced two more contract gaps that single-provider runs could not:
+  the `plain-node` role's definition permitted tagging an asset-pipeline package.json
+  beside a primary backend manifest (the 15 role-carrying fixtures already encoded the
+  narrower rule; the role table now states it), and `delivery-policy-no-pr` pinned one
+  grammatical form of the no-squash prohibition. Scenario needles now accept an any-of
+  alternation so a faithful paraphrase passes while a document stating no prohibition
+  still fails — the grader gained a capability, it was not loosened.
 - **Version 2.3.0 → 2.4.0** (minor: new opt-in module + description rewrite), both
   plugin manifests in lockstep.
 

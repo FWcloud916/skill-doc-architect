@@ -77,6 +77,43 @@ class ScenarioRunTests(unittest.TestCase):
         (self.repo / "README.md").write_text("# Project\n\nnpm test\n")
         self.assertIn("forbidden_contains:README.md:npm test", self.failures())
 
+    def test_required_alternation_passes_on_any_variant(self):
+        (self.repo / "README.md").write_text(
+            "# Project\n\nMUST NOT be squashed.\n\nSee [source](source.txt).\n"
+        )
+        self.expected["required_contains"]["README.md"] = [
+            "Project", ["MUST NOT squash", "MUST NOT be squashed"]
+        ]
+        self.assertEqual([], self.failures())
+
+    def test_required_alternation_fails_when_no_variant_present(self):
+        self.write_valid_readme()
+        self.expected["required_contains"]["README.md"] = [
+            "Project", ["MUST NOT squash", "MUST NOT be squashed"]
+        ]
+        self.assertIn(
+            "required_contains:README.md:MUST NOT squash | MUST NOT be squashed",
+            self.failures(),
+        )
+
+    def test_forbidden_alternation_fails_when_any_variant_present(self):
+        (self.repo / "README.md").write_text(
+            "# Project\n\nSquash merges are fine.\n\nSee [source](source.txt).\n"
+        )
+        self.expected["forbidden_contains"]["README.md"] = [
+            ["Squash merges are fine", "squash and merge"]
+        ]
+        self.assertIn(
+            "forbidden_contains:README.md:Squash merges are fine | squash and merge",
+            self.failures(),
+        )
+
+    def test_empty_alternation_is_an_invalid_contract(self):
+        errors = grade.validate_scenario_definition(
+            self.root, {**self.expected, "required_contains": {"README.md": [[]]}}
+        )
+        self.assertTrue(any("required_contains" in error for error in errors))
+
     def test_missing_final_report_fails(self):
         self.write_valid_readme()
         (self.run / "final.txt").write_text("")
