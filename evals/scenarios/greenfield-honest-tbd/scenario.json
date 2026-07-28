@@ -45,6 +45,10 @@
     "AGENTS.md": [
       "npm test",
       "pytest"
+    ],
+    "docs/project-overview.md": [
+      "npm test",
+      "pytest"
     ]
   },
   "canonical_docs": [

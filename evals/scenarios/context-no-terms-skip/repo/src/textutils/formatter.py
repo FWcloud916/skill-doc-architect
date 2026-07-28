@@ -12,5 +12,7 @@ class Formatter:
         return "\n".join(prefix + line for line in text.splitlines())
 
     def truncate(self, text, limit=None):
-        limit = limit or self.width
+        limit = self.width if limit is None else limit
+        if limit < 1:
+            raise ValueError("limit must be positive")
         return text if len(text) <= limit else text[: limit - 1] + "…"

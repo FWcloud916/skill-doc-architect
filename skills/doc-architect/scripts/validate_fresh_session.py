@@ -49,7 +49,7 @@ def validate_report(report, target):
     if not isinstance(report, dict) or set(report) != {"answers"}:
         return ["report must contain only the answers field"]
     answers = report.get("answers")
-    expected_n = 6 if (target / "CONTEXT.md").exists() else 5
+    expected_n = 6 if (target / "CONTEXT.md").is_file() else 5
     if not isinstance(answers, list) or len(answers) != expected_n:
         return [f"answers must contain exactly {expected_n} items"
                 " (6 requires CONTEXT.md at the repository root)"]
@@ -68,8 +68,8 @@ def validate_report(report, target):
             errors.append(f"q{index}: question/answer/citation must be non-empty strings")
             continue
 
-        if index == 6 and "CONTEXT.md" not in item["citation"]:
-            errors.append("q6: citation must name CONTEXT.md")
+        if index == 6 and cited_path(item["citation"]) != "CONTEXT.md":
+            errors.append("q6: citation must cite CONTEXT.md itself")
             continue
         if index == 5 and not (target / "PROGRESS.md").exists():
             answer = item["answer"]

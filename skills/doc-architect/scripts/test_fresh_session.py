@@ -102,6 +102,14 @@ class FreshSessionValidationTests(unittest.TestCase):
         errors = fresh.validate_report(self.report, self.repo)
         self.assertTrue(any("q6" in error for error in errors))
 
+    def test_q6_prose_mention_of_context_does_not_bypass(self):
+        (self.repo / "CONTEXT.md").write_text("# Sample — Context\n")
+        row = self._q6_row()
+        row["citation"] = "README.md — see CONTEXT.md"
+        self.report["answers"].append(row)
+        errors = fresh.validate_report(self.report, self.repo)
+        self.assertTrue(any("q6" in error for error in errors))
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -10,6 +10,8 @@ class Parser:
             line = line.strip()
             if not line or line.startswith("#"):
                 continue
-            key, _, value = line.partition("=")
+            key, sep, value = line.partition("=")
+            if not sep:
+                continue
             result[key.strip()] = value.strip()
         return result

@@ -11,7 +11,7 @@
 
 ---
 
-## 2026-07-28 — Grill-pruned SKILL.md, tightened trigger description, CONTEXT.md glossary module
+## 2026-07-28 — Grill-pruned SKILL.md, tightened trigger description, CONTEXT.md context module
 
 - **Pruning (writing-great-skills pass).** Mode B step 1's inline disambiguation order
   and step 3's hybrid disposition duplicated the stacks index verbatim — SKILL.md now
@@ -31,7 +31,7 @@
   (2–3 candidates + marked recommendation + one-line reason); headless explicitly
   skips the interview. `sprint contract` reinforced by a DoD-B echo (it appeared
   exactly once repo-wide before).
-- **CONTEXT.md glossary module (opt-in, repo root).** `references/context-template.md`:
+- **CONTEXT.md context module (opt-in, repo root — the project glossary).** `references/context-template.md`:
   Language (bold canonical term + `_Avoid_:` synonyms), Relationships, Flagged
   ambiguities, ~80-line budget. Boundary ruling: naming lives in CONTEXT.md, structure
   in domain-models.md — cross-link, never restate. Term rulings are user decisions:

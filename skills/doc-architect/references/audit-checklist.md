@@ -115,6 +115,8 @@ pre-existing files are source material, not doc-architect-owned audit targets.
 
 **CONTEXT.md (only when the context module was selected)**
 - [ ] Under ~80 lines
+- [ ] `# <Project> — Context` title and a `## Language` section are present
+- [ ] §Language defines at least one bold canonical term (Q6 cites the first one)
 - [ ] Every `_Avoid_:` term has zero occurrences in the generated doc set (README.md,
       AGENTS.md, `docs/`, DESIGN.md prose) — each hit is a drift finding
 - [ ] No orphan terms: every bold §Language term occurs at least once in code or docs

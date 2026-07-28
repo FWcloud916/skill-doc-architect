@@ -29,7 +29,7 @@ was honored.
 
 **Fresh Session Test** — the independent end-to-end gate (audit-checklist §6): a
 fresh-context agent answers the §6 questions from the repository alone, citations
-validated by `scripts/fresh_session_test.sh`.
+validated by `skills/doc-architect/scripts/fresh_session_test.sh`.
 _Avoid_: FST (proposed — pending ruling)
 
 **Headless** — a run with no user available: never pauses, executes the plan as made,
@@ -50,6 +50,6 @@ specific mis-detection; regression traps name their decision-log entry via
 
 ## Flagged ambiguities
 
-- "context module" vs "glossary module": both appear in the 2026-07-28
-  decision-log entry; proposed ruling — the module is the **context module**
-  (matches SKILL.md's doc-set table); "glossary" stays descriptive prose only.
+- "context module" vs "glossary module": both circulated on 2026-07-28; proposed
+  ruling — the module is the **context module** (matches SKILL.md's doc-set table);
+  "glossary" is descriptive prose only. The decision log follows this wording.

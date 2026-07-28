@@ -114,9 +114,9 @@ restate the selection when presenting results.
    direction (`references/design-template.md` §Mode G design interview).
 5. Modules: `domain-models.md` only if a data-model draft exists (marked
    `planned — no schema yet`); skip `coding-style.md` until a linter is chosen; skip
-   `db-observation.md` until a schema exists. `CONTEXT.md` when selected: the
-   interview's naming choices are the rulings — settle each term one at a time with a
-   proposed `_Avoid_` list (`context-template.md`).
+   `db-observation.md` until a schema exists. `CONTEXT.md` when selected: interactive
+   rules each term one at a time (the interview's naming choices are the rulings, each
+   with a proposed `_Avoid_` list); headless keeps entries `proposed — pending ruling`.
 6. **Hand off and report** under headings containing the canonical G labels above:
    list every TBD section with its Mode-U return trigger (e.g. "after the first
    models land"), then run the Mode-G Definition of Done (below), including the Fresh
