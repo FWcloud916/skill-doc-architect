@@ -11,6 +11,48 @@
 
 ---
 
+## 2026-07-28 — Grill-pruned SKILL.md, tightened trigger description, CONTEXT.md glossary module
+
+- **Pruning (writing-great-skills pass).** Mode B step 1's inline disambiguation order
+  and step 3's hybrid disposition duplicated the stacks index verbatim — SKILL.md now
+  routes instead of restating. The interactive-wait/headless-proceed rule lives only in
+  the shared Plan-before-you-write block; the verification-gate warning is stated once
+  in the per-mode Definition of Done + checklist §6. No-op sentences pruned ("do not
+  stall" → positive form; "an honest fact" decoration dropped). Net 225 → 220 lines
+  *including* the new module's wiring; verify.sh budget ratcheted 225 → 220.
+- **Description rewrite.** 11 lines/100 words → 9 lines/~85 words: identity sentence
+  dropped (the body carries it), one trigger per mode with at most one zh example each,
+  `Fresh Session Test` promoted into the description as a leading word, and a
+  terminology/glossary trigger added for the new module. The 16-case matrix was walked
+  through entry by entry: `generated` and `endpoint descriptions` proved load-bearing
+  and stayed.
+- **Mode G grilling.** One question per turn (the answer shapes the next), facts
+  verified from the environment instead of asked, advise merged into each question
+  (2–3 candidates + marked recommendation + one-line reason); headless explicitly
+  skips the interview. `sprint contract` reinforced by a DoD-B echo (it appeared
+  exactly once repo-wide before).
+- **CONTEXT.md glossary module (opt-in, repo root).** `references/context-template.md`:
+  Language (bold canonical term + `_Avoid_:` synonyms), Relationships, Flagged
+  ambiguities, ~80-line budget. Boundary ruling: naming lives in CONTEXT.md, structure
+  in domain-models.md — cross-link, never restate. Term rulings are user decisions:
+  headless emits `proposed — pending ruling`, interactive settles one term at a time.
+  Mode hooks: B extracts terms during discovery reading and flags synonym drift
+  (highest-value finding; generic stack vocabulary never qualifies), G captures
+  interview-coined terms, U-1 maps diff terms as candidates only, U-2 gains two grep
+  invariants (§2): Avoid-term drift scan and orphan-term staleness.
+- **Fresh Session Q6.** Asked only when `CONTEXT.md` exists; report schema widened to
+  5..6 answers, the validator requires the sixth answer to cite CONTEXT.md (and
+  exactly 5 answers when the file is absent). verify.sh pins the new schema contract.
+- **Eval deltas.** The live sweep exposed two latent contract inconsistencies fixed
+  contract-side (never grader-side): `basic-vscode-extension/expected.json` lacked the
+  additive `build-tooling` role that 051f8aa's typescript row implies, and the
+  evidence contract let models cite bare directories (`src-tauri/`) that fail the
+  `is_file()` grader — evidence is now explicitly file-only. Scenarios 7 → 10
+  (`context-term-drift`, `context-no-terms-skip`, `context-avoid-drift-audit`);
+  trigger matrix 16 → 18 (10/4/4).
+- **Version 2.3.0 → 2.4.0** (minor: new opt-in module + description rewrite), both
+  plugin manifests in lockstep.
+
 ## 2026-07-20 — Native Codex CLI plugin packaging
 
 Codex users could only install the skill through the generic skills CLI or manual

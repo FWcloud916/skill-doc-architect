@@ -100,7 +100,7 @@ report "$([ "$audit_sections" = '1 2 3 4 5 6 ' ]; echo $?)" \
 
 # 7. Line budgets
 skill_lines=$(wc -l < "$SKILL_MD")
-report "$([ "$skill_lines" -le 225 ]; echo $?)" "SKILL.md within 225-line budget" "$skill_lines lines"
+report "$([ "$skill_lines" -le 220 ]; echo $?)" "SKILL.md within 220-line budget" "$skill_lines lines"
 description_words=$(awk 'NR >= 4 { if ($0 == "---") exit; print }' "$SKILL_MD" | wc -w | tr -d ' ')
 report "$([ "$description_words" -ge 60 ] && [ "$description_words" -le 140 ]; echo $?)" \
   "SKILL.md trigger description stays concise" "$description_words words (expected 60..140)"

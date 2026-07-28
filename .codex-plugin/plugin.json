@@ -1,6 +1,6 @@
 {
   "name": "doc-architect",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "description": "Plans, bootstraps, audits, and maintains evidence-based project docs with cross-provider validation and end-to-end evaluation gates.",
   "author": {
     "name": "FWcloud916",
