@@ -27,6 +27,7 @@ References:
 - `references/coding-style-template.md` — generate from the project's own linter config
 - `references/db-observation-template.md` — DB observation how-to (DB-owning projects only)
 - `references/harness-template.md` — agent-harness state: PROGRESS.md + Mode-B resume state file
+- `references/context-template.md` — project glossary (opt-in, repo root): term rulings + `_Avoid_` lists
 - `references/design-template.md` — UI design-system doc (opt-in): tokens, extraction map, design interview
 - `references/audit-checklist.md` — diff→section mapping, invariants, command checks (§5), Fresh Session Test (§6)
 
@@ -44,6 +45,7 @@ References:
 | `docs/db-observation.md` | module | the project owns a server-side relational datastore (a client-embedded store — SQLite/Core Data/Room — doesn't qualify; record it in project-overview §9) |
 | `DESIGN.md` (repo root) | module | the project owns a styled visual surface (stack metadata says `inherent`, or `conditional` discovery finds evidence) — **opt-in only**; Mode B extracts tokens from theme sources (`design-template.md` §Extraction map), gaps stay honest `TODO` |
 | `PROGRESS.md` (repo root) | module | the project is actively developed by AI agents across sessions — **opt-in only** (offer in G, recommended default; offer in B when agent-driven development is stated or evident); selecting it brings the AGENTS.md Session routine with it |
+| `CONTEXT.md` (repo root) | module | the project has recurring terms of its own (B: term extraction finds them; G: the interview surfaces ≥3 needing definition) — **opt-in only**; term rulings are user decisions, headless keeps them `proposed — pending ruling` (`context-template.md`) |
 
 **Plan before you write**: the doc-set selection (modules generated, modules skipped,
 one-line reason for each skip) is a plan, not an afterthought. Interactive: present it
@@ -63,8 +65,9 @@ restate the selection when presenting results.
 - **Scope guard:** this skill touches ONLY the files it generates (README.md, AGENTS.md
   + symlinks, the canonical `docs/` files, `docs/domain/`, `PROGRESS.md` when the
   harness module was selected, `DESIGN.md` when the design module was selected,
-  `docs/.doc-architect-state.md` while Mode B is in flight). Never edit or delete
-  anything else under `docs/` (scratch dirs, memos, pending notes…).
+  `CONTEXT.md` when the context module was selected, `docs/.doc-architect-state.md`
+  while Mode B is in flight). Never edit or delete anything else under `docs/`
+  (scratch dirs, memos, pending notes…).
 - **Feedback beats prose:** the commands that verify work (test, lint, run) are the
   highest-value lines in the doc set — they get executable verification (checklist §5),
   not just a grep. Never write a command you did not find in real config.

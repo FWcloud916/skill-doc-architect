@@ -41,6 +41,7 @@ The generated doc set is modular:
 | `docs/db-observation.md` | when the project owns a server-side relational datastore |
 | `DESIGN.md` (UI design system, repo root) | when the project renders a UI — opt-in; Stitch-compatible design tokens + prose |
 | `PROGRESS.md` (agent-harness state, repo root) | when the project is actively developed by AI agents — opt-in |
+| `CONTEXT.md` (project glossary, repo root) | when the project has recurring terms of its own — opt-in; term rulings + `_Avoid_` synonym lists |
 
 ## Install
 
