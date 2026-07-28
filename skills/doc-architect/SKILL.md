@@ -1,16 +1,14 @@
 ---
 name: doc-architect
 description: >-
-  Plans, bootstraps, audits, and maintains a project's complete documentation
-  architecture: README.md, AGENTS.md, canonical docs/, optional PROGRESS.md, and
-  optional DESIGN.md. Use for greenfield documentation planning; brownfield repos
-  that lack core docs; requests to write README or AGENTS; full-set diff-driven sync;
-  full documentation drift audits; or /doc-architect (e.g. "新專案要建文件",
-  "這個專案沒有文件", "更新 docs", "檢查文件有沒有過時"). This broader skill owns
-  doc-set selection, stack discovery, merge preservation, and Fresh Session validation
-  across stacks. If an established repo only needs its existing canonical docs/ files
-  generated, synchronized, or audited, prefer project-docs when available. Do not use
-  for client-facing integration guides, API/OpenAPI/Postman reference generation,
+  Plans, bootstraps, audits, and maintains a project's complete documentation set —
+  README.md, AGENTS.md, modular docs/, optional PROGRESS.md and DESIGN.md — gated by the
+  Fresh Session Test. Use for greenfield doc planning ("新專案要建文件"), brownfield
+  repos lacking core docs or README/AGENTS requests ("這個專案沒有文件"), diff-driven
+  doc sync ("更新 docs"), docs drift audits ("檢查文件有沒有過時"), project
+  terminology/glossary bootstrap, or /doc-architect. Prefer project-docs when an
+  established repo only needs its existing canonical docs/ generated, synchronized, or
+  audited. Not for client-facing integration guides, API/OpenAPI/Postman references,
   endpoint descriptions, or changelogs.
 ---
 
