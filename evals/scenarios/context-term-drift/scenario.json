@@ -1,0 +1,81 @@
+{
+  "mode": "B",
+  "request": "Bootstrap the complete applicable doc-architect documentation set for this existing Python CLI, and select the CONTEXT.md module. Do not select PROGRESS.md or DESIGN.md. The repository's own terminology drifts between the code and the existing README; extract terms, detect the drift, and record term rulings per the skill's headless rules. Run headless: never pause for confirmation.",
+  "allowed_changes": [
+    "README.md",
+    "AGENTS.md",
+    "CLAUDE.md",
+    "CONTEXT.md",
+    "docs/project-overview.md",
+    "docs/domain-models.md",
+    "docs/coding-style.md"
+  ],
+  "required_changes": [
+    "AGENTS.md",
+    "CONTEXT.md",
+    "docs/project-overview.md"
+  ],
+  "required_paths": [
+    "CONTEXT.md"
+  ],
+  "forbidden_paths": [
+    "PROGRESS.md",
+    "DESIGN.md",
+    "docs/.doc-architect-state.md",
+    "docs/db-observation.md"
+  ],
+  "unchanged_paths": [
+    "pyproject.toml",
+    "Makefile",
+    "src/parcel/shipment.py",
+    "src/parcel/handler.py",
+    "src/parcel/cli.py",
+    "tests/test_shipment.py"
+  ],
+  "required_contains": {
+    "CONTEXT.md": [
+      "Shipment",
+      "elivery",
+      "proposed — pending ruling",
+      "_Avoid_"
+    ]
+  },
+  "forbidden_contains": {
+    "CONTEXT.md": [
+      [
+        "**Handler** —",
+        "**Handler** (",
+        "**Handler**:",
+        "**Handler** -"
+      ],
+      [
+        "**CommandHandler** —",
+        "**CommandHandler** (",
+        "**CommandHandler**:",
+        "**CommandHandler** -"
+      ],
+      [
+        "**Service** —",
+        "**Service** (",
+        "**Service**:",
+        "**Service** -"
+      ],
+      [
+        "**Controller** —",
+        "**Controller** (",
+        "**Controller**:",
+        "**Controller** -"
+      ]
+    ]
+  },
+  "canonical_docs": [
+    "docs/project-overview.md"
+  ],
+  "validate_relative_links": true,
+  "final_required_sections": [
+    "Plan",
+    "Verification",
+    "Fresh Session Test"
+  ],
+  "final_required_contains": []
+}

@@ -22,7 +22,8 @@ An agent skill that plans, bootstraps, and maintains a project's core documentat
   workflow in `AGENTS.md`; no-PR teams can require `git merge --no-ff` and retain merge
   topology without keeping branch refs forever. Headless runs never guess a policy.
 - **Verification, not vibes** — every mode proves documented commands by executing
-  safe read-only checks and ends with a cross-provider 5-question Fresh Session Test.
+  safe read-only checks and ends with a cross-provider Fresh Session Test (5
+  questions; 6 when `CONTEXT.md` is present).
   Claude Code and Codex CLI can supply the independent context. A project with
   no runnable test gate gets an explicit warning (missing feedback loop) plus a
   stack-appropriate suggestion — and, when `PROGRESS.md` is selected, the gate is
@@ -41,6 +42,7 @@ The generated doc set is modular:
 | `docs/db-observation.md` | when the project owns a server-side relational datastore |
 | `DESIGN.md` (UI design system, repo root) | when the project renders a UI — opt-in; Stitch-compatible design tokens + prose |
 | `PROGRESS.md` (agent-harness state, repo root) | when the project is actively developed by AI agents — opt-in |
+| `CONTEXT.md` (project glossary, repo root) | when the project has recurring terms of its own — opt-in; term rulings + `_Avoid_` synonym lists |
 
 ## Install
 

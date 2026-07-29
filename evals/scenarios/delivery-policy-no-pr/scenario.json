@@ -1,19 +1,69 @@
 {
   "mode": "B",
   "request": "Complete the missing core documentation for this existing Node service in merge mode. README.md is complete and must remain unchanged. CONTRIBUTING.md is the authoritative delivery policy: preserve its task-branch and no-PR merge-commit workflow in AGENTS.md without adding a PR/MR requirement. Do not select optional modules.",
-  "allowed_changes": ["AGENTS.md", "CLAUDE.md", "docs/project-overview.md"],
-  "required_changes": ["AGENTS.md", "docs/project-overview.md"],
-  "required_paths": ["README.md", "AGENTS.md", "docs/project-overview.md", "CONTRIBUTING.md"],
-  "forbidden_paths": ["PROGRESS.md", "DESIGN.md", "docs/domain-models.md", "docs/coding-style.md", "docs/db-observation.md", "docs/.doc-architect-state.md"],
-  "unchanged_paths": ["README.md", "CONTRIBUTING.md", "package.json", "src/server.js"],
+  "allowed_changes": [
+    "AGENTS.md",
+    "CLAUDE.md",
+    "docs/project-overview.md"
+  ],
+  "required_changes": [
+    "AGENTS.md",
+    "docs/project-overview.md"
+  ],
+  "required_paths": [
+    "README.md",
+    "AGENTS.md",
+    "docs/project-overview.md",
+    "CONTRIBUTING.md"
+  ],
+  "forbidden_paths": [
+    "PROGRESS.md",
+    "DESIGN.md",
+    "docs/domain-models.md",
+    "docs/coding-style.md",
+    "docs/db-observation.md",
+    "docs/.doc-architect-state.md",
+    "CONTEXT.md"
+  ],
+  "unchanged_paths": [
+    "README.md",
+    "CONTRIBUTING.md",
+    "package.json",
+    "src/server.js"
+  ],
   "required_contains": {
-    "AGENTS.md": ["task/<short-name>", "git merge --no-ff <branch>", "MUST NOT squash", "source branch", "verification result"]
+    "AGENTS.md": [
+      "task/<short-name>",
+      "git merge --no-ff <branch>",
+      [
+        "MUST NOT squash",
+        "MUST NOT be squashed",
+        "must not be squashed"
+      ],
+      "source branch",
+      "verification result"
+    ]
   },
   "forbidden_contains": {
-    "AGENTS.md": ["MUST open a PR", "MUST open an MR", "MUST create a pull request", "MUST create a merge request", "must open a PR", "must open an MR", "must submit a pull request", "must submit a merge request"]
+    "AGENTS.md": [
+      "MUST open a PR",
+      "MUST open an MR",
+      "MUST create a pull request",
+      "MUST create a merge request",
+      "must open a PR",
+      "must open an MR",
+      "must submit a pull request",
+      "must submit a merge request"
+    ]
   },
-  "canonical_docs": ["docs/project-overview.md"],
+  "canonical_docs": [
+    "docs/project-overview.md"
+  ],
   "validate_relative_links": true,
-  "final_required_sections": ["Plan", "Verification", "Fresh Session Test"],
+  "final_required_sections": [
+    "Plan",
+    "Verification",
+    "Fresh Session Test"
+  ],
   "final_required_contains": []
 }

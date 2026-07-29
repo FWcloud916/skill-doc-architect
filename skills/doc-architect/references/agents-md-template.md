@@ -24,11 +24,9 @@ architecture inline goes stale fast and gets skimmed, which defeats its purpose.
 ## Hard constraints
 
 <Non-negotiables only — the rules that break the build, the data, or the team's process
- if violated. ≤ 15. Each is a MUST / MUST NOT with its source in parentheses.>
-
-- MUST run `<test command>` and see it pass before declaring any task done (source: CI gate)
-- MUST NOT edit `<generated dir>` by hand — regenerate via `<tool>` (source: <config file>)
-- MUST NOT commit directly to `<default branch>` (source: repo settings / team rule)
+ if violated. ≤ 15. Each is a MUST / MUST NOT with its source in parentheses, found in
+ THIS repo's config, CI, and team rules — the test-gate rule (run `<test command>`
+ before declaring done) is always one of them.>
 
 ## Read before you work
 
@@ -41,6 +39,7 @@ edits, running tests) can skip; do not pre-load all docs.
 | Touching domain behavior, data models, state machines | [docs/domain-models.md](docs/domain-models.md) |
 | Style, lint rules, error handling, layering conventions | [docs/coding-style.md](docs/coding-style.md) |
 | Changing query shape (`WHERE`/`JOIN`/`ORDER BY`/pagination) on a hot table | [docs/db-observation.md](docs/db-observation.md) |
+| Unsure what a project-specific term means | [CONTEXT.md](CONTEXT.md) |
 
 ## Commands
 

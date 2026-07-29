@@ -2,7 +2,7 @@
 
 > **Type:** Explanation
 > **Audience:** Maintainers (human and AI) of this skill
-> **Last updated:** 2026-07-20
+> **Last updated:** 2026-07-28
 >
 > Decision log for this skill's architecture, newest first. Portable source of truth —
 > everything a fresh clone needs to modify the skill without prior session context.
@@ -10,6 +10,65 @@
 > at repo root); those now live under `skills/doc-architect/`.
 
 ---
+
+## 2026-07-28 — Grill-pruned SKILL.md, tightened trigger description, CONTEXT.md context module
+
+- **Pruning (writing-great-skills pass).** Mode B step 1's inline disambiguation order
+  and step 3's hybrid disposition duplicated the stacks index verbatim — SKILL.md now
+  routes instead of restating. The interactive-wait/headless-proceed rule lives only in
+  the shared Plan-before-you-write block; the verification-gate warning is stated once
+  in the per-mode Definition of Done + checklist §6. No-op sentences pruned ("do not
+  stall" → positive form; "an honest fact" decoration dropped). Net 225 → 220 lines
+  *including* the new module's wiring; verify.sh budget ratcheted 225 → 220.
+- **Description rewrite.** 11 lines/100 words → 9 lines/~85 words: identity sentence
+  dropped (the body carries it), one trigger per mode with at most one zh example each,
+  `Fresh Session Test` promoted into the description as a leading word, and a
+  terminology/glossary trigger added for the new module. The 16-case matrix was walked
+  through entry by entry: `generated` and `endpoint descriptions` proved load-bearing
+  and stayed.
+- **Mode G grilling.** One question per turn (the answer shapes the next), facts
+  verified from the environment instead of asked, advise merged into each question
+  (2–3 candidates + marked recommendation + one-line reason); headless explicitly
+  skips the interview. `sprint contract` reinforced by a DoD-B echo (it appeared
+  exactly once repo-wide before).
+- **CONTEXT.md context module (opt-in, repo root — the project glossary).** `references/context-template.md`:
+  Language (bold canonical term + `_Avoid_:` synonyms), Relationships, Flagged
+  ambiguities, ~80-line budget. Boundary ruling: naming lives in CONTEXT.md, structure
+  in domain-models.md — cross-link, never restate. Term rulings are user decisions:
+  headless emits `proposed — pending ruling`, interactive settles one term at a time.
+  Mode hooks: B extracts terms during discovery reading and flags synonym drift
+  (highest-value finding; generic stack vocabulary never qualifies), G captures
+  interview-coined terms, U-1 maps diff terms as candidates only, U-2 gains two grep
+  invariants (§2): Avoid-term drift scan and orphan-term staleness.
+- **Fresh Session Q6.** Asked only when `CONTEXT.md` exists; report schema widened to
+  5..6 answers, the validator requires the sixth answer to cite CONTEXT.md (and
+  exactly 5 answers when the file is absent). verify.sh pins the new schema contract.
+- **Eval deltas.** The live sweep exposed two latent contract inconsistencies fixed
+  contract-side (never grader-side): `basic-vscode-extension/expected.json` lacked the
+  additive `build-tooling` role that 051f8aa's typescript row implies, and the
+  evidence contract let models cite bare directories (`src-tauri/`) that fail the
+  `is_file()` grader — evidence is now explicitly file-only. Scenarios 7 → 10
+  (`context-term-drift`, `context-no-terms-skip`, `context-avoid-drift-audit`);
+  trigger matrix 16 → 18 (10/4/4).
+- **Context-engineering experiments (Claude-5 blog follow-up).** Two unhobbling probes,
+  each validated by a live 10-scenario sweep (7 first-pass green + 3 reruns after
+  provider connection drops — no behavioral failures): (1) agents-md-template's three
+  worked hard-constraint examples replaced by an interface-style definition (examples
+  steered generation toward copying those exact shapes); (2) SKILL.md shared
+  conventions deduped — frontmatter shape, RFC 2119, ASCII-ER, and relative-link rules
+  now live only in the templates (generation time) + checklist §2 (verification time),
+  behind a one-line pointer bullet. Budget ratcheted again 220 → 216.
+- **Cross-provider validation (Codex CLI 0.145.0).** A full Codex sweep — 35/35
+  detection, 10/10 scenarios, plus an independent Fresh Session run answering Q6 from
+  `CONTEXT.md` — surfaced two more contract gaps that single-provider runs could not:
+  the `plain-node` role's definition permitted tagging an asset-pipeline package.json
+  beside a primary backend manifest (the 15 role-carrying fixtures already encoded the
+  narrower rule; the role table now states it), and `delivery-policy-no-pr` pinned one
+  grammatical form of the no-squash prohibition. Scenario needles now accept an any-of
+  alternation so a faithful paraphrase passes while a document stating no prohibition
+  still fails — the grader gained a capability, it was not loosened.
+- **Version 2.3.0 → 2.4.0** (minor: new opt-in module + description rewrite), both
+  plugin manifests in lockstep.
 
 ## 2026-07-20 — Native Codex CLI plugin packaging
 
@@ -404,6 +463,18 @@ stacks/ index above — but the mode organization itself stands.)
 `Node backend`, `Python`, `Rust`, `Serverless`, `Frontend web`, `React Native`,
 `Apple (iOS/macOS)`, `Android`, `Flutter`, `Electron`, `Tauri`,
 `Windows desktop (.NET)`, `VS Code extension`.
+
+**SKILL.md change checklist (failure modes):** before merging any SKILL.md (or
+reference) change, walk the six skill-authoring failure modes:
+
+1. *Premature completion* — does every mode still end at a checkable Definition of Done?
+2. *Duplication* — does the change restate anything the stacks index, templates, or
+   audit checklist already owns? Point, don't restate.
+3. *Sediment* — single-occurrence terms, dead references, patched-in clauses nothing uses.
+4. *Sprawl* — does new content belong in a reference file instead of the always-loaded body?
+5. *No-op* — does each new sentence change behavior relative to the model default?
+   Delete it if not.
+6. *Negation* — prefer positive instructions; a bare "don't" needs a paired "do".
 
 **Adding a stack (standard procedure):**
 1. Create `skills/doc-architect/references/stacks/<stack>.md` using the 5-section skeleton (copy an existing

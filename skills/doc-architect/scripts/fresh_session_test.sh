@@ -1,16 +1,17 @@
 #!/usr/bin/env bash
 # Independent Fresh Session Test (references/audit-checklist.md §6).
 #
-# Gets answers to the 5 Fresh Session Test questions from a genuinely fresh
-# context (a headless Claude or Codex subprocess with zero conversation history),
-# instead of the writing session self-simulating "an agent with only the
-# repo as context" — which isn't actually fresh, since it remembers every
-# decision it just made. The calling session still does the grading
-# (blocking-gap vs pass vs honest TBD per checklist §6); this script only
-# fetches independent answers.
+# Gets answers to the Fresh Session Test questions (5; 6 when CONTEXT.md
+# exists) from a genuinely fresh context (a headless Claude or Codex
+# subprocess with zero conversation history), instead of the writing session
+# self-simulating "an agent with only the repo as context" — which isn't
+# actually fresh, since it remembers every decision it just made. The calling
+# session still does the grading (blocking-gap vs pass vs honest TBD per
+# checklist §6); this script only fetches independent answers.
 #
-# The 5 questions are hard-coded below from checklist §6's table. If that
-# table's wording changes, update this prompt in the same change.
+# The questions are hard-coded below from checklist §6's table (Q6 appended
+# only when CONTEXT.md exists at the target root). If that table's wording
+# changes, update this prompt in the same change.
 #
 # Usage:
 #   ./fresh_session_test.sh <target_repo_path> [model]
@@ -36,11 +37,24 @@ if ! command -v "$EVAL_CLI" >/dev/null 2>&1; then
   exit 1
 fi
 
+Q6_QUESTION=''
+Q6_JSON_ROW=''
+QUESTION_COUNT=5
+if [[ -f "$TARGET/CONTEXT.md" ]]; then
+  QUESTION_COUNT=6
+  Q6_QUESTION='
+6. What does the core project terminology mean, and which synonyms are avoided?
+   Answer from the first term defined in the Language section of CONTEXT.md, and
+   cite CONTEXT.md.'
+  Q6_JSON_ROW=',
+  {"q": 6, "question": "What does the core project terminology mean, and which synonyms are avoided?", "answer": "...", "citation": "CONTEXT.md — Language"}'
+fi
+
 PROMPT='You are an agent whose ONLY context is the repository at '"$TARGET"'. You have
 no memory of how or why any file was written. Using only the doc set and repo files at
-that path, answer these 5 questions, citing the doc file + section (or exact location)
-that answers each one. If a question is genuinely unanswerable from the repo alone, say
-so plainly instead of guessing.
+that path, answer these '"$QUESTION_COUNT"' questions, citing the doc file + section
+(or exact location) that answers each one. If a question is genuinely unanswerable from
+the repo alone, say so plainly instead of guessing.
 
 1. What is this system?
 2. How is it organized?
@@ -49,7 +63,7 @@ so plainly instead of guessing.
 5. What work state, if any, does this repository track? If PROGRESS.md is absent,
    answer "N/A — not agent-tracked (PROGRESS.md absent)"; that absence is valid
    repository evidence, not an unanswerable gap, and set citation exactly
-   "PROGRESS.md absent at repository root".
+   "PROGRESS.md absent at repository root".'"$Q6_QUESTION"'
 
 Output ONLY a JSON object (no prose, no markdown fences) with this shape:
 {"answers": [
@@ -57,7 +71,7 @@ Output ONLY a JSON object (no prose, no markdown fences) with this shape:
   {"q": 2, "question": "How is it organized?", "answer": "...", "citation": "..."},
   {"q": 3, "question": "How do I run it?", "answer": "...", "citation": "..."},
   {"q": 4, "question": "How do I verify my work?", "answer": "...", "citation": "..."},
-  {"q": 5, "question": "What work state, if any, does this repository track?", "answer": "N/A — not agent-tracked (PROGRESS.md absent)", "citation": "PROGRESS.md absent at repository root"}
+  {"q": 5, "question": "What work state, if any, does this repository track?", "answer": "N/A — not agent-tracked (PROGRESS.md absent)", "citation": "PROGRESS.md absent at repository root"}'"$Q6_JSON_ROW"'
 ]}'
 
 temp_dir="$(mktemp -d)"

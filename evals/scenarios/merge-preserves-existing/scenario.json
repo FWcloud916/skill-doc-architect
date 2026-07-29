@@ -1,20 +1,57 @@
 {
   "mode": "B",
   "request": "Complete the missing core documentation for this existing Node service in merge mode. README.md is already complete and must remain byte-for-byte unchanged. Preserve docs/team-memo.md as non-canonical source material. Do not select optional modules.",
-  "allowed_changes": ["AGENTS.md", "CLAUDE.md", "docs/project-overview.md"],
-  "required_changes": ["AGENTS.md", "docs/project-overview.md"],
-  "required_paths": ["README.md", "AGENTS.md", "docs/project-overview.md", "docs/team-memo.md"],
-  "forbidden_paths": ["PROGRESS.md", "DESIGN.md", "docs/domain-models.md", "docs/coding-style.md", "docs/db-observation.md", "docs/.doc-architect-state.md"],
-  "unchanged_paths": ["README.md", "docs/team-memo.md", "package.json", "src/server.js"],
+  "allowed_changes": [
+    "AGENTS.md",
+    "CLAUDE.md",
+    "docs/project-overview.md"
+  ],
+  "required_changes": [
+    "AGENTS.md",
+    "docs/project-overview.md"
+  ],
+  "required_paths": [
+    "README.md",
+    "AGENTS.md",
+    "docs/project-overview.md",
+    "docs/team-memo.md"
+  ],
+  "forbidden_paths": [
+    "PROGRESS.md",
+    "DESIGN.md",
+    "docs/domain-models.md",
+    "docs/coding-style.md",
+    "docs/db-observation.md",
+    "docs/.doc-architect-state.md",
+    "CONTEXT.md"
+  ],
+  "unchanged_paths": [
+    "README.md",
+    "docs/team-memo.md",
+    "package.json",
+    "src/server.js"
+  ],
   "required_contains": {
-    "README.md": ["PRESERVE-README-7F3A"],
-    "docs/team-memo.md": ["PRESERVE-MEMO-91BC"]
+    "README.md": [
+      "PRESERVE-README-7F3A"
+    ],
+    "docs/team-memo.md": [
+      "PRESERVE-MEMO-91BC"
+    ]
   },
   "forbidden_contains": {
-    "AGENTS.md": ["npm run deploy"]
+    "AGENTS.md": [
+      "npm run deploy"
+    ]
   },
-  "canonical_docs": ["docs/project-overview.md"],
+  "canonical_docs": [
+    "docs/project-overview.md"
+  ],
   "validate_relative_links": true,
-  "final_required_sections": ["Plan", "Verification", "Fresh Session Test"],
+  "final_required_sections": [
+    "Plan",
+    "Verification",
+    "Fresh Session Test"
+  ],
   "final_required_contains": []
 }

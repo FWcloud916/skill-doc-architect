@@ -1,21 +1,66 @@
 {
   "mode": "B",
   "request": "Bootstrap the complete applicable doc-architect documentation set for this existing Python CLI. Do not select PROGRESS.md or DESIGN.md. Use the real Makefile commands and the ruff configuration as evidence.",
-  "allowed_changes": ["README.md", "AGENTS.md", "CLAUDE.md", "docs/project-overview.md", "docs/coding-style.md"],
-  "required_changes": ["README.md", "AGENTS.md", "docs/project-overview.md", "docs/coding-style.md"],
-  "required_paths": ["README.md", "AGENTS.md", "docs/project-overview.md", "docs/coding-style.md"],
-  "forbidden_paths": ["PROGRESS.md", "DESIGN.md", "docs/domain-models.md", "docs/db-observation.md", "docs/.doc-architect-state.md"],
-  "unchanged_paths": ["pyproject.toml", "Makefile", "src/atlas_cli/main.py", "tests/test_main.py"],
+  "allowed_changes": [
+    "README.md",
+    "AGENTS.md",
+    "CLAUDE.md",
+    "docs/project-overview.md",
+    "docs/coding-style.md"
+  ],
+  "required_changes": [
+    "README.md",
+    "AGENTS.md",
+    "docs/project-overview.md",
+    "docs/coding-style.md"
+  ],
+  "required_paths": [
+    "README.md",
+    "AGENTS.md",
+    "docs/project-overview.md",
+    "docs/coding-style.md"
+  ],
+  "forbidden_paths": [
+    "PROGRESS.md",
+    "DESIGN.md",
+    "docs/domain-models.md",
+    "docs/db-observation.md",
+    "docs/.doc-architect-state.md",
+    "CONTEXT.md"
+  ],
+  "unchanged_paths": [
+    "pyproject.toml",
+    "Makefile",
+    "src/atlas_cli/main.py",
+    "tests/test_main.py"
+  ],
   "required_contains": {
-    "README.md": ["make test"],
-    "docs/coding-style.md": ["ruff"]
+    "README.md": [
+      "make test"
+    ],
+    "docs/coding-style.md": [
+      "ruff"
+    ]
   },
   "forbidden_contains": {
-    "README.md": ["npm test", "bundle exec"],
-    "AGENTS.md": ["npm test", "bundle exec"]
+    "README.md": [
+      "npm test",
+      "bundle exec"
+    ],
+    "AGENTS.md": [
+      "npm test",
+      "bundle exec"
+    ]
   },
-  "canonical_docs": ["docs/project-overview.md", "docs/coding-style.md"],
+  "canonical_docs": [
+    "docs/project-overview.md",
+    "docs/coding-style.md"
+  ],
   "validate_relative_links": true,
-  "final_required_sections": ["Plan", "Verification", "Fresh Session Test"],
+  "final_required_sections": [
+    "Plan",
+    "Verification",
+    "Fresh Session Test"
+  ],
   "final_required_contains": []
 }

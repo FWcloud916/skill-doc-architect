@@ -6,5 +6,5 @@
       "role": "primary"
     }
   ],
-  "package_json": [{"path": "package.json", "roles": ["extension"]}]
+  "package_json": [{"path": "package.json", "roles": ["build-tooling", "extension"]}]
 }

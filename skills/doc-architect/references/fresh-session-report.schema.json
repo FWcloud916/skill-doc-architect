@@ -7,13 +7,13 @@
     "answers": {
       "type": "array",
       "minItems": 5,
-      "maxItems": 5,
+      "maxItems": 6,
       "items": {
         "type": "object",
         "additionalProperties": false,
         "required": ["q", "question", "answer", "citation"],
         "properties": {
-          "q": {"type": "integer", "minimum": 1, "maximum": 5},
+          "q": {"type": "integer", "minimum": 1, "maximum": 6},
           "question": {"type": "string", "minLength": 1},
           "answer": {"type": "string", "minLength": 1},
           "citation": {"type": "string", "minLength": 1}

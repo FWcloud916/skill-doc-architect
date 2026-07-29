@@ -1,0 +1,47 @@
+{
+  "mode": "B",
+  "request": "Bootstrap the complete applicable doc-architect documentation set for this existing Python library. Consider the CONTEXT.md module explicitly and apply its generate-when rule; do not select PROGRESS.md or DESIGN.md. Run headless: never pause for confirmation, and record every module skip with its one-line reason in the final report.",
+  "allowed_changes": [
+    "README.md",
+    "AGENTS.md",
+    "CLAUDE.md",
+    "docs/project-overview.md",
+    "docs/coding-style.md",
+    "docs/domain-models.md"
+  ],
+  "required_changes": [
+    "README.md",
+    "AGENTS.md",
+    "docs/project-overview.md"
+  ],
+  "required_paths": [],
+  "forbidden_paths": [
+    "CONTEXT.md",
+    "PROGRESS.md",
+    "DESIGN.md",
+    "docs/.doc-architect-state.md",
+    "docs/db-observation.md"
+  ],
+  "unchanged_paths": [
+    "pyproject.toml",
+    "Makefile",
+    "src/textutils/formatter.py",
+    "src/textutils/parser.py",
+    "tests/test_formatter.py"
+  ],
+  "required_contains": {},
+  "forbidden_contains": {},
+  "canonical_docs": [
+    "docs/project-overview.md"
+  ],
+  "validate_relative_links": true,
+  "final_required_sections": [
+    "Plan",
+    "Verification",
+    "Fresh Session Test"
+  ],
+  "final_required_contains": [
+    "CONTEXT.md",
+    "skip"
+  ]
+}

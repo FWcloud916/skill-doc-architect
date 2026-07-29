@@ -48,6 +48,18 @@
     "reason": "Explicit invocation always selects this skill."
   },
   {
+    "id": "glossary-zh",
+    "prompt": "幫這個專案建術語表，統一 code 和文件的用語",
+    "expected": "doc-architect",
+    "reason": "Project glossary/terminology bootstrap is the CONTEXT.md module trigger."
+  },
+  {
+    "id": "terminology-drift-en",
+    "prompt": "Unify the project's terminology — the code and the docs call the same concept by different names.",
+    "expected": "doc-architect",
+    "reason": "Synonym-drift consolidation routes to the CONTEXT.md module."
+  },
+  {
     "id": "canonical-create-only",
     "prompt": "Create only docs/project-overview.md, domain-models.md, coding-style.md, and db-observation.md.",
     "expected": "prefer-project-docs",

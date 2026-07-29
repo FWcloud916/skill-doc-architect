@@ -1,0 +1,15 @@
+{
+  "mode": "U-2",
+  "request": "Audit the existing documentation for drift, including terminology drift against CONTEXT.md's Avoid rulings. Report findings only; do not fix or modify any file.",
+  "allowed_changes": [],
+  "required_changes": [],
+  "required_paths": ["README.md", "AGENTS.md", "CONTEXT.md", "docs/project-overview.md", "docs/domain-models.md"],
+  "forbidden_paths": ["PROGRESS.md", "DESIGN.md", "docs/.doc-architect-state.md"],
+  "unchanged_paths": ["README.md", "AGENTS.md", "CONTEXT.md", "docs/project-overview.md", "docs/domain-models.md", "src/models.py"],
+  "required_contains": {},
+  "forbidden_contains": {},
+  "canonical_docs": ["docs/project-overview.md", "docs/domain-models.md"],
+  "validate_relative_links": true,
+  "final_required_sections": ["Verification results"],
+  "final_required_contains": ["Delivery", "CONTEXT.md"]
+}

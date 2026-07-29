@@ -75,7 +75,7 @@ mapping in the final report and proceed. Give every canonical mode-specific head
 report label from SKILL.md its own Markdown heading; descriptive wording may surround
 the intact label. Do not
 modify application source files. For this scenario run, do not start a nested
-Claude/Codex Fresh Session call; self-simulate Q1-Q5 and label that result degraded.
+Claude/Codex Fresh Session call; self-simulate the checklist §6 questions and label that result degraded.
 Return the normal doc-architect final report."
 
     if [[ "$EVAL_CLI" = "claude" ]]; then
