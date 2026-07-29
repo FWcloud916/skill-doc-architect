@@ -114,6 +114,20 @@ class ScenarioRunTests(unittest.TestCase):
         )
         self.assertTrue(any("required_contains" in error for error in errors))
 
+    def test_empty_needle_string_is_an_invalid_contract(self):
+        self.assertFalse(grade.valid_needle(""))
+        errors = grade.validate_scenario_definition(
+            self.root, {**self.expected, "required_contains": {"README.md": [""]}}
+        )
+        self.assertTrue(any("required_contains" in error for error in errors))
+
+    def test_empty_alternation_member_is_an_invalid_contract(self):
+        self.assertFalse(grade.valid_needle([""]))
+        errors = grade.validate_scenario_definition(
+            self.root, {**self.expected, "forbidden_contains": {"README.md": [["npm test", ""]]}}
+        )
+        self.assertTrue(any("forbidden_contains" in error for error in errors))
+
     def test_missing_final_report_fails(self):
         self.write_valid_readme()
         (self.run / "final.txt").write_text("")

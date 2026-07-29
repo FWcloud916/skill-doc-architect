@@ -1,6 +1,7 @@
 """Entry point for the parcel CLI."""
 
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -11,20 +12,30 @@ STATE_FILE = Path(".parcel.json")
 
 def load_handler():
     handler = CommandHandler()
-    if STATE_FILE.is_file():
-        for entry in json.loads(STATE_FILE.read_text()):
-            shipment = handler.handle_create(entry["shipment_id"], entry["destination"])
-            shipment.status = entry["status"]
-            shipment.events = entry["events"]
+    if not STATE_FILE.is_file():
+        return handler
+    try:
+        entries = json.loads(STATE_FILE.read_text())
+    except json.JSONDecodeError:
+        print(f"warning: {STATE_FILE} is unreadable; starting from empty state",
+              file=sys.stderr)
+        return handler
+    for entry in entries:
+        shipment = handler.handle_create(entry["shipment_id"], entry["destination"])
+        shipment.status = entry["status"]
+        shipment.events = entry["events"]
     return handler
 
 
 def save_handler(handler):
-    STATE_FILE.write_text(json.dumps([
+    payload = json.dumps([
         {"shipment_id": s.shipment_id, "destination": s.destination,
          "status": s.status, "events": s.events}
         for s in handler.shipments.values()
-    ]))
+    ])
+    tmp = STATE_FILE.with_suffix(".json.tmp")
+    tmp.write_text(payload)
+    os.replace(tmp, STATE_FILE)
 
 
 def main(argv=None):
@@ -45,7 +56,11 @@ def main(argv=None):
         if len(argv) != 2:
             print("usage: parcel status <id>", file=sys.stderr)
             return 2
-        print(handler.handle_status(argv[1]))
+        try:
+            print(handler.handle_status(argv[1]))
+        except KeyError:
+            print(f"no such shipment: {argv[1]}", file=sys.stderr)
+            return 1
         return 0
     print(f"unknown command: {argv[0]}", file=sys.stderr)
     return 1

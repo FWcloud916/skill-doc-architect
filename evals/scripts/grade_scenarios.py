@@ -50,13 +50,18 @@ def needle_label(needle):
 
 
 def valid_needle(needle):
-    """A needle is a string, or a non-empty list of strings (any-of alternation)."""
+    """A needle is a non-empty string, or a non-empty list of them (any-of).
+
+    Empty strings are rejected because membership is substring-based: an empty
+    required needle would always pass and an empty forbidden needle would always
+    fail, regardless of what the run produced.
+    """
     if isinstance(needle, str):
-        return True
+        return bool(needle)
     return (
         isinstance(needle, list)
         and bool(needle)
-        and all(isinstance(item, str) for item in needle)
+        and all(isinstance(item, str) and item for item in needle)
     )
 
 

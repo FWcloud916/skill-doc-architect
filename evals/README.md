@@ -169,6 +169,16 @@ An independent Fresh Session Test run through Codex against this repository retu
 six answers with Q6 citing `CONTEXT.md — Language`, validating the conditional
 question end-to-end on a second provider.
 
+**Needles assert the contract, not the wording** (2026-07-29). `context-term-drift`
+forbade the bare string `**CommandHandler**` anywhere in CONTEXT.md, intending "no
+junk definition of a generic word in §Language". A run whose §Language was exactly
+right still failed, because the model wrote a legitimate relationship line
+(`- A **CommandHandler** holds many **Shipments**`). The needles now match the
+*definition shape* (`**Term** —`, `**Term** (`, `**Term**:`, `**Term** -`) as an
+any-of alternation, so junk definitions are still caught while relationship prose
+passes. Before relying on a needle, check that its failure mode is the behavior under
+test and not a phrasing the contract never forbade.
+
 Claude validation baseline (2026-07-14, Claude Code 2.1.209,
 `claude-sonnet-5`): v2.1.0's full N=3 sweep passed **30/34 fixtures** and **4/6
 scenarios**; an independent Fresh Session canary failed only Q5's absence citation.
